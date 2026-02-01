@@ -44,3 +44,48 @@ export interface CalculationResult {
   allowance: number // お小遣い（1人あたり）
   settlement: number // 精算額（正: 夫→妻、負: 妻→夫）
 }
+
+// 月コピーの重複処理モード
+export type CopyMode = 'add' | 'skip' | 'replace'
+
+// 月コピーのオプション
+export interface CopyMonthOptions {
+  sourceMonth: string // コピー元月
+  targetMonth: string // コピー先月
+  mode: CopyMode // 重複時の処理モード
+  includeIncome: boolean // 収入をコピーするか
+  includeExpense: boolean // 支出をコピーするか
+  includeCarryover: boolean // 繰越をコピーするか
+}
+
+// 月コピーの結果
+export interface CopyMonthResult {
+  success: boolean
+  copied: {
+    incomes: number
+    expenses: number
+    carryovers: number
+  }
+  skipped: {
+    incomes: number
+    expenses: number
+    carryovers: number
+  }
+  error?: string
+}
+
+// 月コピーのプレビュー
+export interface CopyMonthPreview {
+  sourceMonth: string
+  targetMonth: string
+  source: {
+    incomes: number
+    expenses: number
+    carryovers: number
+  }
+  existing: {
+    incomes: number
+    expenses: number
+    carryovers: number
+  }
+}
