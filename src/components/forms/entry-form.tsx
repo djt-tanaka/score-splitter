@@ -35,32 +35,32 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="flex gap-2 items-end">
-      <div className="flex-1">
-        <Input name="label" placeholder="項目名" required />
+    <form ref={formRef} action={handleSubmit} className="space-y-3">
+      <Input name="label" placeholder="項目名" required />
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <Input
+            name="amount"
+            type="number"
+            placeholder="金額"
+            min="1"
+            required
+          />
+        </div>
+        <div className="w-24">
+          <Select name="person" defaultValue="husband">
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="husband">夫</SelectItem>
+              <SelectItem value="wife">妻</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div className="w-32">
-        <Input
-          name="amount"
-          type="number"
-          placeholder="金額"
-          min="1"
-          required
-        />
-      </div>
-      <div className="w-24">
-        <Select name="person" defaultValue="husband">
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="husband">夫</SelectItem>
-            <SelectItem value="wife">妻</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <Button type="submit" size="sm">
-        {typeLabels[type]}追加
+      <Button type="submit" className="w-full h-12">
+        {typeLabels[type]}を追加
       </Button>
     </form>
   )
