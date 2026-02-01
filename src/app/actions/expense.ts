@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { expenseSchema } from '@/lib/validations/expense'
-import { toDbMonth, fromDbMonth } from '@/lib/utils/format'
 import type { Expense } from '@/types'
 
 export interface ActionResult<T = unknown> {
@@ -17,7 +16,7 @@ export async function getExpensesByMonth(month: string): Promise<Expense[]> {
   const { data, error } = await supabase
     .from('expenses')
     .select('*')
-    .eq('month', toDbMonth(month))
+    .eq('month', month)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -27,7 +26,7 @@ export async function getExpensesByMonth(month: string): Promise<Expense[]> {
 
   return data.map((row) => ({
     id: row.id,
-    month: fromDbMonth(row.month),
+    month: row.month,
     label: row.label,
     amount: row.amount,
     person: row.person,
@@ -55,7 +54,7 @@ export async function createExpense(
   const { data, error } = await supabase
     .from('expenses')
     .insert({
-      month: toDbMonth(parsed.data.month),
+      month: parsed.data.month,
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
@@ -73,7 +72,7 @@ export async function createExpense(
     success: true,
     data: {
       id: data.id,
-      month: fromDbMonth(data.month),
+      month: data.month,
       label: data.label,
       amount: data.amount,
       person: data.person,
@@ -121,7 +120,7 @@ export async function updateExpense(
     success: true,
     data: {
       id: data.id,
-      month: fromDbMonth(data.month),
+      month: data.month,
       label: data.label,
       amount: data.amount,
       person: data.person,

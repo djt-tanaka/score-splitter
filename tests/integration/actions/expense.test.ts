@@ -28,19 +28,18 @@ describe('expense actions', () => {
 
   describe('getExpensesByMonth', () => {
     it('指定月の支出を取得する', async () => {
-      // DBから返されるデータはDB形式（YYYY-MM-01）
       const mockData = [
         {
           id: '1',
-          month: '2026-01-01',
+          month: '202601',
           label: '食費',
-          amount: -50000, // DBでは負の値
+          amount: -50000,
           person: 'wife',
           created_at: '2026-01-01T00:00:00Z',
         },
         {
           id: '2',
-          month: '2026-01-01',
+          month: '202601',
           label: '家賃',
           amount: -100000,
           person: 'husband',
@@ -53,12 +52,11 @@ describe('expense actions', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('expenses')
       expect(result).toHaveLength(2)
-      // 返り値はアプリ形式（YYYYMM）に変換される
       expect(result[0]).toEqual({
         id: '1',
         month: '202601',
         label: '食費',
-        amount: -50000, // 負の値のまま返される
+        amount: -50000,
         person: 'wife',
         createdAt: '2026-01-01T00:00:00Z',
       })
@@ -90,10 +88,9 @@ describe('expense actions', () => {
         person: 'husband',
       })
 
-      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'new-id',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト支出',
         amount: -50000, // DBには負の値で保存
         person: 'husband',
@@ -105,9 +102,8 @@ describe('expense actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.data?.amount).toBe(-50000)
-      // insertにはDB形式で渡される
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト支出',
         amount: -50000, // 負の値で保存
         person: 'husband',
@@ -123,7 +119,7 @@ describe('expense actions', () => {
       })
       mockSingleSuccess({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: -10000,
         person: 'husband',
@@ -187,10 +183,9 @@ describe('expense actions', () => {
         amount: 80000, // 入力は正の値
         person: 'wife',
       })
-      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'existing-id',
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の支出',
         amount: -80000, // DBには負の値
         person: 'wife',
@@ -218,7 +213,7 @@ describe('expense actions', () => {
       })
       mockSingleSuccess({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: -10000,
         person: 'husband',

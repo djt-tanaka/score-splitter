@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { toDbMonth } from '@/lib/utils/format'
 import type {
   CopyMonthOptions,
   CopyMonthResult,
@@ -19,37 +18,35 @@ export async function getCopyMonthPreview(
   targetMonth: string
 ): Promise<CopyMonthPreview> {
   const supabase = await createClient()
-  const dbSourceMonth = toDbMonth(sourceMonth)
-  const dbTargetMonth = toDbMonth(targetMonth)
 
   const [incomes, expenses, carryovers, existingCounts] = await Promise.all([
     supabase
       .from('incomes')
       .select('id, label, amount, person')
-      .eq('month', dbSourceMonth)
+      .eq('month', sourceMonth)
       .order('created_at', { ascending: true }),
     supabase
       .from('expenses')
       .select('id, label, amount, person')
-      .eq('month', dbSourceMonth)
+      .eq('month', sourceMonth)
       .order('created_at', { ascending: true }),
     supabase
       .from('carryovers')
       .select('*', { count: 'exact', head: true })
-      .eq('month', dbSourceMonth),
+      .eq('month', sourceMonth),
     Promise.all([
       supabase
         .from('incomes')
         .select('*', { count: 'exact', head: true })
-        .eq('month', dbTargetMonth),
+        .eq('month', targetMonth),
       supabase
         .from('expenses')
         .select('*', { count: 'exact', head: true })
-        .eq('month', dbTargetMonth),
+        .eq('month', targetMonth),
       supabase
         .from('carryovers')
         .select('*', { count: 'exact', head: true })
-        .eq('month', dbTargetMonth),
+        .eq('month', targetMonth),
     ]),
   ])
 
@@ -93,13 +90,10 @@ async function copyCarryovers(
   targetMonth: string,
   mode: 'add' | 'skip' | 'replace'
 ): Promise<{ copied: number; skipped: number }> {
-  const dbSourceMonth = toDbMonth(sourceMonth)
-  const dbTargetMonth = toDbMonth(targetMonth)
-
   const { data: sourceData, error } = await supabase
     .from('carryovers')
     .select('label, amount, person')
-    .eq('month', dbSourceMonth)
+    .eq('month', sourceMonth)
 
   if (error || !sourceData) {
     throw new Error('繰越の取得に失敗しました')
@@ -113,7 +107,7 @@ async function copyCarryovers(
     const { data: existingData } = await supabase
       .from('carryovers')
       .select('label, person')
-      .eq('month', dbTargetMonth)
+      .eq('month', targetMonth)
 
     existingKeys = new Set(
       (existingData ?? []).map((d) => `${d.label}|${d.person}`)
@@ -136,7 +130,7 @@ async function copyCarryovers(
     }
 
     itemsToInsert.push({
-      month: dbTargetMonth,
+      month: targetMonth,
       label: item.label,
       amount: item.amount,
       person: item.person,
@@ -164,7 +158,7 @@ export async function copyMonthData(
   options: CopyMonthOptions
 ): Promise<CopyMonthResult> {
   const supabase = await createClient()
-  const dbTargetMonth = toDbMonth(options.targetMonth)
+  const targetMonth = options.targetMonth
 
   const result: CopyMonthResult = {
     success: true,
@@ -182,19 +176,19 @@ export async function copyMonthData(
         await supabase
           .from('incomes')
           .delete()
-          .eq('month', dbTargetMonth)
+          .eq('month', targetMonth)
       }
       if (hasExpense) {
         await supabase
           .from('expenses')
           .delete()
-          .eq('month', dbTargetMonth)
+          .eq('month', targetMonth)
       }
       if (options.includeCarryover) {
         await supabase
           .from('carryovers')
           .delete()
-          .eq('month', dbTargetMonth)
+          .eq('month', targetMonth)
       }
     }
 
@@ -209,11 +203,11 @@ export async function copyMonthData(
         supabase
           .from('incomes')
           .select('label, person')
-          .eq('month', dbTargetMonth),
+          .eq('month', targetMonth),
         supabase
           .from('expenses')
           .select('label, person')
-          .eq('month', dbTargetMonth),
+          .eq('month', targetMonth),
       ])
 
       existingKeys = {
@@ -259,7 +253,7 @@ export async function copyMonthData(
       }
 
       const newItem = {
-        month: dbTargetMonth,
+        month: targetMonth,
         label: item.label,
         amount,
         person: item.person,

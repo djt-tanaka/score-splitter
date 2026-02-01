@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { carryoverSchema } from '@/lib/validations/carryover'
-import { toDbMonth, fromDbMonth } from '@/lib/utils/format'
 import type { Carryover } from '@/types'
 
 export interface ActionResult<T = unknown> {
@@ -17,7 +16,7 @@ export async function getCarryoversByMonth(month: string): Promise<Carryover[]> 
   const { data, error } = await supabase
     .from('carryovers')
     .select('*')
-    .eq('month', toDbMonth(month))
+    .eq('month', month)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -27,7 +26,7 @@ export async function getCarryoversByMonth(month: string): Promise<Carryover[]> 
 
   return data.map((row) => ({
     id: row.id,
-    month: fromDbMonth(row.month),
+    month: row.month,
     label: row.label,
     amount: row.amount,
     person: row.person,
@@ -55,7 +54,7 @@ export async function createCarryover(
   const { data, error } = await supabase
     .from('carryovers')
     .insert({
-      month: toDbMonth(parsed.data.month),
+      month: parsed.data.month,
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
@@ -73,7 +72,7 @@ export async function createCarryover(
     success: true,
     data: {
       id: data.id,
-      month: fromDbMonth(data.month),
+      month: data.month,
       label: data.label,
       amount: data.amount,
       person: data.person,
@@ -121,7 +120,7 @@ export async function updateCarryover(
     success: true,
     data: {
       id: data.id,
-      month: fromDbMonth(data.month),
+      month: data.month,
       label: data.label,
       amount: data.amount,
       person: data.person,

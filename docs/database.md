@@ -11,7 +11,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月 |
+| month | VARCHAR(6) | 対象月（YYYYMM形式） |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（正の値） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -23,7 +23,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月 |
+| month | VARCHAR(6) | 対象月（YYYYMM形式） |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（**負の値**） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -35,7 +35,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月 |
+| month | VARCHAR(6) | 対象月（YYYYMM形式） |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（**負の値**） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -89,7 +89,7 @@ interface Carryover {
 
 ### 月の形式
 
-アプリケーション内では `YYYYMM` 形式（6桁の数字）を使用します。
+アプリケーション内およびデータベースでは `YYYYMM` 形式（6桁の数字）を使用します。
 
 ```typescript
 // 例: 2024年3月
@@ -97,9 +97,6 @@ const month = '202403'
 
 // URL例: /?month=202403
 ```
-
-**注意**: データベースの `month` カラムは `DATE` 型として定義されています。
-Supabaseは文字列からの暗黙的な変換を行います。
 
 ### インデックス
 
@@ -115,7 +112,8 @@ Supabaseの RLS を有効化し、データアクセスを制御しています�
 
 ```
 supabase/migrations/
-└── 001_initial_schema.sql  # 初期スキーマ
+├── 001_initial_schema.sql           # 初期スキーマ
+└── 002_change_month_to_varchar.sql  # 月カラムをVARCHAR(6)に変更
 ```
 
 ## トリガー

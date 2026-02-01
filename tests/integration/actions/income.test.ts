@@ -28,11 +28,10 @@ describe('income actions', () => {
 
   describe('getIncomesByMonth', () => {
     it('指定月の収入を取得する', async () => {
-      // DBから返されるデータはDB形式（YYYY-MM-01）
       const mockData = [
         {
           id: '1',
-          month: '2026-01-01',
+          month: '202601',
           label: '給料',
           amount: 300000,
           person: 'husband',
@@ -40,7 +39,7 @@ describe('income actions', () => {
         },
         {
           id: '2',
-          month: '2026-01-01',
+          month: '202601',
           label: 'ボーナス',
           amount: 100000,
           person: 'wife',
@@ -53,7 +52,6 @@ describe('income actions', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('incomes')
       expect(result).toHaveLength(2)
-      // 返り値はアプリ形式（YYYYMM）に変換される
       expect(result[0]).toEqual({
         id: '1',
         month: '202601',
@@ -90,10 +88,9 @@ describe('income actions', () => {
         person: 'husband',
       })
 
-      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'new-id',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
@@ -104,7 +101,6 @@ describe('income actions', () => {
       const result = await createIncome(formData)
 
       expect(result.success).toBe(true)
-      // 返り値はアプリ形式に変換される
       expect(result.data).toEqual({
         id: 'new-id',
         month: '202601',
@@ -113,9 +109,8 @@ describe('income actions', () => {
         person: 'husband',
         createdAt: '2026-01-01T00:00:00Z',
       })
-      // insertにはDB形式で渡される
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
@@ -188,10 +183,9 @@ describe('income actions', () => {
         amount: 200000,
         person: 'wife',
       })
-      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'existing-id',
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の収入',
         amount: 200000,
         person: 'wife',

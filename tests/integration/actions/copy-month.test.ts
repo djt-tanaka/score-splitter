@@ -47,10 +47,9 @@ describe('copy-month actions', () => {
         expect(result.success).toBe(true)
         expect(result.copied.incomes).toBe(1)
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('incomes')
-        // insertにはDB形式で渡される
         expect(qb.insert).toHaveBeenCalledWith([
           {
-            month: '2026-02-01',
+            month: '202602',
             label: '給料',
             amount: 300000,
             person: 'husband',
