@@ -14,7 +14,8 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
   const router = useRouter()
 
   function navigateMonth(offset: number) {
-    const [year, month] = currentMonth.split('-').map(Number)
+    const year = parseInt(currentMonth.slice(0, 4), 10)
+    const month = parseInt(currentMonth.slice(4, 6), 10)
     const date = new Date(year, month - 1 + offset, 1)
     router.push(`/?month=${parseMonth(date)}`)
   }

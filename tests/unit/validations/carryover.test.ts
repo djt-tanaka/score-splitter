@@ -4,7 +4,7 @@ import { carryoverSchema } from '@/lib/validations/carryover'
 describe('carryoverSchema', () => {
   // 入力時は正の値（保存時に負の値に変換される）
   const validData = {
-    month: '2026-01-01',
+    month: '202601',
     label: 'テスト繰越',
     amount: 10000,
     person: 'husband' as const,
@@ -24,29 +24,29 @@ describe('carryoverSchema', () => {
   })
 
   describe('月形式のバリデーション', () => {
-    it('不正な形式（ゼロ埋めなし）でエラー', () => {
+    it('不正な形式（桁数不足）でエラー', () => {
       const result = carryoverSchema.safeParse({
         ...validData,
-        month: '2026-1-01',
+        month: '20261',
       })
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe('日付形式が不正です')
+        expect(result.error.issues[0].message).toBe('月形式が不正です')
       }
     })
 
-    it('不正な形式（年が3桁）でエラー', () => {
+    it('不正な形式（桁数超過）でエラー', () => {
       const result = carryoverSchema.safeParse({
         ...validData,
-        month: '202-01-01',
+        month: '2026010',
       })
       expect(result.success).toBe(false)
     })
 
-    it('不正な形式（区切り文字が/）でエラー', () => {
+    it('不正な形式（ハイフン付き）でエラー', () => {
       const result = carryoverSchema.safeParse({
         ...validData,
-        month: '2026/01/01',
+        month: '2026-01',
       })
       expect(result.success).toBe(false)
     })

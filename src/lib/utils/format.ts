@@ -10,33 +10,35 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
- * ISO日付文字列を「YYYY年M月」形式に変換する
- * @param isoDate ISO日付文字列（例: 2026-01-01）
+ * 月文字列を「YYYY年M月」形式に変換する
+ * @param month 月文字列（例: 202601）
  * @returns フォーマットされた文字列（例: 2026年1月）
  */
-export function formatMonth(isoDate: string): string {
-  const [year, month] = isoDate.split('-')
-  return `${year}年${parseInt(month, 10)}月`
+export function formatMonth(month: string): string {
+  const year = month.slice(0, 4)
+  const m = parseInt(month.slice(4, 6), 10)
+  return `${year}年${m}月`
 }
 
 /**
- * Dateオブジェクトを月初のISO日付文字列に変換する
+ * Dateオブジェクトを月文字列に変換する
  * @param date Dateオブジェクト
- * @returns ISO日付文字列（例: 2026-01-01）
+ * @returns 月文字列（例: 202601）
  */
 export function parseMonth(date: Date): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
-  return `${year}-${month}-01`
+  return `${year}${month}`
 }
 
 /**
  * 指定月の1ヶ月前を返す
- * @param month ISO日付文字列（例: 2026-02-01）
- * @returns 1ヶ月前のISO日付文字列（例: 2026-01-01）
+ * @param month 月文字列（例: 202602）
+ * @returns 1ヶ月前の月文字列（例: 202601）
  */
 export function getPreviousMonth(month: string): string {
-  const [year, m] = month.split('-').map(Number)
+  const year = parseInt(month.slice(0, 4), 10)
+  const m = parseInt(month.slice(4, 6), 10)
   const date = new Date(year, m - 2, 1)
   return parseMonth(date)
 }

@@ -26,8 +26,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -49,7 +49,7 @@ describe('copy-month actions', () => {
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('incomes')
         expect(qb.insert).toHaveBeenCalledWith([
           {
-            month: '2026-02-01',
+            month: '202602',
             label: '給料',
             amount: 300000,
             person: 'husband',
@@ -62,8 +62,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -93,8 +93,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -124,8 +124,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -173,8 +173,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'skip',
           selectedItems: [
             {
@@ -213,8 +213,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'replace',
           selectedItems: [
             {
@@ -254,8 +254,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [], // 収入・支出なし
           includeCarryover: true,
@@ -272,8 +272,8 @@ describe('copy-month actions', () => {
         qb.insert.mockResolvedValue({ data: null, error: null })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [],
           includeCarryover: false,
@@ -295,8 +295,8 @@ describe('copy-month actions', () => {
         })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -328,8 +328,8 @@ describe('copy-month actions', () => {
         })
 
         const options: CopyMonthOptions = {
-          sourceMonth: '2026-01-01',
-          targetMonth: '2026-02-01',
+          sourceMonth: '202601',
+          targetMonth: '202602',
           mode: 'add',
           selectedItems: [
             {
@@ -364,8 +364,8 @@ describe('copy-month actions', () => {
       qb.insert.mockResolvedValue({ data: null, error: null })
 
       const options: CopyMonthOptions = {
-        sourceMonth: '2026-01-01',
-        targetMonth: '2026-02-01',
+        sourceMonth: '202601',
+        targetMonth: '202602',
         mode: 'add',
         selectedItems: [
           {

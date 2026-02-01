@@ -15,7 +15,7 @@ export function createFormData(
 export function createMockIncome(overrides: Partial<Income> = {}): Income {
   return {
     id: 'test-income-1',
-    month: '2026-01-01',
+    month: '202601',
     label: 'テスト収入',
     amount: 100000,
     person: 'husband',
@@ -27,7 +27,7 @@ export function createMockIncome(overrides: Partial<Income> = {}): Income {
 export function createMockExpense(overrides: Partial<Expense> = {}): Expense {
   return {
     id: 'test-expense-1',
-    month: '2026-01-01',
+    month: '202601',
     label: 'テスト支出',
     amount: -50000, // 支出は負の値
     person: 'husband',
@@ -41,7 +41,7 @@ export function createMockCarryover(
 ): Carryover {
   return {
     id: 'test-carryover-1',
-    month: '2026-01-01',
+    month: '202601',
     label: 'テスト繰越',
     amount: -10000, // 繰越は負の値
     person: 'husband',
