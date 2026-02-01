@@ -11,7 +11,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月（YYYY-MM-01形式） |
+| month | DATE | 対象月 |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（正の値） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -23,7 +23,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月（YYYY-MM-01形式） |
+| month | DATE | 対象月 |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（**負の値**） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -35,7 +35,7 @@ Supabase（PostgreSQL）を使用したデータベース設計です。
 | カラム | 型 | 説明 |
 |-------|---|------|
 | id | UUID | 主キー（自動生成） |
-| month | DATE | 対象月（YYYY-MM-01形式） |
+| month | DATE | 対象月 |
 | label | VARCHAR(255) | 項目名 |
 | amount | INTEGER | 金額（**負の値**） |
 | person | VARCHAR(10) | 担当者（'husband' / 'wife'） |
@@ -49,7 +49,7 @@ type Person = 'husband' | 'wife'
 
 interface Income {
   id: string
-  month: string      // 'YYYY-MM-01'形式
+  month: string      // 'YYYYMM'形式
   label: string
   amount: number     // 正の値
   person: Person
@@ -89,12 +89,17 @@ interface Carryover {
 
 ### 月の形式
 
-月は `YYYY-MM-01` 形式（月初の日付）で保存します。
+アプリケーション内では `YYYYMM` 形式（6桁の数字）を使用します。
 
 ```typescript
 // 例: 2024年3月
-const month = '2024-03-01'
+const month = '202403'
+
+// URL例: /?month=202403
 ```
+
+**注意**: データベースの `month` カラムは `DATE` 型として定義されています。
+Supabaseは文字列からの暗黙的な変換を行います。
 
 ### インデックス
 
