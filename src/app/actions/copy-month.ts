@@ -242,10 +242,14 @@ export async function copyMonthData(
         continue
       }
 
+      // itemCopyModeに応じて金額を決定
+      const amount =
+        item.itemCopyMode === 'labelOnly' ? 0 : item.amount
+
       const newItem = {
         month: options.targetMonth,
         label: item.label,
-        amount: item.amount,
+        amount,
         person: item.person,
       }
 

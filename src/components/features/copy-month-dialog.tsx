@@ -20,7 +20,13 @@ import {
 } from '@/components/ui/select'
 import { getCopyMonthPreview, copyMonthData } from '@/app/actions/copy-month'
 import { formatMonth, formatCurrency } from '@/lib/utils/format'
-import type { CopyMonthPreview, CopyMode, CopyItem } from '@/types'
+import type {
+  CopyMonthPreview,
+  CopyMode,
+  CopyItem,
+  ItemCopyMode,
+  SelectedCopyItem,
+} from '@/types'
 
 interface CopyMonthDialogProps {
   currentMonth: string
@@ -32,6 +38,9 @@ const personLabels = {
   wife: '妻',
 }
 
+// 項目の選択状態（未選択 | 金額込み | 項目名のみ）
+type ItemSelection = 'none' | 'withAmount' | 'labelOnly'
+
 export function CopyMonthDialog({
   currentMonth,
   previousMonth,
@@ -40,19 +49,26 @@ export function CopyMonthDialog({
   const [isPending, setIsPending] = useState(false)
   const [preview, setPreview] = useState<CopyMonthPreview | null>(null)
   const [mode, setMode] = useState<CopyMode>('add')
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  // 各項目の選択状態を管理（id -> selection）
+  const [itemSelections, setItemSelections] = useState<Map<string, ItemSelection>>(
+    new Map()
+  )
   const [includeCarryover, setIncludeCarryover] = useState(true)
 
   // ダイアログを開いた時にプレビューを取得
   useEffect(() => {
     if (open) {
       setPreview(null)
-      setSelectedIds(new Set())
+      setItemSelections(new Map())
       setIncludeCarryover(true)
       getCopyMonthPreview(previousMonth, currentMonth).then((data) => {
         setPreview(data)
-        // デフォルトで全項目を選択
-        setSelectedIds(new Set(data.items.map((item) => item.id)))
+        // デフォルトで全項目を「金額込み」で選択
+        const selections = new Map<string, ItemSelection>()
+        data.items.forEach((item) => {
+          selections.set(item.id, 'withAmount')
+        })
+        setItemSelections(selections)
       })
     }
   }, [open, previousMonth, currentMonth])
@@ -66,50 +82,62 @@ export function CopyMonthDialog({
     }
   }, [preview])
 
-  function toggleItem(id: string) {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
+  function setItemSelection(id: string, selection: ItemSelection) {
+    setItemSelections((prev) => {
+      const next = new Map(prev)
+      next.set(id, selection)
       return next
     })
   }
 
   function toggleAllInType(type: 'income' | 'expense') {
     const items = groupedItems[type]
-    const allSelected = items.every((item) => selectedIds.has(item.id))
+    const allSelected = items.every(
+      (item) => itemSelections.get(item.id) !== 'none'
+    )
 
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (allSelected) {
-        items.forEach((item) => next.delete(item.id))
-      } else {
-        items.forEach((item) => next.add(item.id))
-      }
+    setItemSelections((prev) => {
+      const next = new Map(prev)
+      items.forEach((item) => {
+        next.set(item.id, allSelected ? 'none' : 'withAmount')
+      })
       return next
     })
   }
 
   function selectAll() {
     if (!preview) return
-    setSelectedIds(new Set(preview.items.map((item) => item.id)))
+    const selections = new Map<string, ItemSelection>()
+    preview.items.forEach((item) => {
+      selections.set(item.id, 'withAmount')
+    })
+    setItemSelections(selections)
     setIncludeCarryover(true)
   }
 
   function deselectAll() {
-    setSelectedIds(new Set())
+    if (!preview) return
+    const selections = new Map<string, ItemSelection>()
+    preview.items.forEach((item) => {
+      selections.set(item.id, 'none')
+    })
+    setItemSelections(selections)
     setIncludeCarryover(false)
   }
 
   async function handleCopy() {
     if (!preview) return
 
-    const selectedItems = preview.items.filter((item) =>
-      selectedIds.has(item.id)
-    )
+    // 選択された項目をSelectedCopyItemに変換
+    const selectedItems: SelectedCopyItem[] = preview.items
+      .filter((item) => {
+        const selection = itemSelections.get(item.id)
+        return selection && selection !== 'none'
+      })
+      .map((item) => ({
+        ...item,
+        itemCopyMode: (itemSelections.get(item.id) as ItemCopyMode) || 'withAmount',
+      }))
 
     if (selectedItems.length === 0 && !includeCarryover) {
       toast.error('コピーする項目を選択してください')
@@ -151,16 +179,24 @@ export function CopyMonthDialog({
   const hasSourceData =
     preview && (preview.items.length > 0 || preview.carryoverCount > 0)
   const hasExistingData = preview && preview.existingCount > 0
-  const canCopy = selectedIds.size > 0 || includeCarryover
+
+  // 選択されている項目数を計算
+  const selectedCount = Array.from(itemSelections.values()).filter(
+    (s) => s !== 'none'
+  ).length
+  const canCopy = selectedCount > 0 || includeCarryover
   const totalSelected =
-    selectedIds.size + (includeCarryover && preview ? preview.carryoverCount : 0)
+    selectedCount + (includeCarryover && preview ? preview.carryoverCount : 0)
 
   function renderItemGroup(type: 'income' | 'expense', items: CopyItem[]) {
     if (items.length === 0) return null
 
     const typeLabel = type === 'income' ? '収入' : '支出'
-    const allSelected = items.every((item) => selectedIds.has(item.id))
-    const someSelected = items.some((item) => selectedIds.has(item.id))
+    const selectedInGroup = items.filter(
+      (item) => itemSelections.get(item.id) !== 'none'
+    ).length
+    const allSelected = selectedInGroup === items.length
+    const someSelected = selectedInGroup > 0 && selectedInGroup < items.length
 
     return (
       <div key={type} className="space-y-2">
@@ -169,7 +205,7 @@ export function CopyMonthDialog({
             type="checkbox"
             checked={allSelected}
             ref={(el) => {
-              if (el) el.indeterminate = someSelected && !allSelected
+              if (el) el.indeterminate = someSelected
             }}
             onChange={() => toggleAllInType(type)}
             className="h-4 w-4 rounded border-gray-300"
@@ -178,26 +214,48 @@ export function CopyMonthDialog({
           <span className="text-sm text-gray-500">({items.length}件)</span>
         </label>
         <div className="ml-6 space-y-1">
-          {items.map((item) => (
-            <label
-              key={item.id}
-              className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-gray-50"
-            >
-              <input
-                type="checkbox"
-                checked={selectedIds.has(item.id)}
-                onChange={() => toggleItem(item.id)}
-                className="h-4 w-4 rounded border-gray-300"
-              />
-              <span className="flex-1 text-sm">{item.label}</span>
-              <span className="text-xs text-gray-500">
-                {personLabels[item.person]}
-              </span>
-              <span className="text-sm tabular-nums">
-                {formatCurrency(item.amount)}
-              </span>
-            </label>
-          ))}
+          {items.map((item) => {
+            const selection = itemSelections.get(item.id) || 'none'
+            const isSelected = selection !== 'none'
+
+            return (
+              <div
+                key={item.id}
+                className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-50"
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() =>
+                    setItemSelection(
+                      item.id,
+                      isSelected ? 'none' : 'withAmount'
+                    )
+                  }
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <span className="flex-1 text-sm">{item.label}</span>
+                <span className="text-xs text-gray-500">
+                  {personLabels[item.person]}
+                </span>
+                <span className="text-sm tabular-nums w-20 text-right">
+                  {formatCurrency(item.amount)}
+                </span>
+                {isSelected && (
+                  <select
+                    value={selection}
+                    onChange={(e) =>
+                      setItemSelection(item.id, e.target.value as ItemSelection)
+                    }
+                    className="text-xs border rounded px-1 py-0.5 bg-white"
+                  >
+                    <option value="withAmount">金額込み</option>
+                    <option value="labelOnly">項目名のみ</option>
+                  </select>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     )
