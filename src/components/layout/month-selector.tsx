@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { formatMonth, parseMonth } from '@/lib/utils/format'
+import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
+import { formatMonth, parseMonth, getPreviousMonth } from '@/lib/utils/format'
 
 interface MonthSelectorProps {
   currentMonth: string
@@ -22,6 +23,8 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
     router.push(`/?month=${parseMonth(new Date())}`)
   }
 
+  const previousMonth = getPreviousMonth(currentMonth)
+
   return (
     <div className="flex items-center justify-center gap-4">
       <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
@@ -36,6 +39,10 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
       <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
         <ChevronRight className="h-4 w-4" />
       </Button>
+      <CopyMonthDialog
+        currentMonth={currentMonth}
+        previousMonth={previousMonth}
+      />
     </div>
   )
 }

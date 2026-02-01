@@ -29,3 +29,14 @@ export function parseMonth(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, '0')
   return `${year}-${month}-01`
 }
+
+/**
+ * 指定月の1ヶ月前を返す
+ * @param month ISO日付文字列（例: 2026-02-01）
+ * @returns 1ヶ月前のISO日付文字列（例: 2026-01-01）
+ */
+export function getPreviousMonth(month: string): string {
+  const [year, m] = month.split('-').map(Number)
+  const date = new Date(year, m - 2, 1)
+  return parseMonth(date)
+}
