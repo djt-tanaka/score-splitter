@@ -48,14 +48,22 @@ export interface CalculationResult {
 // 月コピーの重複処理モード
 export type CopyMode = 'add' | 'skip' | 'replace'
 
+// コピー対象項目（収入・支出用）
+export interface CopyItem {
+  id: string
+  label: string
+  amount: number
+  person: Person
+  type: 'income' | 'expense'
+}
+
 // 月コピーのオプション
 export interface CopyMonthOptions {
   sourceMonth: string // コピー元月
   targetMonth: string // コピー先月
   mode: CopyMode // 重複時の処理モード
-  includeIncome: boolean // 収入をコピーするか
-  includeExpense: boolean // 支出をコピーするか
-  includeCarryover: boolean // 繰越をコピーするか
+  selectedItems: CopyItem[] // コピー対象の収入・支出項目
+  includeCarryover: boolean // 繰越を一括コピーするか
 }
 
 // 月コピーの結果
@@ -78,14 +86,7 @@ export interface CopyMonthResult {
 export interface CopyMonthPreview {
   sourceMonth: string
   targetMonth: string
-  source: {
-    incomes: number
-    expenses: number
-    carryovers: number
-  }
-  existing: {
-    incomes: number
-    expenses: number
-    carryovers: number
-  }
+  items: CopyItem[] // 収入・支出の項目リスト
+  carryoverCount: number // 繰越の件数
+  existingCount: number // コピー先の既存データ件数
 }

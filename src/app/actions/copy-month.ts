@@ -6,11 +6,12 @@ import type {
   CopyMonthOptions,
   CopyMonthResult,
   CopyMonthPreview,
+  CopyItem,
 } from '@/types'
 
 /**
  * コピー操作のプレビューを取得
- * コピー元とコピー先のデータ件数を返す
+ * 収入・支出の項目リストと繰越件数を返す
  */
 export async function getCopyMonthPreview(
   sourceMonth: string,
@@ -18,84 +19,93 @@ export async function getCopyMonthPreview(
 ): Promise<CopyMonthPreview> {
   const supabase = await createClient()
 
-  const [
-    sourceIncomes,
-    sourceExpenses,
-    sourceCarryovers,
-    existingIncomes,
-    existingExpenses,
-    existingCarryovers,
-  ] = await Promise.all([
+  const [incomes, expenses, carryovers, existingCounts] = await Promise.all([
     supabase
       .from('incomes')
-      .select('*', { count: 'exact', head: true })
-      .eq('month', sourceMonth),
+      .select('id, label, amount, person')
+      .eq('month', sourceMonth)
+      .order('created_at', { ascending: true }),
     supabase
       .from('expenses')
-      .select('*', { count: 'exact', head: true })
-      .eq('month', sourceMonth),
+      .select('id, label, amount, person')
+      .eq('month', sourceMonth)
+      .order('created_at', { ascending: true }),
     supabase
       .from('carryovers')
       .select('*', { count: 'exact', head: true })
       .eq('month', sourceMonth),
-    supabase
-      .from('incomes')
-      .select('*', { count: 'exact', head: true })
-      .eq('month', targetMonth),
-    supabase
-      .from('expenses')
-      .select('*', { count: 'exact', head: true })
-      .eq('month', targetMonth),
-    supabase
-      .from('carryovers')
-      .select('*', { count: 'exact', head: true })
-      .eq('month', targetMonth),
+    Promise.all([
+      supabase
+        .from('incomes')
+        .select('*', { count: 'exact', head: true })
+        .eq('month', targetMonth),
+      supabase
+        .from('expenses')
+        .select('*', { count: 'exact', head: true })
+        .eq('month', targetMonth),
+      supabase
+        .from('carryovers')
+        .select('*', { count: 'exact', head: true })
+        .eq('month', targetMonth),
+    ]),
   ])
+
+  const items: CopyItem[] = [
+    ...(incomes.data ?? []).map((item) => ({
+      id: item.id,
+      label: item.label,
+      amount: item.amount,
+      person: item.person,
+      type: 'income' as const,
+    })),
+    ...(expenses.data ?? []).map((item) => ({
+      id: item.id,
+      label: item.label,
+      amount: item.amount,
+      person: item.person,
+      type: 'expense' as const,
+    })),
+  ]
+
+  const existingCount =
+    (existingCounts[0].count ?? 0) +
+    (existingCounts[1].count ?? 0) +
+    (existingCounts[2].count ?? 0)
 
   return {
     sourceMonth,
     targetMonth,
-    source: {
-      incomes: sourceIncomes.count ?? 0,
-      expenses: sourceExpenses.count ?? 0,
-      carryovers: sourceCarryovers.count ?? 0,
-    },
-    existing: {
-      incomes: existingIncomes.count ?? 0,
-      expenses: existingExpenses.count ?? 0,
-      carryovers: existingCarryovers.count ?? 0,
-    },
+    items,
+    carryoverCount: carryovers.count ?? 0,
+    existingCount,
   }
 }
 
 /**
- * テーブル単位のコピー処理
+ * 繰越を一括コピー
  */
-async function copyTable(
+async function copyCarryovers(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  table: 'incomes' | 'expenses' | 'carryovers',
   sourceMonth: string,
   targetMonth: string,
   mode: 'add' | 'skip' | 'replace'
 ): Promise<{ copied: number; skipped: number }> {
-  // コピー元データを取得
   const { data: sourceData, error } = await supabase
-    .from(table)
+    .from('carryovers')
     .select('label, amount, person')
     .eq('month', sourceMonth)
 
   if (error || !sourceData) {
-    throw new Error(`${table}の取得に失敗しました`)
+    throw new Error('繰越の取得に失敗しました')
   }
 
   let copied = 0
   let skipped = 0
 
-  // スキップモードの場合、既存データのキーを取得
   let existingKeys = new Set<string>()
   if (mode === 'skip') {
     const { data: existingData } = await supabase
-      .from(table)
+      .from('carryovers')
       .select('label, person')
       .eq('month', targetMonth)
 
@@ -104,7 +114,6 @@ async function copyTable(
     )
   }
 
-  // バッチ挿入用の配列
   const itemsToInsert: Array<{
     month: string
     label: string
@@ -129,14 +138,13 @@ async function copyTable(
     copied++
   }
 
-  // まとめて挿入
   if (itemsToInsert.length > 0) {
     const { error: insertError } = await supabase
-      .from(table)
+      .from('carryovers')
       .insert(itemsToInsert)
 
     if (insertError) {
-      throw new Error(`${table}の挿入に失敗しました: ${insertError.message}`)
+      throw new Error(`繰越の挿入に失敗: ${insertError.message}`)
     }
   }
 
@@ -160,13 +168,16 @@ export async function copyMonthData(
   try {
     // 置換モードの場合、先に既存データを削除
     if (options.mode === 'replace') {
-      if (options.includeIncome) {
+      const hasIncome = options.selectedItems.some((i) => i.type === 'income')
+      const hasExpense = options.selectedItems.some((i) => i.type === 'expense')
+
+      if (hasIncome) {
         await supabase
           .from('incomes')
           .delete()
           .eq('month', options.targetMonth)
       }
-      if (options.includeExpense) {
+      if (hasExpense) {
         await supabase
           .from('expenses')
           .delete()
@@ -180,41 +191,93 @@ export async function copyMonthData(
       }
     }
 
-    // 各データタイプのコピー処理
-    if (options.includeIncome) {
-      const copyResult = await copyTable(
-        supabase,
-        'incomes',
-        options.sourceMonth,
-        options.targetMonth,
-        options.mode
-      )
-      result.copied.incomes = copyResult.copied
-      result.skipped.incomes = copyResult.skipped
+    // スキップモードの場合、既存データのキーを取得
+    let existingKeys: Record<string, Set<string>> = {
+      income: new Set(),
+      expense: new Set(),
     }
 
-    if (options.includeExpense) {
-      const copyResult = await copyTable(
-        supabase,
-        'expenses',
-        options.sourceMonth,
-        options.targetMonth,
-        options.mode
-      )
-      result.copied.expenses = copyResult.copied
-      result.skipped.expenses = copyResult.skipped
+    if (options.mode === 'skip' && options.selectedItems.length > 0) {
+      const [existingIncomes, existingExpenses] = await Promise.all([
+        supabase
+          .from('incomes')
+          .select('label, person')
+          .eq('month', options.targetMonth),
+        supabase
+          .from('expenses')
+          .select('label, person')
+          .eq('month', options.targetMonth),
+      ])
+
+      existingKeys = {
+        income: new Set(
+          (existingIncomes.data ?? []).map((d) => `${d.label}|${d.person}`)
+        ),
+        expense: new Set(
+          (existingExpenses.data ?? []).map((d) => `${d.label}|${d.person}`)
+        ),
+      }
     }
 
+    // 収入・支出の項目をコピー
+    const incomeItems: Array<{
+      month: string
+      label: string
+      amount: number
+      person: string
+    }> = []
+    const expenseItems: Array<{
+      month: string
+      label: string
+      amount: number
+      person: string
+    }> = []
+
+    for (const item of options.selectedItems) {
+      const key = `${item.label}|${item.person}`
+
+      if (options.mode === 'skip' && existingKeys[item.type].has(key)) {
+        if (item.type === 'income') result.skipped.incomes++
+        else result.skipped.expenses++
+        continue
+      }
+
+      const newItem = {
+        month: options.targetMonth,
+        label: item.label,
+        amount: item.amount,
+        person: item.person,
+      }
+
+      if (item.type === 'income') {
+        incomeItems.push(newItem)
+        result.copied.incomes++
+      } else {
+        expenseItems.push(newItem)
+        result.copied.expenses++
+      }
+    }
+
+    if (incomeItems.length > 0) {
+      const { error } = await supabase.from('incomes').insert(incomeItems)
+      if (error) throw new Error(`収入の挿入に失敗: ${error.message}`)
+    }
+
+    if (expenseItems.length > 0) {
+      const { error } = await supabase.from('expenses').insert(expenseItems)
+      if (error) throw new Error(`支出の挿入に失敗: ${error.message}`)
+    }
+
+    // 繰越を一括コピー
     if (options.includeCarryover) {
-      const copyResult = await copyTable(
+      const carryoverResult = await copyCarryovers(
         supabase,
-        'carryovers',
         options.sourceMonth,
         options.targetMonth,
         options.mode
       )
-      result.copied.carryovers = copyResult.copied
-      result.skipped.carryovers = copyResult.skipped
+      result.copied.carryovers = carryoverResult.copied
+      result.skipped.carryovers = carryoverResult.skipped
     }
 
     revalidatePath('/')
