@@ -243,8 +243,13 @@ export async function copyMonthData(
       }
 
       // itemCopyModeに応じて金額を決定
-      const amount =
-        item.itemCopyMode === 'labelOnly' ? 0 : item.amount
+      // labelOnlyの場合、DB制約(収入は正、支出は負)を満たす最小値を設定
+      let amount: number
+      if (item.itemCopyMode === 'labelOnly') {
+        amount = item.type === 'income' ? 1 : -1
+      } else {
+        amount = item.amount
+      }
 
       const newItem = {
         month: options.targetMonth,
