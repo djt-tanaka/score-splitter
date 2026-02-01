@@ -42,3 +42,24 @@ export function getPreviousMonth(month: string): string {
   const date = new Date(year, m - 2, 1)
   return parseMonth(date)
 }
+
+/**
+ * アプリ形式（YYYYMM）をDB形式（YYYY-MM-01）に変換する
+ * @param month 月文字列（例: 202601）
+ * @returns DB形式の日付文字列（例: 2026-01-01）
+ */
+export function toDbMonth(month: string): string {
+  const year = month.slice(0, 4)
+  const m = month.slice(4, 6)
+  return `${year}-${m}-01`
+}
+
+/**
+ * DB形式（YYYY-MM-01）をアプリ形式（YYYYMM）に変換する
+ * @param dbMonth DB形式の日付文字列（例: 2026-01-01）
+ * @returns 月文字列（例: 202601）
+ */
+export function fromDbMonth(dbMonth: string): string {
+  const [year, month] = dbMonth.split('-')
+  return `${year}${month}`
+}

@@ -28,18 +28,19 @@ describe('carryover actions', () => {
 
   describe('getCarryoversByMonth', () => {
     it('指定月の繰越を取得する', async () => {
+      // DBから返されるデータはDB形式（YYYY-MM-01）
       const mockData = [
         {
           id: '1',
-          month: '202601',
+          month: '2026-01-01',
           label: '前月からの繰越',
           amount: -30000, // DBでは負の値
           person: 'husband',
-          created_at: '202601T00:00:00Z',
+          created_at: '2026-01-01T00:00:00Z',
         },
         {
           id: '2',
-          month: '202601',
+          month: '2026-01-01',
           label: '貯金から',
           amount: -20000,
           person: 'wife',
@@ -52,13 +53,14 @@ describe('carryover actions', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('carryovers')
       expect(result).toHaveLength(2)
+      // 返り値はアプリ形式（YYYYMM）に変換される
       expect(result[0]).toEqual({
         id: '1',
         month: '202601',
         label: '前月からの繰越',
         amount: -30000,
         person: 'husband',
-        createdAt: '202601T00:00:00Z',
+        createdAt: '2026-01-01T00:00:00Z',
       })
     })
 
@@ -88,13 +90,14 @@ describe('carryover actions', () => {
         person: 'husband',
       })
 
+      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'new-id',
-        month: '202601',
+        month: '2026-01-01',
         label: 'テスト繰越',
         amount: -10000, // DBには負の値で保存
         person: 'husband',
-        created_at: '202601T00:00:00Z',
+        created_at: '2026-01-01T00:00:00Z',
       }
       mockSingleSuccess(mockRow)
 
@@ -102,8 +105,9 @@ describe('carryover actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.data?.amount).toBe(-10000)
+      // insertにはDB形式で渡される
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
-        month: '202601',
+        month: '2026-01-01',
         label: 'テスト繰越',
         amount: -10000, // 負の値で保存
         person: 'husband',
@@ -119,7 +123,7 @@ describe('carryover actions', () => {
       })
       mockSingleSuccess({
         id: '1',
-        month: '202601',
+        month: '2026-01-01',
         label: 'テスト',
         amount: -5000,
         person: 'husband',
@@ -183,13 +187,14 @@ describe('carryover actions', () => {
         amount: 15000, // 入力は正の値
         person: 'wife',
       })
+      // DBから返されるデータはDB形式
       const mockRow = {
         id: 'existing-id',
-        month: '202601',
+        month: '2026-01-01',
         label: '更新後の繰越',
         amount: -15000, // DBには負の値
         person: 'wife',
-        created_at: '202601T00:00:00Z',
+        created_at: '2026-01-01T00:00:00Z',
       }
       mockSingleSuccess(mockRow)
 
@@ -213,7 +218,7 @@ describe('carryover actions', () => {
       })
       mockSingleSuccess({
         id: '1',
-        month: '202601',
+        month: '2026-01-01',
         label: 'テスト',
         amount: -5000,
         person: 'husband',

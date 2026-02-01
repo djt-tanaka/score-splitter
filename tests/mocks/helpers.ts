@@ -1,4 +1,5 @@
 import type { Income, Expense, Carryover } from '@/types'
+import { toDbMonth } from '@/lib/utils/format'
 
 // FormDataを生成するヘルパー
 export function createFormData(
@@ -85,13 +86,13 @@ export function createMockCarryovers(count: number = 3): Carryover[] {
   )
 }
 
-// Supabaseのレスポンス形式に変換（created_at付き）
+// Supabaseのレスポンス形式に変換（created_at付き、monthをDB形式に変換）
 export function toSupabaseRow<
   T extends { id: string; month: string; label: string; amount: number; person: string },
 >(item: T) {
   return {
     id: item.id,
-    month: item.month,
+    month: toDbMonth(item.month),
     label: item.label,
     amount: item.amount,
     person: item.person,
