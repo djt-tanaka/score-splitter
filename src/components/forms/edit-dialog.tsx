@@ -87,11 +87,11 @@ export function EditDialog({
           <DialogTitle>{typeLabels[type]}を編集</DialogTitle>
         </DialogHeader>
         <form action={handleSubmit} className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium">項目名</label>
             <Input name="label" defaultValue={label} required />
           </div>
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium">金額</label>
             <Input
               name="amount"
@@ -101,10 +101,10 @@ export function EditDialog({
               required
             />
           </div>
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium">担当者</label>
             <Select name="person" defaultValue={person}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -114,15 +114,16 @@ export function EditDialog({
             </Select>
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
-          <div className="flex justify-end gap-2">
+          <div className="flex gap-3 pt-2">
             <Button
               type="button"
               variant="outline"
+              className="flex-1 h-12"
               onClick={() => setOpen(false)}
             >
               キャンセル
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" className="flex-1 h-12" disabled={isPending}>
               {isPending ? '更新中...' : '更新'}
             </Button>
           </div>
