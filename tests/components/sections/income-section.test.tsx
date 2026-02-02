@@ -14,14 +14,14 @@ describe('IncomeSection', () => {
   const mockIncomes: Income[] = [
     {
       id: '1',
-      month: '2026-01-01',
+      month: '202601',
       label: '給料',
       amount: 300000,
       person: 'husband',
     },
     {
       id: '2',
-      month: '2026-01-01',
+      month: '202601',
       label: 'ボーナス',
       amount: 100000,
       person: 'wife',
@@ -29,40 +29,40 @@ describe('IncomeSection', () => {
   ]
 
   it('収入一覧を表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     expect(screen.getByText('給料')).toBeInTheDocument()
     expect(screen.getByText('ボーナス')).toBeInTheDocument()
   })
 
   it('合計金額を表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     // 合計は400,000円
     expect(screen.getByText('¥400,000')).toBeInTheDocument()
   })
 
   it('各項目の金額を表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     expect(screen.getByText('¥300,000')).toBeInTheDocument()
     expect(screen.getByText('¥100,000')).toBeInTheDocument()
   })
 
   it('収入がない場合メッセージを表示する', () => {
-    render(<IncomeSection incomes={[]} month="2026-01-01" />)
+    render(<IncomeSection incomes={[]} month="202601" />)
 
     expect(screen.getByText('収入がありません')).toBeInTheDocument()
   })
 
   it('タイトル「収入」を表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     expect(screen.getByText('収入')).toBeInTheDocument()
   })
 
   it('担当者バッジを表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     // PersonBadgeコンポーネントがレンダリングされることを確認
     // バッジとSelectオプションの両方に「夫」「妻」が存在するのでgetAllByTextを使用
@@ -73,7 +73,7 @@ describe('IncomeSection', () => {
   })
 
   it('削除ボタンを表示する', () => {
-    render(<IncomeSection incomes={mockIncomes} month="2026-01-01" />)
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
     // Trash2アイコンを含むボタンが収入の数だけ存在
     const deleteButtons = screen.getAllByRole('button', { name: '' })

@@ -158,6 +158,7 @@ export async function copyMonthData(
   options: CopyMonthOptions
 ): Promise<CopyMonthResult> {
   const supabase = await createClient()
+  const targetMonth = options.targetMonth
 
   const result: CopyMonthResult = {
     success: true,
@@ -175,19 +176,19 @@ export async function copyMonthData(
         await supabase
           .from('incomes')
           .delete()
-          .eq('month', options.targetMonth)
+          .eq('month', targetMonth)
       }
       if (hasExpense) {
         await supabase
           .from('expenses')
           .delete()
-          .eq('month', options.targetMonth)
+          .eq('month', targetMonth)
       }
       if (options.includeCarryover) {
         await supabase
           .from('carryovers')
           .delete()
-          .eq('month', options.targetMonth)
+          .eq('month', targetMonth)
       }
     }
 
@@ -202,11 +203,11 @@ export async function copyMonthData(
         supabase
           .from('incomes')
           .select('label, person')
-          .eq('month', options.targetMonth),
+          .eq('month', targetMonth),
         supabase
           .from('expenses')
           .select('label, person')
-          .eq('month', options.targetMonth),
+          .eq('month', targetMonth),
       ])
 
       existingKeys = {
@@ -252,7 +253,7 @@ export async function copyMonthData(
       }
 
       const newItem = {
-        month: options.targetMonth,
+        month: targetMonth,
         label: item.label,
         amount,
         person: item.person,

@@ -31,15 +31,15 @@ describe('expense actions', () => {
       const mockData = [
         {
           id: '1',
-          month: '2026-01-01',
+          month: '202601',
           label: '食費',
-          amount: -50000, // DBでは負の値
+          amount: -50000,
           person: 'wife',
           created_at: '2026-01-01T00:00:00Z',
         },
         {
           id: '2',
-          month: '2026-01-01',
+          month: '202601',
           label: '家賃',
           amount: -100000,
           person: 'husband',
@@ -48,15 +48,15 @@ describe('expense actions', () => {
       ]
       mockSelectSuccess(mockData)
 
-      const result = await getExpensesByMonth('2026-01-01')
+      const result = await getExpensesByMonth('202601')
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('expenses')
       expect(result).toHaveLength(2)
       expect(result[0]).toEqual({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: '食費',
-        amount: -50000, // 負の値のまま返される
+        amount: -50000,
         person: 'wife',
         createdAt: '2026-01-01T00:00:00Z',
       })
@@ -65,7 +65,7 @@ describe('expense actions', () => {
     it('データがない場合は空配列を返す', async () => {
       mockSelectSuccess([])
 
-      const result = await getExpensesByMonth('2026-01-01')
+      const result = await getExpensesByMonth('202601')
 
       expect(result).toEqual([])
     })
@@ -73,7 +73,7 @@ describe('expense actions', () => {
     it('エラー時は空配列を返す', async () => {
       mockSelectError('Database error')
 
-      const result = await getExpensesByMonth('2026-01-01')
+      const result = await getExpensesByMonth('202601')
 
       expect(result).toEqual([])
     })
@@ -82,7 +82,7 @@ describe('expense actions', () => {
   describe('createExpense', () => {
     it('有効なデータで支出を作成する（金額は負の値に変換）', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト支出',
         amount: 50000, // 入力は正の値
         person: 'husband',
@@ -90,7 +90,7 @@ describe('expense actions', () => {
 
       const mockRow = {
         id: 'new-id',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト支出',
         amount: -50000, // DBには負の値で保存
         person: 'husband',
@@ -102,9 +102,8 @@ describe('expense actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.data?.amount).toBe(-50000)
-      // insertに渡される値が負であることを確認
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト支出',
         amount: -50000, // 負の値で保存
         person: 'husband',
@@ -113,14 +112,14 @@ describe('expense actions', () => {
 
     it('作成後にrevalidatePathが呼ばれる', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 10000,
         person: 'husband',
       })
       mockSingleSuccess({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: -10000,
         person: 'husband',
@@ -134,7 +133,7 @@ describe('expense actions', () => {
 
     it('バリデーションエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: '',
         amount: 50000,
         person: 'husband',
@@ -148,7 +147,7 @@ describe('expense actions', () => {
 
     it('金額が不正な場合エラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: -100, // 入力時に負の値は不正
         person: 'husband',
@@ -162,7 +161,7 @@ describe('expense actions', () => {
 
     it('DBエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 50000,
         person: 'husband',
@@ -179,14 +178,14 @@ describe('expense actions', () => {
   describe('updateExpense', () => {
     it('支出を更新する（金額は負の値に変換）', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の支出',
         amount: 80000, // 入力は正の値
         person: 'wife',
       })
       const mockRow = {
         id: 'existing-id',
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の支出',
         amount: -80000, // DBには負の値
         person: 'wife',
@@ -207,14 +206,14 @@ describe('expense actions', () => {
 
     it('更新後にrevalidatePathが呼ばれる', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 10000,
         person: 'husband',
       })
       mockSingleSuccess({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: -10000,
         person: 'husband',
@@ -237,12 +236,12 @@ describe('expense actions', () => {
       const result = await updateExpense('1', formData)
 
       expect(result.success).toBe(false)
-      expect(result.error).toBe('日付形式が不正です')
+      expect(result.error).toBe('月形式が不正です')
     })
 
     it('DBエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 50000,
         person: 'husband',

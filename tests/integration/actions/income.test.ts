@@ -31,7 +31,7 @@ describe('income actions', () => {
       const mockData = [
         {
           id: '1',
-          month: '2026-01-01',
+          month: '202601',
           label: '給料',
           amount: 300000,
           person: 'husband',
@@ -39,7 +39,7 @@ describe('income actions', () => {
         },
         {
           id: '2',
-          month: '2026-01-01',
+          month: '202601',
           label: 'ボーナス',
           amount: 100000,
           person: 'wife',
@@ -48,13 +48,13 @@ describe('income actions', () => {
       ]
       mockSelectSuccess(mockData)
 
-      const result = await getIncomesByMonth('2026-01-01')
+      const result = await getIncomesByMonth('202601')
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('incomes')
       expect(result).toHaveLength(2)
       expect(result[0]).toEqual({
         id: '1',
-        month: '2026-01-01',
+        month: '202601',
         label: '給料',
         amount: 300000,
         person: 'husband',
@@ -65,7 +65,7 @@ describe('income actions', () => {
     it('データがない場合は空配列を返す', async () => {
       mockSelectSuccess([])
 
-      const result = await getIncomesByMonth('2026-01-01')
+      const result = await getIncomesByMonth('202601')
 
       expect(result).toEqual([])
     })
@@ -73,7 +73,7 @@ describe('income actions', () => {
     it('エラー時は空配列を返す', async () => {
       mockSelectError('Database error')
 
-      const result = await getIncomesByMonth('2026-01-01')
+      const result = await getIncomesByMonth('202601')
 
       expect(result).toEqual([])
     })
@@ -82,7 +82,7 @@ describe('income actions', () => {
   describe('createIncome', () => {
     it('有効なデータで収入を作成する', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
@@ -90,7 +90,7 @@ describe('income actions', () => {
 
       const mockRow = {
         id: 'new-id',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
@@ -103,14 +103,14 @@ describe('income actions', () => {
       expect(result.success).toBe(true)
       expect(result.data).toEqual({
         id: 'new-id',
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
         createdAt: '2026-01-01T00:00:00Z',
       })
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト収入',
         amount: 100000,
         person: 'husband',
@@ -119,12 +119,12 @@ describe('income actions', () => {
 
     it('作成後にrevalidatePathが呼ばれる', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 100000,
         person: 'husband',
       })
-      mockSingleSuccess(toSupabaseRow({ id: '1', month: '2026-01-01', label: 'テスト', amount: 100000, person: 'husband' }))
+      mockSingleSuccess(toSupabaseRow({ id: '1', month: '202601', label: 'テスト', amount: 100000, person: 'husband' }))
 
       await createIncome(formData)
 
@@ -133,7 +133,7 @@ describe('income actions', () => {
 
     it('バリデーションエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: '', // 空の項目名
         amount: 100000,
         person: 'husband',
@@ -147,7 +147,7 @@ describe('income actions', () => {
 
     it('金額が不正な場合エラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 0, // 0は不正
         person: 'husband',
@@ -161,7 +161,7 @@ describe('income actions', () => {
 
     it('DBエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 100000,
         person: 'husband',
@@ -178,14 +178,14 @@ describe('income actions', () => {
   describe('updateIncome', () => {
     it('収入を更新する', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の収入',
         amount: 200000,
         person: 'wife',
       })
       const mockRow = {
         id: 'existing-id',
-        month: '2026-01-01',
+        month: '202601',
         label: '更新後の収入',
         amount: 200000,
         person: 'wife',
@@ -207,12 +207,12 @@ describe('income actions', () => {
 
     it('更新後にrevalidatePathが呼ばれる', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 100000,
         person: 'husband',
       })
-      mockSingleSuccess(toSupabaseRow({ id: '1', month: '2026-01-01', label: 'テスト', amount: 100000, person: 'husband' }))
+      mockSingleSuccess(toSupabaseRow({ id: '1', month: '202601', label: 'テスト', amount: 100000, person: 'husband' }))
 
       await updateIncome('1', formData)
 
@@ -230,12 +230,12 @@ describe('income actions', () => {
       const result = await updateIncome('1', formData)
 
       expect(result.success).toBe(false)
-      expect(result.error).toBe('日付形式が不正です')
+      expect(result.error).toBe('月形式が不正です')
     })
 
     it('DBエラー時はエラーを返す', async () => {
       const formData = createFormData({
-        month: '2026-01-01',
+        month: '202601',
         label: 'テスト',
         amount: 100000,
         person: 'husband',

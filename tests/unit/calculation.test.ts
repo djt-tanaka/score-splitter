@@ -5,29 +5,29 @@ import type { Income, Expense } from '@/types'
 describe('calculateSettlement', () => {
   // 仕様書のサンプルデータ
   const sampleIncomes: Income[] = [
-    { id: '1', month: '2026-01-01', label: '夫手取り＋子育てT', amount: 984590, person: 'husband' },
-    { id: '2', month: '2026-01-01', label: '妻手取り', amount: 52448, person: 'wife' },
+    { id: '1', month: '202601', label: '夫手取り＋子育てT', amount: 984590, person: 'husband' },
+    { id: '2', month: '202601', label: '妻手取り', amount: 52448, person: 'wife' },
   ]
 
   const sampleExpenses: Expense[] = [
-    { id: '1', month: '2026-01-01', label: '家賃', amount: -146450, person: 'husband' },
-    { id: '2', month: '2026-01-01', label: '駐車場', amount: -13400, person: 'husband' },
-    { id: '3', month: '2026-01-01', label: '電気代', amount: -19470, person: 'husband' },
-    { id: '4', month: '2026-01-01', label: '食費', amount: -63028, person: 'wife' },
-    { id: '5', month: '2026-01-01', label: '備品費', amount: -101196, person: 'wife' },
-    { id: '6', month: '2026-01-01', label: '出前＋外食', amount: -60556, person: 'wife' },
-    { id: '7', month: '2026-01-01', label: 'タブレット＋Youtube', amount: -4460, person: 'husband' },
-    { id: '8', month: '2026-01-01', label: '子供用品', amount: -55442, person: 'wife' },
-    { id: '9', month: '2026-01-01', label: '保育園代＋備品', amount: -5500, person: 'husband' },
-    { id: '10', month: '2026-01-01', label: 'ガソリン＋高速', amount: -16600, person: 'husband' },
-    { id: '11', month: '2026-01-01', label: 'スイミング', amount: -10505, person: 'wife' },
-    { id: '12', month: '2026-01-01', label: '婦人科', amount: -10450, person: 'wife' },
-    { id: '13', month: '2026-01-01', label: '社会保険＋年金', amount: -43000, person: 'husband' },
-    { id: '14', month: '2026-01-01', label: '小規模企業共済', amount: -70000, person: 'husband' },
-    { id: '15', month: '2026-01-01', label: '水道代', amount: -9838, person: 'husband' },
-    { id: '16', month: '2026-01-01', label: 'ネット代', amount: -4807, person: 'husband' },
-    { id: '17', month: '2026-01-01', label: 'ガス代', amount: -9076, person: 'husband' },
-    { id: '18', month: '2026-01-01', label: '庸介所得税(2023)', amount: -190000, person: 'husband' },
+    { id: '1', month: '202601', label: '家賃', amount: -146450, person: 'husband' },
+    { id: '2', month: '202601', label: '駐車場', amount: -13400, person: 'husband' },
+    { id: '3', month: '202601', label: '電気代', amount: -19470, person: 'husband' },
+    { id: '4', month: '202601', label: '食費', amount: -63028, person: 'wife' },
+    { id: '5', month: '202601', label: '備品費', amount: -101196, person: 'wife' },
+    { id: '6', month: '202601', label: '出前＋外食', amount: -60556, person: 'wife' },
+    { id: '7', month: '202601', label: 'タブレット＋Youtube', amount: -4460, person: 'husband' },
+    { id: '8', month: '202601', label: '子供用品', amount: -55442, person: 'wife' },
+    { id: '9', month: '202601', label: '保育園代＋備品', amount: -5500, person: 'husband' },
+    { id: '10', month: '202601', label: 'ガソリン＋高速', amount: -16600, person: 'husband' },
+    { id: '11', month: '202601', label: 'スイミング', amount: -10505, person: 'wife' },
+    { id: '12', month: '202601', label: '婦人科', amount: -10450, person: 'wife' },
+    { id: '13', month: '202601', label: '社会保険＋年金', amount: -43000, person: 'husband' },
+    { id: '14', month: '202601', label: '小規模企業共済', amount: -70000, person: 'husband' },
+    { id: '15', month: '202601', label: '水道代', amount: -9838, person: 'husband' },
+    { id: '16', month: '202601', label: 'ネット代', amount: -4807, person: 'husband' },
+    { id: '17', month: '202601', label: 'ガス代', amount: -9076, person: 'husband' },
+    { id: '18', month: '202601', label: '庸介所得税(2023)', amount: -190000, person: 'husband' },
   ]
 
   it('収入合計を正しく計算する', () => {
@@ -78,7 +78,7 @@ describe('calculateSettlement', () => {
 
   it('収入のみの場合、支出は0で計算する', () => {
     const incomes: Income[] = [
-      { id: '1', month: '2026-01-01', label: '給料', amount: 100000, person: 'husband' },
+      { id: '1', month: '202601', label: '給料', amount: 100000, person: 'husband' },
     ]
     const result = calculateSettlement(incomes, [])
     expect(result.totalIncome).toBe(100000)
@@ -89,10 +89,10 @@ describe('calculateSettlement', () => {
 
   it('妻の方が支出が多い場合、精算額が負になる', () => {
     const incomes: Income[] = [
-      { id: '1', month: '2026-01-01', label: '給料', amount: 100000, person: 'wife' },
+      { id: '1', month: '202601', label: '給料', amount: 100000, person: 'wife' },
     ]
     const expenses: Expense[] = [
-      { id: '1', month: '2026-01-01', label: '支出', amount: -80000, person: 'wife' },
+      { id: '1', month: '202601', label: '支出', amount: -80000, person: 'wife' },
     ]
     const result = calculateSettlement(incomes, expenses)
     expect(result.allowance).toBe(10000) // (100000 - 80000) / 2
