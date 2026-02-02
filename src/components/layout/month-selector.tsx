@@ -26,19 +26,21 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
   const previousMonth = getPreviousMonth(currentMonth)
 
   return (
-    <div className="flex items-center justify-center gap-4">
-      <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <button
-        onClick={goToCurrentMonth}
-        className="text-xl font-bold min-w-[150px] hover:text-blue-600"
-      >
-        {formatMonth(currentMonth)}
-      </button>
-      <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+    <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <button
+          onClick={goToCurrentMonth}
+          className="text-xl font-bold min-w-[120px] text-center hover:text-blue-600"
+        >
+          {formatMonth(currentMonth)}
+        </button>
+        <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
       <CopyMonthDialog
         currentMonth={currentMonth}
         previousMonth={previousMonth}
