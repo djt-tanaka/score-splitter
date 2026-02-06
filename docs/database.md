@@ -104,7 +104,7 @@ const month = '202403'
 
 ## Row Level Security (RLS)
 
-Supabaseの RLS を有効化し、データアクセスを制御しています。
+全テーブルでRLSを有効化し、ポリシーを設定していない状態（= 全拒否）にしています。サーバー側ではservice role keyを使用してRLSをバイパスし、Server Actions経由でのみデータアクセスを許可しています。anon keyでの直接アクセスは全て拒否されます。
 
 ## マイグレーション
 
@@ -113,7 +113,8 @@ Supabaseの RLS を有効化し、データアクセスを制御しています�
 ```
 supabase/migrations/
 ├── 001_initial_schema.sql           # 初期スキーマ
-└── 002_change_month_to_varchar.sql  # 月カラムをVARCHAR(6)に変更
+├── 002_change_month_to_varchar.sql  # 月カラムをVARCHAR(6)に変更
+└── 003_restrict_rls_policies.sql    # RLSポリシーを全削除（全拒否化）
 ```
 
 ## トリガー
