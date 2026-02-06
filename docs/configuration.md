@@ -174,10 +174,12 @@ export default nextConfig
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+APP_PASSWORD_HASH_BASE64=your_password_hash_base64
 ```
 
 | 変数 | 説明 |
 |-----|------|
 | NEXT_PUBLIC_SUPABASE_URL | SupabaseプロジェクトのURL |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | Supabase匿名キー |
+| SUPABASE_SERVICE_ROLE_KEY | Supabase service role key（サーバー専用、RLSバイパス用） |
+| APP_PASSWORD_HASH_BASE64 | アプリパスワードのbcryptハッシュ（Base64エンコード） |
