@@ -24,13 +24,15 @@ export default async function HomePage({ searchParams }: HomeProps) {
   ])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-6 space-y-6 max-w-2xl">
+      <main className="container mx-auto px-4 py-8 space-y-6 max-w-4xl">
         <MonthSelector currentMonth={month} />
         <CalculationSection incomes={incomes} expenses={expenses} />
-        <IncomeSection incomes={incomes} month={month} />
-        <ExpenseSection expenses={expenses} month={month} />
+        <div className="grid gap-6 md:grid-cols-2">
+          <IncomeSection incomes={incomes} month={month} />
+          <ExpenseSection expenses={expenses} month={month} />
+        </div>
         <CarryoverSection carryovers={carryovers} month={month} />
       </main>
     </div>

@@ -19,11 +19,11 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
 
   return (
-    <Card>
+    <Card className="glow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="flex justify-between items-center">
           <span>支出</span>
-          <span className="text-red-600">{formatCurrency(total)}</span>
+          <span className="text-neon-red font-mono font-tabular">{formatCurrency(total)}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -38,7 +38,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
                 <span>{expense.label}</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="font-medium text-red-600">
+                <span className="font-medium text-neon-red font-mono font-tabular">
                   {formatCurrency(expense.amount)}
                 </span>
                 <EditDialog
@@ -55,7 +55,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
                     type="submit"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-400 hover:text-red-600"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -64,7 +64,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
             </div>
           ))}
           {expenses.length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-4">
               支出がありません
             </p>
           )}

@@ -59,7 +59,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
           </Select>
         </div>
       </div>
-      <Button type="submit" className="w-full h-12">
+      <Button type="submit" className="w-full h-12 glow-sm hover:glow-md transition-shadow">
         {typeLabels[type]}を追加
       </Button>
     </form>

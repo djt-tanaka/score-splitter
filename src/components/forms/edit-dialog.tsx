@@ -77,7 +77,7 @@ export function EditDialog({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-gray-400 hover:text-blue-600"
+          className="h-8 w-8 text-muted-foreground hover:text-accent"
         >
           <Pencil className="h-4 w-4" />
         </Button>
@@ -113,7 +113,7 @@ export function EditDialog({
               </SelectContent>
             </Select>
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex gap-3 pt-2">
             <Button
               type="button"

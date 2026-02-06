@@ -26,11 +26,11 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
   const total = carryovers.reduce((sum, c) => sum + c.amount, 0)
 
   return (
-    <Card>
+    <Card className="glow-sm">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader className="pb-3">
           <CollapsibleTrigger asChild>
-            <CardTitle className="flex justify-between items-center cursor-pointer hover:bg-gray-50 -mx-6 -my-4 px-6 py-4">
+            <CardTitle className="flex justify-between items-center cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors">
               <div className="flex items-center gap-2">
                 {isOpen ? (
                   <ChevronDown className="h-4 w-4" />
@@ -38,11 +38,11 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                   <ChevronRight className="h-4 w-4" />
                 )}
                 <span>繰越（参照用）</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   ※精算額には含まれません
                 </span>
               </div>
-              <span className="text-gray-600">{formatCurrency(total)}</span>
+              <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
             </CardTitle>
           </CollapsibleTrigger>
         </CardHeader>
@@ -59,7 +59,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                     <span>{carryover.label}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="font-medium text-gray-600">
+                    <span className="font-medium text-muted-foreground font-mono font-tabular">
                       {formatCurrency(carryover.amount)}
                     </span>
                     <EditDialog
@@ -76,7 +76,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                         type="submit"
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-gray-400 hover:text-red-600"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -85,7 +85,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                 </div>
               ))}
               {carryovers.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-4">
+                <p className="text-sm text-muted-foreground text-center py-4">
                   繰越がありません
                 </p>
               )}

@@ -7,11 +7,11 @@ interface PersonBadgeProps {
 const personConfig = {
   husband: {
     label: '夫',
-    className: 'bg-blue-100 text-blue-700',
+    className: 'bg-husband-light text-husband border border-husband/25',
   },
   wife: {
     label: '妻',
-    className: 'bg-pink-100 text-pink-700',
+    className: 'bg-wife-light text-wife border border-wife/25',
   },
 } as const
 
@@ -19,7 +19,7 @@ export function PersonBadge({ person }: PersonBadgeProps) {
   const config = personConfig[person]
 
   return (
-    <span className={`text-xs px-2 py-0.5 rounded font-medium ${config.className}`}>
+    <span className={`text-xs px-2.5 py-1 rounded-md font-semibold ${config.className}`}>
       {config.label}
     </span>
   )
