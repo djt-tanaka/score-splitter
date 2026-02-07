@@ -13,6 +13,35 @@ async function login(page: Page) {
   await page.waitForURL(/\/(\?|$)/)
 }
 
+/**
+ * 収入カードのロケーターを取得
+ * React が「収入<!-- -->を追加」のようにレンダリングするため、
+ * data-slot="card" でカードを特定し、カードタイトル「収入」でフィルタする
+ */
+function getIncomeCard(page: Page) {
+  return page.locator('[data-slot="card"]').filter({
+    has: page.locator('[data-slot="card-title"] > span', { hasText: /^収入$/ }),
+  })
+}
+
+/**
+ * 支出カードのロケーターを取得
+ */
+function getExpenseCard(page: Page) {
+  return page.locator('[data-slot="card"]').filter({
+    has: page.locator('[data-slot="card-title"] > span', { hasText: /^支出$/ }),
+  })
+}
+
+/**
+ * 繰越カードのロケーターを取得
+ */
+function getCarryoverCard(page: Page) {
+  return page.locator('[data-slot="card"]').filter({
+    hasText: '繰越（参照用）',
+  })
+}
+
 // =============================================
 // ログインページ
 // =============================================
@@ -41,8 +70,8 @@ test.describe('ログインページ', () => {
     await page.getByRole('button', { name: 'ログイン' }).click()
     await page.waitForURL(/\/(\?|$)/)
 
-    // ホームページの要素を確認
-    await expect(page.getByText('収入')).toBeVisible()
+    // ホームページの要素を確認（精算額は常に表示される）
+    await expect(page.getByText('精算額')).toBeVisible()
   })
 })
 
@@ -60,10 +89,12 @@ test.describe('ホームページ', () => {
   })
 
   test('全セクションが表示される', async ({ page }) => {
-    // 収入セクション
-    await expect(page.getByRole('heading', { name: '収入' }).or(page.locator('span').filter({ hasText: /^収入$/ }).first())).toBeVisible()
+    // 収入セクション（CardTitleはdivなのでdata-slotで探す）
+    const incomeCard = getIncomeCard(page)
+    await expect(incomeCard).toBeVisible()
     // 支出セクション
-    await expect(page.getByRole('heading', { name: '支出' }).or(page.locator('span').filter({ hasText: /^支出$/ }).first())).toBeVisible()
+    const expenseCard = getExpenseCard(page)
+    await expect(expenseCard).toBeVisible()
     // 繰越セクション
     await expect(page.getByText('繰越（参照用）')).toBeVisible()
     // 精算額セクション
@@ -71,17 +102,18 @@ test.describe('ホームページ', () => {
   })
 
   test('シードデータの収入が表示される', async ({ page }) => {
-    // 2026年2月のシードデータを確認（現在の月によってデータが変わる）
     await page.goto('/?month=202602')
 
+    const incomeCard = getIncomeCard(page)
+
     // 収入の項目が表示される
-    await expect(page.getByText('給料').first()).toBeVisible()
-    await expect(page.getByText('副業')).toBeVisible()
+    await expect(incomeCard.getByText('給料').first()).toBeVisible()
+    await expect(incomeCard.getByText('副業')).toBeVisible()
 
     // 金額が表示される
-    await expect(page.getByText('¥350,000').first()).toBeVisible()
-    await expect(page.getByText('¥280,000')).toBeVisible()
-    await expect(page.getByText('¥50,000')).toBeVisible()
+    await expect(incomeCard.getByText('¥350,000')).toBeVisible()
+    await expect(incomeCard.getByText('¥280,000')).toBeVisible()
+    await expect(incomeCard.getByText('¥50,000')).toBeVisible()
   })
 
   test('シードデータの支出が表示される', async ({ page }) => {
@@ -100,8 +132,8 @@ test.describe('ホームページ', () => {
     // 精算額のセクションが存在
     await expect(page.getByText('精算額')).toBeVisible()
 
-    // 収支詳細
-    await expect(page.getByText('収支詳細')).toBeVisible()
+    // 収支詳細（data-slot="card-title"で収支詳細を探す）
+    await expect(page.locator('[data-slot="card-title"]', { hasText: '収支詳細' })).toBeVisible()
     await expect(page.getByText('収入合計')).toBeVisible()
     await expect(page.getByText('支出合計')).toBeVisible()
     await expect(page.getByText('夫の支出')).toBeVisible()
@@ -139,7 +171,6 @@ test.describe('月ナビゲーション', () => {
   })
 
   test('前月に移動できる', async ({ page }) => {
-    // 左矢印ボタンをクリック
     await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left') }).click()
 
     await expect(page).toHaveURL(/month=202601/)
@@ -147,7 +178,6 @@ test.describe('月ナビゲーション', () => {
   })
 
   test('翌月に移動できる', async ({ page }) => {
-    // 右矢印ボタンをクリック
     await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-right') }).click()
 
     await expect(page).toHaveURL(/month=202603/)
@@ -187,11 +217,10 @@ test.describe('収入の追加', () => {
   })
 
   test('収入を追加できる', async ({ page }) => {
-    // 収入セクションのフォームに入力
-    const incomeCard = page.locator('.glow-sm').filter({ hasText: '収入を追加' })
+    const incomeCard = getIncomeCard(page)
     await incomeCard.getByPlaceholder('項目名').fill('テスト給料')
     await incomeCard.getByPlaceholder('金額').fill('300000')
-    await incomeCard.getByRole('button', { name: '収入を追加' }).click()
+    await incomeCard.getByRole('button', { name: /収入.*追加/ }).click()
 
     // 追加された項目が表示されることを確認
     await expect(page.getByText('テスト給料')).toBeVisible()
@@ -199,7 +228,7 @@ test.describe('収入の追加', () => {
   })
 
   test('担当者を妻にして収入を追加できる', async ({ page }) => {
-    const incomeCard = page.locator('.glow-sm').filter({ hasText: '収入を追加' })
+    const incomeCard = getIncomeCard(page)
     await incomeCard.getByPlaceholder('項目名').fill('妻のパート')
     await incomeCard.getByPlaceholder('金額').fill('150000')
 
@@ -207,7 +236,7 @@ test.describe('収入の追加', () => {
     await incomeCard.locator('[role="combobox"]').click()
     await page.getByRole('option', { name: '妻' }).click()
 
-    await incomeCard.getByRole('button', { name: '収入を追加' }).click()
+    await incomeCard.getByRole('button', { name: /収入.*追加/ }).click()
 
     await expect(page.getByText('妻のパート')).toBeVisible()
     await expect(page.getByText('¥150,000')).toBeVisible()
@@ -224,10 +253,10 @@ test.describe('支出の追加', () => {
   })
 
   test('支出を追加できる', async ({ page }) => {
-    const expenseCard = page.locator('.glow-sm').filter({ hasText: '支出を追加' })
+    const expenseCard = getExpenseCard(page)
     await expenseCard.getByPlaceholder('項目名').fill('テスト家賃')
     await expenseCard.getByPlaceholder('金額').fill('100000')
-    await expenseCard.getByRole('button', { name: '支出を追加' }).click()
+    await expenseCard.getByRole('button', { name: /支出.*追加/ }).click()
 
     await expect(page.getByText('テスト家賃')).toBeVisible()
   })
@@ -246,14 +275,10 @@ test.describe('繰越の追加', () => {
     // 繰越セクションはCollapsibleなのでクリックで展開
     await page.getByText('繰越（参照用）').click()
 
-    // フォームが表示される
-    await expect(page.getByRole('button', { name: '繰越を追加' })).toBeVisible()
-
-    // 繰越を追加
-    const carryoverContent = page.locator('.glow-sm').filter({ hasText: '繰越を追加' })
-    await carryoverContent.getByPlaceholder('項目名').fill('テスト繰越')
-    await carryoverContent.getByPlaceholder('金額').fill('5000')
-    await carryoverContent.getByRole('button', { name: '繰越を追加' }).click()
+    const carryoverCard = getCarryoverCard(page)
+    await carryoverCard.getByPlaceholder('項目名').fill('テスト繰越')
+    await carryoverCard.getByPlaceholder('金額').fill('5000')
+    await carryoverCard.getByRole('button', { name: /繰越.*追加/ }).click()
 
     await expect(page.getByText('テスト繰越')).toBeVisible()
   })
@@ -269,36 +294,45 @@ test.describe('項目の編集', () => {
   })
 
   test('収入を編集できる', async ({ page }) => {
-    // 副業の行の編集ボタン（Pencilアイコン）をクリック
-    const row = page.locator('div').filter({ hasText: /^副業/ }).first()
+    // 副業の行を見つける（PersonBadge + ラベルがある行）
+    const incomeCard = getIncomeCard(page)
+    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+      hasText: '副業',
+    })
+    // 編集ボタン（Pencilアイコン）をクリック
     await row.locator('button').filter({ has: page.locator('svg.lucide-pencil') }).click()
 
     // 編集ダイアログが表示される
-    await expect(page.getByText('収入を編集')).toBeVisible()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
     // 項目名を変更
-    const labelInput = page.getByRole('dialog').locator('input[name="label"]')
+    const labelInput = dialog.locator('input[name="label"]')
     await labelInput.clear()
     await labelInput.fill('副業収入（更新）')
 
     // 更新ボタンをクリック
-    await page.getByRole('dialog').getByRole('button', { name: '更新' }).click()
+    await dialog.getByRole('button', { name: '更新' }).click()
 
     // ダイアログが閉じて更新された項目名が表示される
     await expect(page.getByText('副業収入（更新）')).toBeVisible()
   })
 
   test('編集ダイアログのキャンセルが動作する', async ({ page }) => {
-    const row = page.locator('div').filter({ hasText: /^副業/ }).first()
+    const incomeCard = getIncomeCard(page)
+    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+      hasText: '副業',
+    })
     await row.locator('button').filter({ has: page.locator('svg.lucide-pencil') }).click()
 
-    await expect(page.getByText('収入を編集')).toBeVisible()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
     // キャンセル
-    await page.getByRole('dialog').getByRole('button', { name: 'キャンセル' }).click()
+    await dialog.getByRole('button', { name: 'キャンセル' }).click()
 
     // ダイアログが閉じる
-    await expect(page.getByText('収入を編集')).not.toBeVisible()
+    await expect(dialog).not.toBeVisible()
   })
 })
 
@@ -312,15 +346,19 @@ test.describe('項目の削除', () => {
   })
 
   test('収入を削除できる', async ({ page }) => {
-    // 副業が表示されていることを確認
-    await expect(page.getByText('副業')).toBeVisible()
+    const incomeCard = getIncomeCard(page)
 
-    // 副業の行の削除ボタン（Trash2アイコン）をクリック
-    const row = page.locator('div').filter({ hasText: /^副業/ }).first()
+    // 副業が表示されていることを確認
+    await expect(incomeCard.getByText('副業')).toBeVisible()
+
+    // 副業の行の削除ボタンをクリック
+    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+      hasText: '副業',
+    })
     await row.locator('button').filter({ has: page.locator('svg.lucide-trash-2') }).click()
 
     // ページがリロードされ副業が消える
-    await expect(page.getByText('副業')).not.toBeVisible({ timeout: 5000 })
+    await expect(incomeCard.getByText('副業')).not.toBeVisible({ timeout: 5000 })
   })
 })
 
@@ -337,10 +375,10 @@ test.describe('精算額の更新', () => {
     await expect(page.getByText('精算なし')).toBeVisible()
 
     // 夫の収入を追加
-    const incomeCard = page.locator('.glow-sm').filter({ hasText: '収入を追加' })
+    const incomeCard = getIncomeCard(page)
     await incomeCard.getByPlaceholder('項目名').fill('給料')
     await incomeCard.getByPlaceholder('金額').fill('400000')
-    await incomeCard.getByRole('button', { name: '収入を追加' }).click()
+    await incomeCard.getByRole('button', { name: /収入.*追加/ }).click()
 
     // 精算額が更新される（夫のみの収入なので夫→妻方向）
     await expect(page.getByText('夫 → 妻')).toBeVisible()
@@ -357,31 +395,34 @@ test.describe('前月からコピー', () => {
   })
 
   test('コピーダイアログが表示される', async ({ page }) => {
-    await page.getByRole('button', { name: '前月からコピー' }).click()
+    await page.getByRole('button', { name: /前月からコピー/ }).click()
 
-    await expect(page.getByText('前月からデータをコピー')).toBeVisible()
-    // コピー元→コピー先の月が表示
-    await expect(page.getByText('2026年1月')).toBeVisible()
-    await expect(page.getByText('2026年2月')).toBeVisible()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('前月からデータをコピー')).toBeVisible()
+    // コピー元→コピー先の月が表示（ダイアログ内でスコープ）
+    await expect(dialog.getByText(/2026年1月/)).toBeVisible()
+    await expect(dialog.getByText(/2026年2月/)).toBeVisible()
   })
 
   test('コピーダイアログに前月のデータが表示される', async ({ page }) => {
-    await page.getByRole('button', { name: '前月からコピー' }).click()
+    await page.getByRole('button', { name: /前月からコピー/ }).click()
 
     // プレビューが読み込まれるのを待つ
-    await expect(page.getByText('コピー対象を選択')).toBeVisible()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('コピー対象を選択')).toBeVisible()
 
     // 前月（2026年1月）のデータが表示されるか確認
-    const dialog = page.getByRole('dialog')
-    await expect(dialog.getByText('収入')).toBeVisible()
+    await expect(dialog.getByText('収入', { exact: true })).toBeVisible()
   })
 
   test('コピーダイアログのキャンセルが動作する', async ({ page }) => {
-    await page.getByRole('button', { name: '前月からコピー' }).click()
-    await expect(page.getByText('前月からデータをコピー')).toBeVisible()
+    await page.getByRole('button', { name: /前月からコピー/ }).click()
 
-    await page.getByRole('dialog').getByRole('button', { name: 'キャンセル' }).click()
-    await expect(page.getByText('前月からデータをコピー')).not.toBeVisible()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('前月からデータをコピー')).toBeVisible()
+
+    await dialog.getByRole('button', { name: 'キャンセル' }).click()
+    await expect(dialog).not.toBeVisible()
   })
 })
 
