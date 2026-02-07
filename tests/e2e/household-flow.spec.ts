@@ -71,7 +71,7 @@ test.describe('ログインページ', () => {
     await page.waitForURL(/\/(\?|$)/)
 
     // ホームページの要素を確認（精算額は常に表示される）
-    await expect(page.getByText('精算額')).toBeVisible()
+    await expect(page.getByText('精算額', { exact: true })).toBeVisible()
   })
 })
 
@@ -98,7 +98,7 @@ test.describe('ホームページ', () => {
     // 繰越セクション
     await expect(page.getByText('繰越（参照用）')).toBeVisible()
     // 精算額セクション
-    await expect(page.getByText('精算額')).toBeVisible()
+    await expect(page.getByText('精算額', { exact: true })).toBeVisible()
   })
 
   test('シードデータの収入が表示される', async ({ page }) => {
@@ -130,7 +130,7 @@ test.describe('ホームページ', () => {
     await page.goto('/?month=202602')
 
     // 精算額のセクションが存在
-    await expect(page.getByText('精算額')).toBeVisible()
+    await expect(page.getByText('精算額', { exact: true })).toBeVisible()
 
     // 収支詳細（data-slot="card-title"で収支詳細を探す）
     await expect(page.locator('[data-slot="card-title"]', { hasText: '収支詳細' })).toBeVisible()
@@ -222,9 +222,9 @@ test.describe('収入の追加', () => {
     await incomeCard.getByPlaceholder('金額').fill('300000')
     await incomeCard.getByRole('button', { name: /収入.*追加/ }).click()
 
-    // 追加された項目が表示されることを確認
-    await expect(page.getByText('テスト給料')).toBeVisible()
-    await expect(page.getByText('¥300,000')).toBeVisible()
+    // 追加された項目が表示されることを確認（収入カード内にスコープ）
+    await expect(incomeCard.getByText('テスト給料')).toBeVisible()
+    await expect(incomeCard.getByText('¥300,000').first()).toBeVisible()
   })
 
   test('担当者を妻にして収入を追加できる', async ({ page }) => {
@@ -238,8 +238,8 @@ test.describe('収入の追加', () => {
 
     await incomeCard.getByRole('button', { name: /収入.*追加/ }).click()
 
-    await expect(page.getByText('妻のパート')).toBeVisible()
-    await expect(page.getByText('¥150,000')).toBeVisible()
+    await expect(incomeCard.getByText('妻のパート')).toBeVisible()
+    await expect(incomeCard.getByText('¥150,000').first()).toBeVisible()
   })
 })
 
