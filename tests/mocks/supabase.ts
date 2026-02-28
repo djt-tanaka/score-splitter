@@ -72,20 +72,24 @@ vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(async () => mockSupabaseClient),
 }))
 
-// SELECT用: 配列を返す（order()の結果として）
+// SELECT用: 配列を返す（order()が2回チェーンされる前提）
 export function mockSelectSuccess<T>(data: T[]) {
-  mockSupabaseClient._queryBuilder.order.mockResolvedValueOnce({
-    data,
-    error: null,
-  })
+  mockSupabaseClient._queryBuilder.order
+    .mockReturnValueOnce(mockSupabaseClient._queryBuilder)
+    .mockResolvedValueOnce({
+      data,
+      error: null,
+    })
 }
 
 // SELECT用: エラーを返す
 export function mockSelectError(message: string) {
-  mockSupabaseClient._queryBuilder.order.mockResolvedValueOnce({
-    data: null,
-    error: { message },
-  })
+  mockSupabaseClient._queryBuilder.order
+    .mockReturnValueOnce(mockSupabaseClient._queryBuilder)
+    .mockResolvedValueOnce({
+      data: null,
+      error: { message },
+    })
 }
 
 // INSERT/UPDATE用: 単一レコードを返す（single()の結果として）

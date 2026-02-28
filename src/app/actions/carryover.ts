@@ -18,6 +18,7 @@ export async function getCarryoversByMonth(month: string): Promise<Carryover[]> 
     .select('*')
     .eq('month', month)
     .order('created_at', { ascending: true })
+    .order('id', { ascending: true })
 
   if (error) {
     console.error('繰越取得エラー:', error)

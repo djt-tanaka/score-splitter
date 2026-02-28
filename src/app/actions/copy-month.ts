@@ -24,12 +24,14 @@ export async function getCopyMonthPreview(
       .from('incomes')
       .select('id, label, amount, person')
       .eq('month', sourceMonth)
-      .order('created_at', { ascending: true }),
+      .order('amount', { ascending: false })
+      .order('id', { ascending: true }),
     supabase
       .from('expenses')
       .select('id, label, amount, person')
       .eq('month', sourceMonth)
-      .order('created_at', { ascending: true }),
+      .order('amount', { ascending: true })
+      .order('id', { ascending: true }),
     supabase
       .from('carryovers')
       .select('*', { count: 'exact', head: true })

@@ -17,7 +17,8 @@ export async function getExpensesByMonth(month: string): Promise<Expense[]> {
     .from('expenses')
     .select('*')
     .eq('month', month)
-    .order('created_at', { ascending: true })
+    .order('amount', { ascending: true })
+    .order('id', { ascending: true })
 
   if (error) {
     console.error('支出取得エラー:', error)

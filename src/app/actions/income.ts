@@ -17,7 +17,8 @@ export async function getIncomesByMonth(month: string): Promise<Income[]> {
     .from('incomes')
     .select('*')
     .eq('month', month)
-    .order('created_at', { ascending: true })
+    .order('amount', { ascending: false })
+    .order('id', { ascending: true })
 
   if (error) {
     console.error('収入取得エラー:', error)
