@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { SubmitButton } from '@/components/ui/submit-button'
 import {
   Select,
   SelectContent,
@@ -59,9 +59,12 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
           </Select>
         </div>
       </div>
-      <Button type="submit" className="w-full h-12 glow-sm hover:glow-md transition-shadow">
+      <SubmitButton
+        className="w-full h-12 glow-sm hover:glow-md transition-shadow"
+        pendingChildren="追加中..."
+      >
         {typeLabels[type]}を追加
-      </Button>
+      </SubmitButton>
     </form>
   )
 }
