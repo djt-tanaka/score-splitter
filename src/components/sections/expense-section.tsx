@@ -1,9 +1,8 @@
 'use client'
 
-import { Trash2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { PersonBadge } from '@/components/ui/person-badge'
+import { DeleteButton } from '@/components/ui/delete-button'
 import { EntryForm } from '@/components/forms/entry-form'
 import { EditDialog } from '@/components/forms/edit-dialog'
 import { createExpense, updateExpense, deleteExpense } from '@/app/actions/expense'
@@ -51,14 +50,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
                   onUpdate={updateExpense}
                 />
                 <form action={async () => { await deleteExpense(expense.id) }}>
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <DeleteButton />
                 </form>
               </div>
             </div>

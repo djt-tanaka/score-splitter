@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { PersonBadge } from '@/components/ui/person-badge'
+import { DeleteButton } from '@/components/ui/delete-button'
 import { EntryForm } from '@/components/forms/entry-form'
 import { EditDialog } from '@/components/forms/edit-dialog'
 import { createCarryover, updateCarryover, deleteCarryover } from '@/app/actions/carryover'
@@ -72,14 +72,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                       onUpdate={updateCarryover}
                     />
                     <form action={async () => { await deleteCarryover(carryover.id) }}>
-                      <Button
-                        type="submit"
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <DeleteButton />
                     </form>
                   </div>
                 </div>

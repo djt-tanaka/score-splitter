@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { SubmitButton } from '@/components/ui/submit-button'
 import {
   Dialog,
   DialogContent,
@@ -50,19 +51,15 @@ export function EditDialog({
 }: EditDialogProps) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isPending, setIsPending] = useState(false)
 
   // 支出と繰越は負の値で保存されているので、表示時は正の値に変換
   const displayAmount = type === 'income' ? amount : Math.abs(amount)
 
   async function handleSubmit(formData: FormData) {
-    setIsPending(true)
     setError(null)
 
     formData.set('month', month)
     const result = await onUpdate(id, formData)
-
-    setIsPending(false)
 
     if (result.success) {
       setOpen(false)
@@ -123,9 +120,9 @@ export function EditDialog({
             >
               キャンセル
             </Button>
-            <Button type="submit" className="flex-1 h-12" disabled={isPending}>
-              {isPending ? '更新中...' : '更新'}
-            </Button>
+            <SubmitButton className="flex-1 h-12" pendingChildren="更新中...">
+              更新
+            </SubmitButton>
           </div>
         </form>
       </DialogContent>
