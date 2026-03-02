@@ -3,15 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { carryoverSchema } from '@/lib/validations/carryover'
-import type { Carryover } from '@/types'
+import type { Carryover, ActionResult } from '@/types'
 
-export interface ActionResult<T = unknown> {
-  success: boolean
-  data?: T
-  error?: string
-}
-
-export async function getCarryoversByMonth(month: string): Promise<Carryover[]> {
+export async function getCarryoversByMonth(month: string): Promise<ActionResult<Carryover[]>> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('carryovers')
@@ -22,17 +16,20 @@ export async function getCarryoversByMonth(month: string): Promise<Carryover[]> 
 
   if (error) {
     console.error('繰越取得エラー:', error)
-    return []
+    return { success: false, error: '繰越データの取得に失敗しました' }
   }
 
-  return data.map((row) => ({
-    id: row.id,
-    month: row.month,
-    label: row.label,
-    amount: row.amount,
-    person: row.person,
-    createdAt: row.created_at,
-  }))
+  return {
+    success: true,
+    data: data.map((row) => ({
+      id: row.id,
+      month: row.month,
+      label: row.label,
+      amount: row.amount,
+      person: row.person,
+      createdAt: row.created_at,
+    })),
+  }
 }
 
 export async function createCarryover(

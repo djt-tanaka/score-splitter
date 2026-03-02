@@ -17,11 +17,21 @@ export default async function HomePage({ searchParams }: HomeProps) {
   const params = await searchParams
   const month = params.month ?? parseMonth(new Date())
 
-  const [incomes, expenses, carryovers] = await Promise.all([
+  const [incomesResult, expensesResult, carryoversResult] = await Promise.all([
     getIncomesByMonth(month),
     getExpensesByMonth(month),
     getCarryoversByMonth(month),
   ])
+
+  if (!incomesResult.success || !expensesResult.success || !carryoversResult.success) {
+    throw new Error(
+      incomesResult.error ?? expensesResult.error ?? carryoversResult.error ?? 'データの取得に失敗しました'
+    )
+  }
+
+  const incomes = incomesResult.data ?? []
+  const expenses = expensesResult.data ?? []
+  const carryovers = carryoversResult.data ?? []
 
   return (
     <div className="min-h-screen gradient-page">

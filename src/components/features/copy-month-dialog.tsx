@@ -55,17 +55,29 @@ export function CopyMonthDialog({
   )
   const [includeCarryover, setIncludeCarryover] = useState(true)
 
-  // ダイアログを開いた時にプレビューを取得
-  useEffect(() => {
-    if (open) {
+  // ダイアログ開閉時のハンドラ
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen)
+    if (nextOpen) {
+      // 状態リセット
       setPreview(null)
       setItemSelections(new Map())
       setIncludeCarryover(true)
-      getCopyMonthPreview(previousMonth, currentMonth).then((data) => {
-        setPreview(data)
+    }
+  }
+
+  // ダイアログを開いた時にプレビューを取得
+  useEffect(() => {
+    if (open) {
+      getCopyMonthPreview(previousMonth, currentMonth).then((result) => {
+        if (!result.success || !result.data) {
+          toast.error(result.error ?? 'プレビューの取得に失敗しました')
+          return
+        }
+        setPreview(result.data)
         // デフォルトで全項目を「金額込み」で選択
         const selections = new Map<string, ItemSelection>()
-        data.items.forEach((item) => {
+        result.data.items.forEach((item) => {
           selections.set(item.id, 'withAmount')
         })
         setItemSelections(selections)
@@ -262,7 +274,7 @@ export function CopyMonthDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-1">
           <Copy className="h-4 w-4" />

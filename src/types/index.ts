@@ -1,3 +1,10 @@
+// Server Actionsの共通戻り値型
+export interface ActionResult<T = unknown> {
+  success: boolean
+  data?: T
+  error?: string
+}
+
 // 担当者
 export type Person = 'husband' | 'wife'
 

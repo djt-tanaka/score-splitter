@@ -7,6 +7,7 @@ import type {
   CopyMonthResult,
   CopyMonthPreview,
   CopyItem,
+  ActionResult,
 } from '@/types'
 
 /**
@@ -16,7 +17,7 @@ import type {
 export async function getCopyMonthPreview(
   sourceMonth: string,
   targetMonth: string
-): Promise<CopyMonthPreview> {
+): Promise<ActionResult<CopyMonthPreview>> {
   const supabase = await createClient()
 
   const [incomes, expenses, carryovers, existingCounts] = await Promise.all([
@@ -52,6 +53,15 @@ export async function getCopyMonthPreview(
     ]),
   ])
 
+  if (incomes.error || expenses.error || carryovers.error) {
+    console.error('月コピープレビュー取得エラー:', {
+      incomes: incomes.error,
+      expenses: expenses.error,
+      carryovers: carryovers.error,
+    })
+    return { success: false, error: 'プレビューデータの取得に失敗しました' }
+  }
+
   const items: CopyItem[] = [
     ...(incomes.data ?? []).map((item) => ({
       id: item.id,
@@ -75,11 +85,14 @@ export async function getCopyMonthPreview(
     (existingCounts[2].count ?? 0)
 
   return {
-    sourceMonth,
-    targetMonth,
-    items,
-    carryoverCount: carryovers.count ?? 0,
-    existingCount,
+    success: true,
+    data: {
+      sourceMonth,
+      targetMonth,
+      items,
+      carryoverCount: carryovers.count ?? 0,
+      existingCount,
+    },
   }
 }
 

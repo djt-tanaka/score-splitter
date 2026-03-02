@@ -72,12 +72,17 @@ describe('IncomeSection', () => {
     expect(wifeElements.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('削除ボタンを表示する', () => {
+  it('削除ボタンにaria-labelが設定されている', () => {
     render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
-    // Trash2アイコンを含むボタンが収入の数だけ存在
-    const deleteButtons = screen.getAllByRole('button', { name: '' })
-    // 削除ボタンと編集ボタンが混在するので、総数を確認
-    expect(deleteButtons.length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByRole('button', { name: '給料を削除' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'ボーナスを削除' })).toBeInTheDocument()
+  })
+
+  it('編集ボタンにaria-labelが設定されている', () => {
+    render(<IncomeSection incomes={mockIncomes} month="202601" />)
+
+    expect(screen.getByRole('button', { name: '給料を編集' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'ボーナスを編集' })).toBeInTheDocument()
   })
 })

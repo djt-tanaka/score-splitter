@@ -72,7 +72,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                       onUpdate={updateCarryover}
                     />
                     <form action={async () => { await deleteCarryover(carryover.id) }}>
-                      <DeleteButton />
+                      <DeleteButton label={`${carryover.label}を削除`} />
                     </form>
                   </div>
                 </div>

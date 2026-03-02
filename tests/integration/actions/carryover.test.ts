@@ -51,8 +51,9 @@ describe('carryover actions', () => {
       const result = await getCarryoversByMonth('202601')
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('carryovers')
-      expect(result).toHaveLength(2)
-      expect(result[0]).toEqual({
+      expect(result.success).toBe(true)
+      expect(result.data).toHaveLength(2)
+      expect(result.data?.[0]).toEqual({
         id: '1',
         month: '202601',
         label: '前月からの繰越',
@@ -67,15 +68,17 @@ describe('carryover actions', () => {
 
       const result = await getCarryoversByMonth('202601')
 
-      expect(result).toEqual([])
+      expect(result.success).toBe(true)
+      expect(result.data).toEqual([])
     })
 
-    it('エラー時は空配列を返す', async () => {
+    it('エラー時はエラーを返す', async () => {
       mockSelectError('Database error')
 
       const result = await getCarryoversByMonth('202601')
 
-      expect(result).toEqual([])
+      expect(result.success).toBe(false)
+      expect(result.error).toBe('繰越データの取得に失敗しました')
     })
   })
 

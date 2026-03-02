@@ -29,7 +29,7 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
   return (
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" onClick={() => navigateMonth(-1)}>
+        <Button variant="outline" size="icon" aria-label="前月に移動" onClick={() => navigateMonth(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <button
@@ -38,7 +38,7 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
         >
           {formatMonth(currentMonth)}
         </button>
-        <Button variant="outline" size="icon" onClick={() => navigateMonth(1)}>
+        <Button variant="outline" size="icon" aria-label="翌月に移動" onClick={() => navigateMonth(1)}>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

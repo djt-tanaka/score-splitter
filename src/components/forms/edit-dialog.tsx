@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { SubmitButton } from '@/components/ui/submit-button'
 import {
   Dialog,
@@ -51,6 +52,7 @@ export function EditDialog({
 }: EditDialogProps) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const uniqueId = useId()
 
   // 支出と繰越は負の値で保存されているので、表示時は正の値に変換
   const displayAmount = type === 'income' ? amount : Math.abs(amount)
@@ -74,6 +76,7 @@ export function EditDialog({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={`${label}を編集`}
           className="h-9 w-9 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
         >
           <Pencil className="h-4 w-4" />
@@ -85,12 +88,13 @@ export function EditDialog({
         </DialogHeader>
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">項目名</label>
-            <Input name="label" defaultValue={label} required />
+            <Label htmlFor={`${uniqueId}-label`}>項目名</Label>
+            <Input id={`${uniqueId}-label`} name="label" defaultValue={label} required />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">金額</label>
+            <Label htmlFor={`${uniqueId}-amount`}>金額</Label>
             <Input
+              id={`${uniqueId}-amount`}
               name="amount"
               type="number"
               defaultValue={displayAmount}
@@ -99,9 +103,9 @@ export function EditDialog({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">担当者</label>
+            <Label htmlFor={`${uniqueId}-person`}>担当者</Label>
             <Select name="person" defaultValue={person}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id={`${uniqueId}-person`} className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
