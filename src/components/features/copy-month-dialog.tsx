@@ -208,10 +208,10 @@ export function CopyMonthDialog({
               if (el) el.indeterminate = someSelected
             }}
             onChange={() => toggleAllInType(type)}
-            className="h-4 w-4 rounded border-gray-300"
+            className="h-4 w-4 rounded border-input"
           />
           <span className="font-medium">{typeLabel}</span>
-          <span className="text-sm text-gray-500">({items.length}件)</span>
+          <span className="text-sm text-muted-foreground">({items.length}件)</span>
         </label>
         <div className="ml-6 space-y-1">
           {items.map((item) => {
@@ -221,7 +221,7 @@ export function CopyMonthDialog({
             return (
               <div
                 key={item.id}
-                className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-gray-50"
+                className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50"
               >
                 <input
                   type="checkbox"
@@ -232,10 +232,10 @@ export function CopyMonthDialog({
                       isSelected ? 'none' : 'withAmount'
                     )
                   }
-                  className="h-4 w-4 rounded border-gray-300"
+                  className="h-4 w-4 rounded border-input"
                 />
                 <span className="flex-1 text-sm">{item.label}</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {personLabels[item.person]}
                 </span>
                 <span className="text-sm tabular-nums w-20 text-right">
@@ -247,7 +247,7 @@ export function CopyMonthDialog({
                     onChange={(e) =>
                       setItemSelection(item.id, e.target.value as ItemSelection)
                     }
-                    className="text-xs border rounded px-1 py-0.5 bg-white"
+                    className="text-xs border border-input rounded px-1.5 py-0.5 bg-background"
                   >
                     <option value="withAmount">金額込み</option>
                     <option value="labelOnly">項目名のみ</option>
@@ -275,14 +275,14 @@ export function CopyMonthDialog({
         </DialogHeader>
 
         {!preview ? (
-          <div className="py-8 text-center text-gray-500">読み込み中...</div>
+          <div className="py-8 text-center text-muted-foreground">読み込み中...</div>
         ) : (
           <div className="flex-1 overflow-hidden flex flex-col space-y-4">
             {/* 月情報 */}
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               {formatMonth(previousMonth)} → {formatMonth(currentMonth)}
               {hasExistingData && (
-                <span className="ml-2 text-yellow-600">
+                <span className="ml-2 text-warning">
                   （コピー先に{preview.existingCount}件の既存データあり）
                 </span>
               )}
@@ -297,15 +297,15 @@ export function CopyMonthDialog({
                     <button
                       type="button"
                       onClick={selectAll}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-accent hover:underline"
                     >
                       すべて選択
                     </button>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-muted-foreground/30">|</span>
                     <button
                       type="button"
                       onClick={deselectAll}
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-accent hover:underline"
                     >
                       すべて解除
                     </button>
@@ -324,10 +324,10 @@ export function CopyMonthDialog({
                           type="checkbox"
                           checked={includeCarryover}
                           onChange={(e) => setIncludeCarryover(e.target.checked)}
-                          className="h-4 w-4 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-input"
                         />
                         <span className="font-medium">繰越</span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-muted-foreground">
                           ({preview.carryoverCount}件)
                         </span>
                       </label>
@@ -362,7 +362,7 @@ export function CopyMonthDialog({
                 )}
               </>
             ) : (
-              <p className="py-4 text-center text-gray-500">
+              <p className="py-4 text-center text-muted-foreground">
                 コピー元の月にデータがありません
               </p>
             )}

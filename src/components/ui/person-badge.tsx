@@ -7,11 +7,11 @@ interface PersonBadgeProps {
 const personConfig = {
   husband: {
     label: '夫',
-    className: 'bg-husband-light text-husband border border-husband/25',
+    className: 'bg-gradient-to-r from-husband-light to-husband-light/50 text-husband border border-husband/25',
   },
   wife: {
     label: '妻',
-    className: 'bg-wife-light text-wife border border-wife/25',
+    className: 'bg-gradient-to-r from-wife-light to-wife-light/50 text-wife border border-wife/25',
   },
 } as const
 

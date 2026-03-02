@@ -12,7 +12,7 @@ export function DeleteButton() {
       type="submit"
       variant="ghost"
       size="icon"
-      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+      className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
       disabled={pending}
     >
       {pending ? (

@@ -53,6 +53,7 @@
   --color-husband-light: var(--husband-light);
   --color-wife: var(--wife);
   --color-wife-light: var(--wife-light);
+  --color-warning: var(--warning);
 }
 
 /* ===== ライトモード（デフォルト） ===== */
@@ -108,6 +109,20 @@
   --glow-md: 0 2px 8px oklch(0 0 0 / 0.10);
   --glow-lg: 0 4px 16px oklch(0 0 0 / 0.12);
 
+  /* グラデーション背景 */
+  --gradient-page-from: oklch(0.97 0.01 260);
+  --gradient-page-to: oklch(0.95 0.03 195);
+  --gradient-hero-from: oklch(0.55 0.18 195 / 8%);
+  --gradient-hero-via: oklch(0.55 0.18 195 / 3%);
+  --gradient-hero-to: oklch(0.50 0.18 250 / 5%);
+
+  /* カードシャドウ */
+  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.04);
+  --shadow-card-hover: 0 4px 12px oklch(0 0 0 / 0.08), 0 2px 4px oklch(0 0 0 / 0.04);
+
+  /* 警告カラー */
+  --warning: oklch(0.65 0.16 70);
+
   /* チャート */
   --chart-1: oklch(0.55 0.18 195);
   --chart-2: oklch(0.50 0.18 155);
@@ -148,8 +163,8 @@
   --muted: oklch(0.25 0.02 260);
   --muted-foreground: oklch(0.60 0.02 260);
 
-  /* アクセント — ネオンシアン */
-  --accent: oklch(0.75 0.18 195);
+  /* アクセント — ネオンシアン（明度を微調整して目に優しく） */
+  --accent: oklch(0.72 0.16 195);
   --accent-foreground: oklch(0.16 0.02 260);
 
   /* デストラクティブ */
@@ -158,7 +173,7 @@
   /* ボーダー・入力 */
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.75 0.18 195);
+  --ring: oklch(0.72 0.16 195);
 
   /* ドメインカラー — ネオンアクセント */
   --neon-green: oklch(0.75 0.20 155);
@@ -172,10 +187,24 @@
   --wife-light: oklch(0.72 0.18 350 / 15%);
 
   /* グロー効果（ダーク用） */
-  --glow-accent: oklch(0.75 0.18 195);
-  --glow-sm: 0 0 8px oklch(0.75 0.18 195 / 15%);
-  --glow-md: 0 0 16px oklch(0.75 0.18 195 / 20%);
-  --glow-lg: 0 0 24px oklch(0.75 0.18 195 / 25%);
+  --glow-accent: oklch(0.72 0.16 195);
+  --glow-sm: 0 0 8px oklch(0.72 0.16 195 / 15%);
+  --glow-md: 0 0 16px oklch(0.72 0.16 195 / 20%);
+  --glow-lg: 0 0 24px oklch(0.72 0.16 195 / 25%);
+
+  /* グラデーション背景（ダーク用） */
+  --gradient-page-from: oklch(0.16 0.02 260);
+  --gradient-page-to: oklch(0.14 0.03 230);
+  --gradient-hero-from: oklch(0.72 0.16 195 / 12%);
+  --gradient-hero-via: oklch(0.72 0.16 195 / 5%);
+  --gradient-hero-to: oklch(0.70 0.18 250 / 8%);
+
+  /* カードシャドウ（ダーク用） */
+  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.3), 0 0 1px oklch(1 0 0 / 0.05);
+  --shadow-card-hover: 0 4px 16px oklch(0.72 0.16 195 / 15%), 0 0 1px oklch(1 0 0 / 0.08);
+
+  /* 警告カラー */
+  --warning: oklch(0.75 0.16 70);
 
   /* チャート */
   --chart-1: oklch(0.75 0.18 195);
@@ -187,12 +216,12 @@
   /* サイドバー（互換性のため） */
   --sidebar: oklch(0.18 0.02 260);
   --sidebar-foreground: oklch(0.93 0.01 260);
-  --sidebar-primary: oklch(0.75 0.18 195);
+  --sidebar-primary: oklch(0.72 0.16 195);
   --sidebar-primary-foreground: oklch(0.16 0.02 260);
   --sidebar-accent: oklch(0.25 0.02 260);
   --sidebar-accent-foreground: oklch(0.93 0.01 260);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.75 0.18 195);
+  --sidebar-ring: oklch(0.72 0.16 195);
 }
 
 @layer base {
@@ -226,4 +255,46 @@
   background: oklch(from var(--card) l c h / 60%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+@utility glass-strong {
+  background: oklch(from var(--card) l c h / 75%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+@utility gradient-page {
+  background: linear-gradient(135deg, var(--gradient-page-from), var(--gradient-page-to));
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility shadow-card-hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+@utility card-interactive {
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  &:hover {
+    border-color: oklch(from var(--accent) l c h / 30%);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fadeIn 300ms ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

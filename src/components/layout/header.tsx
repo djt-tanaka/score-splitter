@@ -7,7 +7,7 @@ import { logout } from '@/app/actions/auth'
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 glass border-b">
+    <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight">家計計算アプリ</h1>
         <div className="flex items-center gap-1">
