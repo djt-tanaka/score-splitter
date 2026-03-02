@@ -34,7 +34,7 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
         </Button>
         <button
           onClick={goToCurrentMonth}
-          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-colors"
+          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-all duration-200 hover:scale-105"
         >
           {formatMonth(currentMonth)}
         </button>

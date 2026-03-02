@@ -18,7 +18,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
 
   return (
-    <Card className="glow-sm">
+    <Card className="shadow-card card-interactive">
       <CardHeader className="pb-3">
         <CardTitle className="flex justify-between items-center">
           <span>支出</span>
@@ -30,7 +30,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
           {expenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between py-2 border-b last:border-0"
+              className="flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
             >
               <div className="flex items-center gap-2">
                 <PersonBadge person={expense.person} />
@@ -56,9 +56,12 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
             </div>
           ))}
           {expenses.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              支出がありません
-            </p>
+            <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                <span className="text-lg opacity-50">+</span>
+              </div>
+              <p className="text-sm">支出がありません</p>
+            </div>
           )}
         </div>
         <EntryForm type="expense" month={month} onSubmit={createExpense} />

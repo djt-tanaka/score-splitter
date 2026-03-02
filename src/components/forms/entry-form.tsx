@@ -35,7 +35,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-3">
+    <form ref={formRef} action={handleSubmit} className="space-y-3 pt-4 border-t border-border/50">
       <Input name="label" placeholder="項目名" required />
       <div className="flex gap-3">
         <div className="flex-1">

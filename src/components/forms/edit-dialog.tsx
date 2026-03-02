@@ -74,7 +74,7 @@ export function EditDialog({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-accent"
+          className="h-9 w-9 text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
         >
           <Pencil className="h-4 w-4" />
         </Button>

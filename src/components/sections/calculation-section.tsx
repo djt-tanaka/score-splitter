@@ -26,8 +26,8 @@ export function CalculationSection({
   return (
     <div className="space-y-4">
       {/* 精算額ヒーローカード */}
-      <Card className="relative overflow-hidden border-accent/20 glow-md">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-neon-cyan/5" />
+      <Card className="relative overflow-hidden border-accent/30 glow-lg">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gradient-hero-from)] via-[var(--gradient-hero-via)] to-[var(--gradient-hero-to)]" />
         <CardContent className="relative pt-8 pb-8">
           <div className="text-center space-y-3">
             <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">
@@ -66,7 +66,7 @@ export function CalculationSection({
               <span className="text-husband">夫</span>
               <span className="text-wife">妻</span>
             </div>
-            <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+            <div className="relative h-3 bg-muted rounded-full overflow-hidden">
               <div
                 className="absolute left-0 top-0 h-full bg-husband rounded-l-full transition-all duration-500 ease-out"
                 style={{ width: `${husbandRatio}%` }}
@@ -85,7 +85,7 @@ export function CalculationSection({
       </Card>
 
       {/* 収支詳細カード */}
-      <Card className="glow-sm">
+      <Card className="shadow-card card-interactive">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">収支詳細</CardTitle>
         </CardHeader>
