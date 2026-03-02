@@ -4,7 +4,11 @@ import { useFormStatus } from 'react-dom'
 import { Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function DeleteButton() {
+interface DeleteButtonProps {
+  label?: string
+}
+
+export function DeleteButton({ label = '削除' }: DeleteButtonProps) {
   const { pending } = useFormStatus()
 
   return (
@@ -12,6 +16,7 @@ export function DeleteButton() {
       type="submit"
       variant="ghost"
       size="icon"
+      aria-label={label}
       className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
       disabled={pending}
     >

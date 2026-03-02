@@ -3,15 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { expenseSchema } from '@/lib/validations/expense'
-import type { Expense } from '@/types'
+import type { Expense, ActionResult } from '@/types'
 
-export interface ActionResult<T = unknown> {
-  success: boolean
-  data?: T
-  error?: string
-}
-
-export async function getExpensesByMonth(month: string): Promise<Expense[]> {
+export async function getExpensesByMonth(month: string): Promise<ActionResult<Expense[]>> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('expenses')
@@ -22,17 +16,20 @@ export async function getExpensesByMonth(month: string): Promise<Expense[]> {
 
   if (error) {
     console.error('支出取得エラー:', error)
-    return []
+    return { success: false, error: '支出データの取得に失敗しました' }
   }
 
-  return data.map((row) => ({
-    id: row.id,
-    month: row.month,
-    label: row.label,
-    amount: row.amount,
-    person: row.person,
-    createdAt: row.created_at,
-  }))
+  return {
+    success: true,
+    data: data.map((row) => ({
+      id: row.id,
+      month: row.month,
+      label: row.label,
+      amount: row.amount,
+      person: row.person,
+      createdAt: row.created_at,
+    })),
+  }
 }
 
 export async function createExpense(

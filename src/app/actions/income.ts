@@ -3,15 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { incomeSchema } from '@/lib/validations/income'
-import type { Income } from '@/types'
+import type { Income, ActionResult } from '@/types'
 
-export interface ActionResult<T = unknown> {
-  success: boolean
-  data?: T
-  error?: string
-}
-
-export async function getIncomesByMonth(month: string): Promise<Income[]> {
+export async function getIncomesByMonth(month: string): Promise<ActionResult<Income[]>> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('incomes')
@@ -22,17 +16,20 @@ export async function getIncomesByMonth(month: string): Promise<Income[]> {
 
   if (error) {
     console.error('収入取得エラー:', error)
-    return []
+    return { success: false, error: '収入データの取得に失敗しました' }
   }
 
-  return data.map((row) => ({
-    id: row.id,
-    month: row.month,
-    label: row.label,
-    amount: row.amount,
-    person: row.person,
-    createdAt: row.created_at,
-  }))
+  return {
+    success: true,
+    data: data.map((row) => ({
+      id: row.id,
+      month: row.month,
+      label: row.label,
+      amount: row.amount,
+      person: row.person,
+      createdAt: row.created_at,
+    })),
+  }
 }
 
 export async function createIncome(
