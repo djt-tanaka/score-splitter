@@ -57,6 +57,57 @@ npm run dev
 | `npm run test:coverage` | カバレッジ測定 |
 | `npm run test:e2e` | E2Eテスト |
 
+## Keepalive（Supabase Free プラン対策）
+
+Supabase Free プランではアクティビティが低いプロジェクトが自動で pause されます。これを防ぐため、GitHub Actions で5日に1回 Supabase Edge Function を呼び出します。
+
+### 仕組み
+
+- `supabase/functions/keepalive/index.ts` - 軽量な Edge Function（JSON レスポンスを返すだけ）
+- `.github/workflows/keep-supabase-awake.yml` - 5日に1回自動実行（手動実行も可能）
+
+### セットアップ
+
+#### 1. Supabase Edge Function のデプロイ
+
+```bash
+supabase functions deploy keepalive
+```
+
+#### 2. Supabase 側の Secret 設定
+
+Supabase Dashboard > Edge Functions > Secrets で以下を設定：
+
+| Secret 名 | 値 |
+|-----------|---|
+| `KEEPALIVE_TOKEN` | 任意のランダム文字列（認証用） |
+
+#### 3. GitHub Secrets の設定
+
+リポジトリの Settings > Secrets and variables > Actions で以下を設定：
+
+| Secret 名 | 値 | 説明 |
+|-----------|---|------|
+| `SUPABASE_URL` | `https://<PROJECT_REF>.supabase.co` | Supabase プロジェクト URL |
+| `SUPABASE_KEEPALIVE_TOKEN` | Supabase 側の `KEEPALIVE_TOKEN` と同じ値 | 認証トークン |
+
+### 動作確認
+
+```bash
+# ローカルで関数を起動
+supabase functions serve keepalive
+
+# ローカルで確認
+curl http://localhost:54321/functions/v1/keepalive
+
+# デプロイ後の確認
+curl -H "Authorization: Bearer <KEEPALIVE_TOKEN>" \
+  https://<PROJECT_REF>.supabase.co/functions/v1/keepalive
+
+# GitHub Actions の手動実行
+# リポジトリの Actions タブ > "Keep Supabase Awake" > "Run workflow"
+```
+
 ## ドキュメント
 
 詳細なドキュメントは [docs/](./docs/) ディレクトリを参照してください。
