@@ -133,11 +133,11 @@ describe('ExpenseSection', () => {
 
     render(<ExpenseSection expenses={mixedExpenses} month="202601" />)
 
-    // 実績合計（isCarryover: falseの合計）: -50,000
-    expect(screen.getByText('-¥50,000')).toBeInTheDocument()
+    // 実績合計（isCarryover: falseの合計）: -50,000（ヘッダーと行アイテムの両方に表示）
+    const amounts = screen.getAllByText('-¥50,000')
+    expect(amounts.length).toBeGreaterThanOrEqual(1)
 
-    // 繰越合計テキストが表示される
-    const carryoverTotalText = screen.getByText(/繰越/)
-    expect(carryoverTotalText).toBeInTheDocument()
+    // 繰越合計テキストがヘッダーに表示される（「繰越 -¥30,000」）
+    expect(screen.getByText(/繰越\s+-¥30,000/)).toBeInTheDocument()
   })
 })

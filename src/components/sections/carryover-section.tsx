@@ -96,7 +96,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                             : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'
                         }`}
                         aria-label={carryover.isCleared ? `${carryover.label}の清算を取消` : `${carryover.label}を清算する`}
-                        title={carryover.isCleared ? '��算を取消' : '清算する'}
+                        title={carryover.isCleared ? '清算を取消' : '清算する'}
                       >
                         {carryover.isCleared ? '✓' : '○'}
                       </button>
@@ -122,7 +122,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                   <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                     <span className="text-lg opacity-50">+</span>
                   </div>
-                  <p className="text-sm">繰越が���りません</p>
+                  <p className="text-sm">繰越がありません</p>
                 </div>
               )}
             </div>
