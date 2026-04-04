@@ -17,6 +17,7 @@ import {
   createCarryover,
   updateCarryover,
   deleteCarryover,
+  toggleCarryoverCleared,
 } from '@/app/actions/carryover'
 
 describe('carryover actions', () => {
@@ -35,6 +36,7 @@ describe('carryover actions', () => {
           label: '前月からの繰越',
           amount: -30000,
           person: 'husband',
+          is_cleared: false,
           created_at: '2026-01-01T00:00:00Z',
         },
         {
@@ -43,6 +45,7 @@ describe('carryover actions', () => {
           label: '貯金から',
           amount: -20000,
           person: 'wife',
+          is_cleared: false,
           created_at: '2026-01-02T00:00:00Z',
         },
       ]
@@ -59,8 +62,29 @@ describe('carryover actions', () => {
         label: '前月からの繰越',
         amount: -30000,
         person: 'husband',
+        isCleared: false,
         createdAt: '2026-01-01T00:00:00Z',
       })
+    })
+
+    it('is_clearedがtrueの場合isClearedにマッピングされる', async () => {
+      const mockData = [
+        {
+          id: '1',
+          month: '202601',
+          label: '清算済み繰越',
+          amount: -10000,
+          person: 'husband',
+          is_cleared: true,
+          created_at: '2026-01-01T00:00:00Z',
+        },
+      ]
+      mockSelectSuccess(mockData)
+
+      const result = await getCarryoversByMonth('202601')
+
+      expect(result.success).toBe(true)
+      expect(result.data?.[0]?.isCleared).toBe(true)
     })
 
     it('データがない場合は空配列を返す', async () => {
@@ -89,6 +113,7 @@ describe('carryover actions', () => {
         label: 'テスト繰越',
         amount: 10000, // 入力は正の値
         person: 'husband',
+        is_cleared: 'false',
       })
 
       const mockRow = {
@@ -97,6 +122,7 @@ describe('carryover actions', () => {
         label: 'テスト繰越',
         amount: -10000, // DBには負の値で保存
         person: 'husband',
+        is_cleared: false,
         created_at: '2026-01-01T00:00:00Z',
       }
       mockSingleSuccess(mockRow)
@@ -105,11 +131,46 @@ describe('carryover actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.data?.amount).toBe(-10000)
+      expect(result.data?.isCleared).toBe(false)
       expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
         month: '202601',
         label: 'テスト繰越',
         amount: -10000, // 負の値で保存
         person: 'husband',
+        is_cleared: false,
+      })
+    })
+
+    it('is_cleared=trueで繰越を作成する', async () => {
+      const formData = createFormData({
+        month: '202601',
+        label: '清算済み繰越',
+        amount: 5000,
+        person: 'wife',
+        is_cleared: 'true',
+      })
+
+      const mockRow = {
+        id: 'new-id',
+        month: '202601',
+        label: '清算済み繰越',
+        amount: -5000,
+        person: 'wife',
+        is_cleared: true,
+        created_at: '2026-01-01T00:00:00Z',
+      }
+      mockSingleSuccess(mockRow)
+
+      const result = await createCarryover(formData)
+
+      expect(result.success).toBe(true)
+      expect(result.data?.isCleared).toBe(true)
+      expect(mockSupabaseClient._queryBuilder.insert).toHaveBeenCalledWith({
+        month: '202601',
+        label: '清算済み繰越',
+        amount: -5000,
+        person: 'wife',
+        is_cleared: true,
       })
     })
 
@@ -119,6 +180,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 5000,
         person: 'husband',
+        is_cleared: 'false',
       })
       mockSingleSuccess({
         id: '1',
@@ -126,6 +188,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: -5000,
         person: 'husband',
+        is_cleared: false,
         created_at: new Date().toISOString(),
       })
 
@@ -140,6 +203,7 @@ describe('carryover actions', () => {
         label: '',
         amount: 10000,
         person: 'husband',
+        is_cleared: 'false',
       })
 
       const result = await createCarryover(formData)
@@ -154,6 +218,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 0,
         person: 'husband',
+        is_cleared: 'false',
       })
 
       const result = await createCarryover(formData)
@@ -168,6 +233,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 10000,
         person: 'husband',
+        is_cleared: 'false',
       })
       mockSingleError('Database error')
 
@@ -185,6 +251,7 @@ describe('carryover actions', () => {
         label: '更新後の繰越',
         amount: 15000, // 入力は正の値
         person: 'wife',
+        is_cleared: 'false',
       })
       const mockRow = {
         id: 'existing-id',
@@ -192,6 +259,7 @@ describe('carryover actions', () => {
         label: '更新後の繰越',
         amount: -15000, // DBには負の値
         person: 'wife',
+        is_cleared: false,
         created_at: '2026-01-01T00:00:00Z',
       }
       mockSingleSuccess(mockRow)
@@ -200,10 +268,12 @@ describe('carryover actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.data?.amount).toBe(-15000)
+      expect(result.data?.isCleared).toBe(false)
       expect(mockSupabaseClient._queryBuilder.update).toHaveBeenCalledWith({
         label: '更新後の繰越',
         amount: -15000, // 負の値で更新
         person: 'wife',
+        is_cleared: false,
       })
     })
 
@@ -213,6 +283,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 5000,
         person: 'husband',
+        is_cleared: 'false',
       })
       mockSingleSuccess({
         id: '1',
@@ -220,6 +291,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: -5000,
         person: 'husband',
+        is_cleared: false,
         created_at: new Date().toISOString(),
       })
 
@@ -234,6 +306,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 10000,
         person: 'husband',
+        is_cleared: 'false',
       })
 
       const result = await updateCarryover('1', formData)
@@ -248,6 +321,7 @@ describe('carryover actions', () => {
         label: 'テスト',
         amount: 10000,
         person: 'husband',
+        is_cleared: 'false',
       })
       mockSingleError('Record not found')
 
@@ -255,6 +329,64 @@ describe('carryover actions', () => {
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('繰越の更新に失敗しました')
+    })
+  })
+
+  describe('toggleCarryoverCleared', () => {
+    it('清算フラグをtrueに更新する', async () => {
+      mockSupabaseClient._queryBuilder.eq.mockResolvedValueOnce({
+        data: null,
+        error: null,
+      })
+
+      const result = await toggleCarryoverCleared('carryover-1', true)
+
+      expect(result.success).toBe(true)
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('carryovers')
+      expect(mockSupabaseClient._queryBuilder.update).toHaveBeenCalledWith({
+        is_cleared: true,
+      })
+      expect(mockSupabaseClient._queryBuilder.eq).toHaveBeenCalledWith(
+        'id',
+        'carryover-1'
+      )
+    })
+
+    it('清算フラグをfalseに更新する', async () => {
+      mockSupabaseClient._queryBuilder.eq.mockResolvedValueOnce({
+        data: null,
+        error: null,
+      })
+
+      const result = await toggleCarryoverCleared('carryover-1', false)
+
+      expect(result.success).toBe(true)
+      expect(mockSupabaseClient._queryBuilder.update).toHaveBeenCalledWith({
+        is_cleared: false,
+      })
+    })
+
+    it('更新後にrevalidatePathが呼ばれる', async () => {
+      mockSupabaseClient._queryBuilder.eq.mockResolvedValueOnce({
+        data: null,
+        error: null,
+      })
+
+      await toggleCarryoverCleared('carryover-1', true)
+
+      expect(mockRevalidatePath).toHaveBeenCalledWith('/')
+    })
+
+    it('DBエラー時はエラーを返す', async () => {
+      mockSupabaseClient._queryBuilder.eq.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Update failed' },
+      })
+
+      const result = await toggleCarryoverCleared('carryover-1', true)
+
+      expect(result.success).toBe(false)
+      expect(result.error).toBe('清算フラグの更新に失敗しました')
     })
   })
 

@@ -27,6 +27,7 @@ export async function getCarryoversByMonth(month: string): Promise<ActionResult<
       label: row.label,
       amount: row.amount,
       person: row.person,
+      isCleared: row.is_cleared ?? false,
       createdAt: row.created_at,
     })),
   }
@@ -40,6 +41,7 @@ export async function createCarryover(
     label: formData.get('label') as string,
     amount: Number(formData.get('amount')),
     person: formData.get('person') as string,
+    is_cleared: formData.get('is_cleared') === 'true',
   }
 
   const parsed = carryoverSchema.safeParse(rawData)
@@ -56,6 +58,7 @@ export async function createCarryover(
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
+      is_cleared: parsed.data.is_cleared,
     })
     .select()
     .single()
@@ -74,6 +77,7 @@ export async function createCarryover(
       label: data.label,
       amount: data.amount,
       person: data.person,
+      isCleared: data.is_cleared,
       createdAt: data.created_at,
     },
   }
@@ -88,6 +92,7 @@ export async function updateCarryover(
     label: formData.get('label') as string,
     amount: Number(formData.get('amount')),
     person: formData.get('person') as string,
+    is_cleared: formData.get('is_cleared') === 'true',
   }
 
   const parsed = carryoverSchema.safeParse(rawData)
@@ -103,6 +108,7 @@ export async function updateCarryover(
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
+      is_cleared: parsed.data.is_cleared,
     })
     .eq('id', id)
     .select()
@@ -122,9 +128,29 @@ export async function updateCarryover(
       label: data.label,
       amount: data.amount,
       person: data.person,
+      isCleared: data.is_cleared,
       createdAt: data.created_at,
     },
   }
+}
+
+export async function toggleCarryoverCleared(
+  id: string,
+  isCleared: boolean
+): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('carryovers')
+    .update({ is_cleared: isCleared })
+    .eq('id', id)
+
+  if (error) {
+    console.error('繰越清算フラグ更新エラー:', error)
+    return { success: false, error: '清算フラグの更新に失敗しました' }
+  }
+
+  revalidatePath('/')
+  return { success: true }
 }
 
 export async function deleteCarryover(id: string): Promise<ActionResult> {

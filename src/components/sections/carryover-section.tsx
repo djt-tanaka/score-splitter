@@ -12,7 +12,7 @@ import { PersonBadge } from '@/components/ui/person-badge'
 import { DeleteButton } from '@/components/ui/delete-button'
 import { EntryForm } from '@/components/forms/entry-form'
 import { EditDialog } from '@/components/forms/edit-dialog'
-import { createCarryover, updateCarryover, deleteCarryover } from '@/app/actions/carryover'
+import { createCarryover, updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Carryover } from '@/types'
 
@@ -23,7 +23,10 @@ interface CarryoverSectionProps {
 
 export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const clearedCarryovers = carryovers.filter((c) => c.isCleared)
+  const unclearedCarryovers = carryovers.filter((c) => !c.isCleared)
   const total = carryovers.reduce((sum, c) => sum + c.amount, 0)
+  const clearedTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
 
   return (
     <Card className="shadow-card card-interactive">
@@ -37,12 +40,21 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                 ) : (
                   <ChevronRight className="h-4 w-4" />
                 )}
-                <span>繰越（参照用）</span>
+                <span>繰越</span>
                 <span className="text-xs text-muted-foreground">
-                  ※精算額には含まれません
+                  {clearedCarryovers.length > 0
+                    ? `※清算済み ${clearedCarryovers.length}件 は精算に含まれます`
+                    : '※精算額には含まれません'}
                 </span>
               </div>
-              <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
+              <div className="flex items-center gap-2">
+                {clearedCarryovers.length > 0 && (
+                  <span className="text-xs text-neon-green font-mono font-tabular">
+                    清算 {formatCurrency(clearedTotal)}
+                  </span>
+                )}
+                <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
+              </div>
             </CardTitle>
           </CollapsibleTrigger>
         </CardHeader>
@@ -52,16 +64,43 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
               {carryovers.map((carryover) => (
                 <div
                   key={carryover.id}
-                  className="flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
+                  className={`flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
+                    carryover.isCleared ? 'opacity-60' : ''
+                  }`}
                 >
                   <div className="flex items-center gap-2">
                     <PersonBadge person={carryover.person} />
-                    <span>{carryover.label}</span>
+                    <span className={carryover.isCleared ? 'line-through' : ''}>
+                      {carryover.label}
+                    </span>
+                    {carryover.isCleared && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-neon-green/10 text-neon-green">
+                        清算済
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="font-medium text-muted-foreground font-mono font-tabular">
+                    <span className={`font-medium font-mono font-tabular ${
+                      carryover.isCleared ? 'text-neon-green line-through' : 'text-muted-foreground'
+                    }`}>
                       {formatCurrency(carryover.amount)}
                     </span>
+                    <form action={async () => {
+                      await toggleCarryoverCleared(carryover.id, !carryover.isCleared)
+                    }}>
+                      <button
+                        type="submit"
+                        className={`h-9 w-9 flex items-center justify-center rounded-lg text-xs transition-colors ${
+                          carryover.isCleared
+                            ? 'text-neon-green bg-neon-green/10'
+                            : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'
+                        }`}
+                        aria-label={carryover.isCleared ? `${carryover.label}の清算を取消` : `${carryover.label}を清算する`}
+                        title={carryover.isCleared ? '��算を取消' : '清算する'}
+                      >
+                        {carryover.isCleared ? '✓' : '○'}
+                      </button>
+                    </form>
                     <EditDialog
                       id={carryover.id}
                       month={month}
@@ -69,6 +108,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                       amount={carryover.amount}
                       person={carryover.person}
                       type="carryover"
+                      isCleared={carryover.isCleared}
                       onUpdate={updateCarryover}
                     />
                     <form action={async () => { await deleteCarryover(carryover.id) }}>
@@ -82,7 +122,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                   <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                     <span className="text-lg opacity-50">+</span>
                   </div>
-                  <p className="text-sm">繰越がありません</p>
+                  <p className="text-sm">繰越が���りません</p>
                 </div>
               )}
             </div>

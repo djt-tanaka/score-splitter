@@ -25,16 +25,18 @@ export interface Expense {
   label: string
   amount: number // 負の値
   person: Person
+  isCarryover: boolean // trueの場合、繰越扱いの支出（実績から除外）
   createdAt?: string
 }
 
-// 繰越（記録用、計算には含めない）
+// 繰越（記録用、計算には含めない。清算済みの場合は精算に含む）
 export interface Carryover {
   id: string
   month: string
   label: string
   amount: number // 負の値
   person: Person
+  isCleared: boolean // trueの場合、今月の黒字で清算（精算に含む）
   createdAt?: string
 }
 
@@ -65,6 +67,7 @@ export interface CopyItem {
   amount: number
   person: Person
   type: 'income' | 'expense'
+  isCarryover?: boolean // 支出が繰越扱いの場合true
 }
 
 // 選択されたコピー項目（コピーモード付き）

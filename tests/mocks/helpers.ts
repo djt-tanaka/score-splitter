@@ -31,6 +31,7 @@ export function createMockExpense(overrides: Partial<Expense> = {}): Expense {
     label: 'テスト支出',
     amount: -50000, // 支出は負の値
     person: 'husband',
+    isCarryover: false,
     ...overrides,
   }
 }
@@ -45,6 +46,7 @@ export function createMockCarryover(
     label: 'テスト繰越',
     amount: -10000, // 繰越は負の値
     person: 'husband',
+    isCleared: false,
     ...overrides,
   }
 }
@@ -89,7 +91,7 @@ export function createMockCarryovers(count: number = 3): Carryover[] {
 export function toSupabaseRow<
   T extends { id: string; month: string; label: string; amount: number; person: string },
 >(item: T) {
-  return {
+  const row: Record<string, unknown> = {
     id: item.id,
     month: item.month,
     label: item.label,
@@ -97,4 +99,13 @@ export function toSupabaseRow<
     person: item.person,
     created_at: new Date().toISOString(),
   }
+  // Expense の isCarryover を DB形式に変換
+  if ('isCarryover' in item) {
+    row.is_carryover = (item as Record<string, unknown>).isCarryover ?? false
+  }
+  // Carryover の isCleared を DB形式に変換
+  if ('isCleared' in item) {
+    row.is_cleared = (item as Record<string, unknown>).isCleared ?? false
+  }
+  return row
 }

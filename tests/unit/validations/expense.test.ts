@@ -14,7 +14,7 @@ describe('expenseSchema', () => {
     const result = expenseSchema.safeParse(validData)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data).toEqual(validData)
+      expect(result.data).toEqual({ ...validData, is_carryover: false })
     }
   })
 
@@ -114,6 +114,32 @@ describe('expenseSchema', () => {
     it('空文字でエラー', () => {
       const result = expenseSchema.safeParse({ ...validData, person: '' })
       expect(result.success).toBe(false)
+    })
+  })
+
+  describe('is_carryoverのバリデーション', () => {
+    it('trueを受け入れる', () => {
+      const result = expenseSchema.safeParse({ ...validData, is_carryover: true })
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_carryover).toBe(true)
+      }
+    })
+
+    it('falseを受け入れる', () => {
+      const result = expenseSchema.safeParse({ ...validData, is_carryover: false })
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_carryover).toBe(false)
+      }
+    })
+
+    it('省略時はfalseがデフォルト', () => {
+      const result = expenseSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_carryover).toBe(false)
+      }
     })
   })
 })

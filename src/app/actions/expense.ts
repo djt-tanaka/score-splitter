@@ -27,6 +27,7 @@ export async function getExpensesByMonth(month: string): Promise<ActionResult<Ex
       label: row.label,
       amount: row.amount,
       person: row.person,
+      isCarryover: row.is_carryover ?? false,
       createdAt: row.created_at,
     })),
   }
@@ -40,6 +41,7 @@ export async function createExpense(
     label: formData.get('label') as string,
     amount: Number(formData.get('amount')),
     person: formData.get('person') as string,
+    is_carryover: formData.get('is_carryover') === 'true',
   }
 
   const parsed = expenseSchema.safeParse(rawData)
@@ -56,6 +58,7 @@ export async function createExpense(
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
+      is_carryover: parsed.data.is_carryover,
     })
     .select()
     .single()
@@ -74,6 +77,7 @@ export async function createExpense(
       label: data.label,
       amount: data.amount,
       person: data.person,
+      isCarryover: data.is_carryover,
       createdAt: data.created_at,
     },
   }
@@ -88,6 +92,7 @@ export async function updateExpense(
     label: formData.get('label') as string,
     amount: Number(formData.get('amount')),
     person: formData.get('person') as string,
+    is_carryover: formData.get('is_carryover') === 'true',
   }
 
   const parsed = expenseSchema.safeParse(rawData)
@@ -103,6 +108,7 @@ export async function updateExpense(
       label: parsed.data.label,
       amount: -parsed.data.amount,
       person: parsed.data.person,
+      is_carryover: parsed.data.is_carryover,
     })
     .eq('id', id)
     .select()
@@ -122,9 +128,29 @@ export async function updateExpense(
       label: data.label,
       amount: data.amount,
       person: data.person,
+      isCarryover: data.is_carryover,
       createdAt: data.created_at,
     },
   }
+}
+
+export async function toggleExpenseCarryover(
+  id: string,
+  isCarryover: boolean
+): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('expenses')
+    .update({ is_carryover: isCarryover })
+    .eq('id', id)
+
+  if (error) {
+    console.error('支出繰越フラグ更新エラー:', error)
+    return { success: false, error: '繰越フラグの更新に失敗しました' }
+  }
+
+  revalidatePath('/')
+  return { success: true }
 }
 
 export async function deleteExpense(id: string): Promise<ActionResult> {

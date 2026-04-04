@@ -67,6 +67,30 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
           </Select>
         </div>
       </div>
+      {type === 'expense' && (
+        <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+          <input type="hidden" name="is_carryover" value="false" />
+          <input
+            type="checkbox"
+            name="is_carryover"
+            value="true"
+            className="rounded border-border"
+          />
+          繰越扱いにする
+        </label>
+      )}
+      {type === 'carryover' && (
+        <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+          <input type="hidden" name="is_cleared" value="false" />
+          <input
+            type="checkbox"
+            name="is_cleared"
+            value="true"
+            className="rounded border-border"
+          />
+          今月で清算する
+        </label>
+      )}
       <SubmitButton
         className="w-full h-12 glow-sm hover:glow-md transition-shadow"
         pendingChildren="追加中..."
