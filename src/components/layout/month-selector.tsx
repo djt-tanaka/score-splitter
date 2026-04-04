@@ -4,13 +4,18 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
+import { ExportCsvButton } from '@/components/features/export-csv-button'
 import { formatMonth, parseMonth, getPreviousMonth } from '@/lib/utils/format'
+import type { Income, Expense, Carryover } from '@/types'
 
 interface MonthSelectorProps {
   currentMonth: string
+  incomes?: Income[]
+  expenses?: Expense[]
+  carryovers?: Carryover[]
 }
 
-export function MonthSelector({ currentMonth }: MonthSelectorProps) {
+export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: MonthSelectorProps) {
   const router = useRouter()
 
   function navigateMonth(offset: number) {
@@ -42,10 +47,20 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
-      <CopyMonthDialog
-        currentMonth={currentMonth}
-        previousMonth={previousMonth}
-      />
+      <div className="flex gap-2">
+        <CopyMonthDialog
+          currentMonth={currentMonth}
+          previousMonth={previousMonth}
+        />
+        {incomes && expenses && carryovers && (
+          <ExportCsvButton
+            currentMonth={currentMonth}
+            incomes={incomes}
+            expenses={expenses}
+            carryovers={carryovers}
+          />
+        )}
+      </div>
     </div>
   )
 }
