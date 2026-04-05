@@ -38,7 +38,7 @@ function getExpenseCard(page: Page) {
  */
 function getCarryoverCard(page: Page) {
   return page.locator('[data-slot="card"]').filter({
-    hasText: '繰越（参照用）',
+    has: page.locator('[data-slot="card-title"]', { hasText: /^繰越/ }),
   })
 }
 
@@ -96,7 +96,7 @@ test.describe('ホームページ', () => {
     const expenseCard = getExpenseCard(page)
     await expect(expenseCard).toBeVisible()
     // 繰越セクション
-    await expect(page.getByText('繰越（参照用）')).toBeVisible()
+    await expect(page.locator('[data-slot="card-title"]', { hasText: /^繰越/ })).toBeVisible()
     // 精算額セクション
     await expect(page.getByText('精算額', { exact: true })).toBeVisible()
   })
@@ -273,7 +273,7 @@ test.describe('繰越の追加', () => {
 
   test('繰越セクションを開いて追加できる', async ({ page }) => {
     // 繰越セクションはCollapsibleなのでクリックで展開
-    await page.getByText('繰越（参照用）').click()
+    await page.locator('[data-slot="card-title"]', { hasText: /^繰越/ }).click()
 
     const carryoverCard = getCarryoverCard(page)
     await carryoverCard.getByPlaceholder('項目名').fill('テスト繰越')
@@ -296,7 +296,7 @@ test.describe('項目の編集', () => {
   test('収入を編集できる', async ({ page }) => {
     // 副業の行を見つける（PersonBadge + ラベルがある行）
     const incomeCard = getIncomeCard(page)
-    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+    const row = incomeCard.locator('div.rounded-lg').filter({
       hasText: '副業',
     })
     // 編集ボタン（Pencilアイコン）をクリック
@@ -320,7 +320,7 @@ test.describe('項目の編集', () => {
 
   test('編集ダイアログのキャンセルが動作する', async ({ page }) => {
     const incomeCard = getIncomeCard(page)
-    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+    const row = incomeCard.locator('div.rounded-lg').filter({
       hasText: '副業',
     })
     await row.locator('button').filter({ has: page.locator('svg.lucide-pencil') }).click()
@@ -352,7 +352,7 @@ test.describe('項目の削除', () => {
     await expect(incomeCard.getByText('副業')).toBeVisible()
 
     // 副業の行の削除ボタンをクリック
-    const row = incomeCard.locator('.flex.items-center.justify-between').filter({
+    const row = incomeCard.locator('div.rounded-lg').filter({
       hasText: '副業',
     })
     await row.locator('button').filter({ has: page.locator('svg.lucide-trash-2') }).click()
