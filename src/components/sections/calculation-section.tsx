@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { calculateSettlement, filterActualExpenses, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
+import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Income, Expense, Carryover } from '@/types'
 
@@ -16,10 +16,9 @@ export function CalculationSection({
 }: CalculationSectionProps) {
   const result = calculateSettlement(incomes, expenses, carryovers)
 
-  // 月の実績（繰越を除いた支出のみ）
-  const actualExpenses = filterActualExpenses(expenses)
-  const actualExpenseTotal = actualExpenses.reduce((sum, e) => sum + e.amount, 0)
-  const monthlyBalance = result.totalIncome + actualExpenseTotal
+  // 月の実績（繰越含む全支出）
+  const allExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const monthlyBalance = result.totalIncome + allExpenseTotal
 
   // 調整
   const carryoverExpenses = filterCarryoverExpenses(expenses)
@@ -114,7 +113,7 @@ export function CalculationSection({
             <div className="flex justify-between">
               <span className="text-muted-foreground">支出合計</span>
               <span className="font-medium text-neon-red font-mono font-tabular">
-                {formatCurrency(actualExpenseTotal)}
+                {formatCurrency(allExpenseTotal)}
               </span>
             </div>
             <div className="col-span-2 pt-3 border-t">
