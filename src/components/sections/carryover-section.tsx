@@ -33,7 +33,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader className="pb-3">
           <CollapsibleTrigger asChild>
-            <CardTitle className="cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors">
+            <CardTitle data-testid="carryover-title" className="cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   {isOpen ? (
