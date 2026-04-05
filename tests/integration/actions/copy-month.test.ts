@@ -154,6 +154,82 @@ describe('copy-month actions', () => {
         expect(result.copied.incomes).toBe(1)
         expect(result.copied.expenses).toBe(1)
       })
+
+      it('繰越フラグ付き支出は繰越テーブルにコピーされる', async () => {
+        const qb = mockSupabaseClient._queryBuilder
+        qb.insert.mockResolvedValue({ data: null, error: null })
+
+        const options: CopyMonthOptions = {
+          sourceMonth: '202601',
+          targetMonth: '202602',
+          mode: 'add',
+          selectedItems: [
+            {
+              id: '1',
+              label: '前月未払い',
+              amount: -30000,
+              person: 'husband',
+              type: 'expense',
+              isCarryover: true,
+              itemCopyMode: 'withAmount',
+            },
+          ],
+          includeCarryover: false,
+        }
+
+        const result = await copyMonthData(options)
+
+        expect(result.success).toBe(true)
+        expect(result.copied.expenses).toBe(0)
+        expect(result.copied.carryovers).toBe(1)
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('carryovers')
+        expect(qb.insert).toHaveBeenCalledWith([
+          {
+            month: '202602',
+            label: '前月未払い',
+            amount: -30000,
+            person: 'husband',
+          },
+        ])
+      })
+
+      it('繰越フラグ付き支出と通常支出が混在する場合、それぞれ正しいテーブルにコピーされる', async () => {
+        const qb = mockSupabaseClient._queryBuilder
+        qb.insert.mockResolvedValue({ data: null, error: null })
+
+        const options: CopyMonthOptions = {
+          sourceMonth: '202601',
+          targetMonth: '202602',
+          mode: 'add',
+          selectedItems: [
+            {
+              id: '1',
+              label: '食費',
+              amount: -50000,
+              person: 'wife',
+              type: 'expense',
+              isCarryover: false,
+              itemCopyMode: 'withAmount',
+            },
+            {
+              id: '2',
+              label: '前月未払い',
+              amount: -30000,
+              person: 'husband',
+              type: 'expense',
+              isCarryover: true,
+              itemCopyMode: 'withAmount',
+            },
+          ],
+          includeCarryover: false,
+        }
+
+        const result = await copyMonthData(options)
+
+        expect(result.success).toBe(true)
+        expect(result.copied.expenses).toBe(1)
+        expect(result.copied.carryovers).toBe(1)
+      })
     })
 
     describe('skipモード', () => {
@@ -245,7 +321,7 @@ describe('copy-month actions', () => {
         qb.select.mockReturnValue(qb)
         qb.eq.mockResolvedValueOnce({
           data: [
-            { label: '前月繰越', amount: -10000, person: 'husband' },
+            { label: '前月繰越', amount: -10000, person: 'husband', is_cleared: false },
           ],
           error: null,
         })
@@ -265,6 +341,64 @@ describe('copy-month actions', () => {
 
         expect(result.success).toBe(true)
         expect(result.copied.carryovers).toBe(1)
+      })
+
+      it('清算済み繰越はコピーされずスキップされる', async () => {
+        const qb = mockSupabaseClient._queryBuilder
+
+        // 繰越データの取得（清算済みと未清算の混在）
+        qb.select.mockReturnValue(qb)
+        qb.eq.mockResolvedValueOnce({
+          data: [
+            { label: '前月繰越', amount: -10000, person: 'husband', is_cleared: false },
+            { label: '清算済み繰越', amount: -5000, person: 'wife', is_cleared: true },
+          ],
+          error: null,
+        })
+
+        // insertの結果
+        qb.insert.mockResolvedValue({ data: null, error: null })
+
+        const options: CopyMonthOptions = {
+          sourceMonth: '202601',
+          targetMonth: '202602',
+          mode: 'add',
+          selectedItems: [],
+          includeCarryover: true,
+        }
+
+        const result = await copyMonthData(options)
+
+        expect(result.success).toBe(true)
+        expect(result.copied.carryovers).toBe(1)
+        expect(result.skipped.carryovers).toBe(1)
+      })
+
+      it('全て清算済みの場合はコピーされない', async () => {
+        const qb = mockSupabaseClient._queryBuilder
+
+        qb.select.mockReturnValue(qb)
+        qb.eq.mockResolvedValueOnce({
+          data: [
+            { label: '清算済み1', amount: -10000, person: 'husband', is_cleared: true },
+            { label: '清算済み2', amount: -5000, person: 'wife', is_cleared: true },
+          ],
+          error: null,
+        })
+
+        const options: CopyMonthOptions = {
+          sourceMonth: '202601',
+          targetMonth: '202602',
+          mode: 'add',
+          selectedItems: [],
+          includeCarryover: true,
+        }
+
+        const result = await copyMonthData(options)
+
+        expect(result.success).toBe(true)
+        expect(result.copied.carryovers).toBe(0)
+        expect(result.skipped.carryovers).toBe(2)
       })
 
       it('includeCarryover=falseで繰越をスキップする', async () => {
@@ -356,6 +490,38 @@ describe('copy-month actions', () => {
 
         expect(result.success).toBe(false)
         expect(result.error).toContain('支出の挿入に失敗')
+      })
+
+      it('繰越フラグ付き支出の挿入エラー時にエラーを返す', async () => {
+        const qb = mockSupabaseClient._queryBuilder
+        // 繰越（支出からの変換）挿入は失敗
+        qb.insert.mockResolvedValueOnce({
+          data: null,
+          error: { message: 'Insert failed' },
+        })
+
+        const options: CopyMonthOptions = {
+          sourceMonth: '202601',
+          targetMonth: '202602',
+          mode: 'add',
+          selectedItems: [
+            {
+              id: '1',
+              label: '前月未払い',
+              amount: -30000,
+              person: 'husband',
+              type: 'expense',
+              isCarryover: true,
+              itemCopyMode: 'withAmount',
+            },
+          ],
+          includeCarryover: false,
+        }
+
+        const result = await copyMonthData(options)
+
+        expect(result.success).toBe(false)
+        expect(result.error).toContain('繰越（支出からの変換）の挿入に失敗')
       })
     })
 

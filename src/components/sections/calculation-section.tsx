@@ -1,18 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { calculateSettlement } from '@/lib/utils/calculation'
+import { calculateSettlement, filterActualExpenses, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import { formatCurrency } from '@/lib/utils/format'
-import type { Income, Expense } from '@/types'
+import type { Income, Expense, Carryover } from '@/types'
 
 interface CalculationSectionProps {
   incomes: Income[]
   expenses: Expense[]
+  carryovers: Carryover[]
 }
 
 export function CalculationSection({
   incomes,
   expenses,
+  carryovers,
 }: CalculationSectionProps) {
-  const result = calculateSettlement(incomes, expenses)
+  const result = calculateSettlement(incomes, expenses, carryovers)
+
+  // 月の実績（繰越を除いた支出のみ）
+  const actualExpenses = filterActualExpenses(expenses)
+  const actualExpenseTotal = actualExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const monthlyBalance = result.totalIncome + actualExpenseTotal
+
+  // 調整
+  const carryoverExpenses = filterCarryoverExpenses(expenses)
+  const clearedCarryovers = filterClearedCarryovers(carryovers)
+  const carryoverExpenseTotal = carryoverExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const clearedCarryoverTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
+  const hasAdjustments = carryoverExpenses.length > 0 || clearedCarryovers.length > 0
 
   // バランスバーの比率計算
   const totalContribution = Math.abs(result.husbandTotal) + Math.abs(result.wifeTotal)
@@ -84,10 +98,10 @@ export function CalculationSection({
         </CardContent>
       </Card>
 
-      {/* 収支詳細カード */}
+      {/* 月の実績カード */}
       <Card className="shadow-card card-interactive">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">収支詳細</CardTitle>
+          <CardTitle className="text-base">月の実績</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
@@ -100,9 +114,65 @@ export function CalculationSection({
             <div className="flex justify-between">
               <span className="text-muted-foreground">支出合計</span>
               <span className="font-medium text-neon-red font-mono font-tabular">
-                {formatCurrency(result.totalExpense)}
+                {formatCurrency(actualExpenseTotal)}
               </span>
             </div>
+            <div className="col-span-2 pt-3 border-t">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">月の収支</span>
+                <span className={`font-semibold font-mono font-tabular ${monthlyBalance >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                  {formatCurrency(monthlyBalance)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 調整カード（調整がある場合のみ表示） */}
+      {hasAdjustments && (
+        <Card className="shadow-card card-interactive">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">調整</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 text-sm">
+              {carryoverExpenses.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">繰越に回した支出</span>
+                  <span className="font-medium font-mono font-tabular">
+                    {formatCurrency(carryoverExpenseTotal)}
+                  </span>
+                </div>
+              )}
+              {clearedCarryovers.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">清算した繰越</span>
+                  <span className="font-medium font-mono font-tabular">
+                    {formatCurrency(clearedCarryoverTotal)}
+                  </span>
+                </div>
+              )}
+              <div className="pt-3 border-t">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">調整後の収支</span>
+                  <span className={`font-semibold font-mono font-tabular ${(monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal) >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
+                    {formatCurrency(monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 収支詳細カード */}
+      <Card className="shadow-card card-interactive">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">収支詳細</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">夫の支出</span>
               <span className="font-medium font-mono font-tabular">

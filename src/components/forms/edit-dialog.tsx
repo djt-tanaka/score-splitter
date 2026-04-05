@@ -29,6 +29,8 @@ interface EditDialogProps {
   amount: number
   person: Person
   type: 'income' | 'expense' | 'carryover'
+  isCarryover?: boolean
+  isCleared?: boolean
   onUpdate: (
     id: string,
     formData: FormData
@@ -48,6 +50,8 @@ export function EditDialog({
   amount,
   person,
   type,
+  isCarryover,
+  isCleared,
   onUpdate,
 }: EditDialogProps) {
   const [open, setOpen] = useState(false)
@@ -114,6 +118,32 @@ export function EditDialog({
               </SelectContent>
             </Select>
           </div>
+          {type === 'expense' && (
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="hidden" name="is_carryover" value="false" />
+              <input
+                type="checkbox"
+                name="is_carryover"
+                value="true"
+                defaultChecked={isCarryover}
+                className="rounded border-border"
+              />
+              繰越扱いにする
+            </label>
+          )}
+          {type === 'carryover' && (
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="hidden" name="is_cleared" value="false" />
+              <input
+                type="checkbox"
+                name="is_cleared"
+                value="true"
+                defaultChecked={isCleared}
+                className="rounded border-border"
+              />
+              今月で清算する
+            </label>
+          )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex gap-3 pt-2">
             <Button

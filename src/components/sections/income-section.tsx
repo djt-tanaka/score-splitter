@@ -30,16 +30,19 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
           {incomes.map((income) => (
             <div
               key={income.id}
-              className="flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
+              data-testid="item-row"
+              className="py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
             >
-              <div className="flex items-center gap-2">
-                <PersonBadge person={income.person} />
-                <span>{income.label}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium font-mono font-tabular">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <PersonBadge person={income.person} />
+                  <span className="truncate">{income.label}</span>
+                </div>
+                <span className="font-medium font-mono font-tabular shrink-0 ml-2">
                   {formatCurrency(income.amount)}
                 </span>
+              </div>
+              <div className="flex items-center justify-end gap-1 mt-1">
                 <EditDialog
                   id={income.id}
                   month={month}

@@ -7,6 +7,7 @@ export const expenseSchema = z.object({
   person: z.enum(['husband', 'wife'], {
     message: '担当者を選択してください',
   }),
+  is_carryover: z.boolean().optional().default(false),
 })
 
 // 入力時は正の値、保存時に負の値に変換

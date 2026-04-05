@@ -14,7 +14,7 @@ describe('carryoverSchema', () => {
     const result = carryoverSchema.safeParse(validData)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data).toEqual(validData)
+      expect(result.data).toEqual({ ...validData, is_cleared: false })
     }
   })
 
@@ -120,6 +120,32 @@ describe('carryoverSchema', () => {
     it('空文字でエラー', () => {
       const result = carryoverSchema.safeParse({ ...validData, person: '' })
       expect(result.success).toBe(false)
+    })
+  })
+
+  describe('is_clearedのバリデーション', () => {
+    it('trueを受け入れる', () => {
+      const result = carryoverSchema.safeParse({ ...validData, is_cleared: true })
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_cleared).toBe(true)
+      }
+    })
+
+    it('falseを受け入れる', () => {
+      const result = carryoverSchema.safeParse({ ...validData, is_cleared: false })
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_cleared).toBe(false)
+      }
+    })
+
+    it('省略時はfalseがデフォルト', () => {
+      const result = carryoverSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.is_cleared).toBe(false)
+      }
     })
   })
 })
