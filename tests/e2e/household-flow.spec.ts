@@ -38,7 +38,7 @@ function getExpenseCard(page: Page) {
  */
 function getCarryoverCard(page: Page) {
   return page.locator('[data-slot="card"]').filter({
-    has: page.locator('[data-slot="card-title"]', { hasText: /^繰越/ }),
+    has: page.locator('[data-slot="card-title"]', { hasText: '繰越' }),
   })
 }
 
@@ -96,7 +96,7 @@ test.describe('ホームページ', () => {
     const expenseCard = getExpenseCard(page)
     await expect(expenseCard).toBeVisible()
     // 繰越セクション
-    await expect(page.locator('[data-slot="card-title"]', { hasText: /^繰越/ })).toBeVisible()
+    await expect(page.locator('[data-slot="card-title"]', { hasText: '繰越' })).toBeVisible()
     // 精算額セクション
     await expect(page.getByText('精算額', { exact: true })).toBeVisible()
   })
@@ -273,7 +273,7 @@ test.describe('繰越の追加', () => {
 
   test('繰越セクションを開いて追加できる', async ({ page }) => {
     // 繰越セクションはCollapsibleなのでクリックで展開
-    await page.locator('[data-slot="card-title"]', { hasText: /^繰越/ }).click()
+    await page.locator('[data-slot="card-title"]', { hasText: '繰越' }).click()
 
     const carryoverCard = getCarryoverCard(page)
     await carryoverCard.getByPlaceholder('項目名').fill('テスト繰越')
