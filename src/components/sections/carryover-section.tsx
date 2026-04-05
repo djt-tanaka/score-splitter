@@ -33,28 +33,30 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CardHeader className="pb-3">
           <CollapsibleTrigger asChild>
-            <CardTitle className="flex justify-between items-center cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors">
-              <div className="flex items-center gap-2">
-                {isOpen ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-                <span>繰越</span>
-                <span className="text-xs text-muted-foreground">
-                  {clearedCarryovers.length > 0
-                    ? `※清算済み ${clearedCarryovers.length}件 は精算に含まれます`
-                    : '※精算額には含まれません'}
-                </span>
+            <CardTitle className="cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  {isOpen ? (
+                    <ChevronDown className="h-4 w-4 shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 shrink-0" />
+                  )}
+                  <span>繰越</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {clearedCarryovers.length > 0 && (
+                    <span className="text-xs text-neon-green font-mono font-tabular">
+                      清算 {formatCurrency(clearedTotal)}
+                    </span>
+                  )}
+                  <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                {clearedCarryovers.length > 0 && (
-                  <span className="text-xs text-neon-green font-mono font-tabular">
-                    清算 {formatCurrency(clearedTotal)}
-                  </span>
-                )}
-                <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-normal mt-1 ml-6">
+                {clearedCarryovers.length > 0
+                  ? `※清算済み ${clearedCarryovers.length}件 は精算に含まれます`
+                  : '※精算額には含まれません'}
+              </p>
             </CardTitle>
           </CollapsibleTrigger>
         </CardHeader>
@@ -64,33 +66,35 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
               {carryovers.map((carryover) => (
                 <div
                   key={carryover.id}
-                  className={`flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
+                  className={`py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
                     carryover.isCleared ? 'opacity-60' : ''
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <PersonBadge person={carryover.person} />
-                    <span className={carryover.isCleared ? 'line-through' : ''}>
-                      {carryover.label}
-                    </span>
-                    {carryover.isCleared && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-neon-green/10 text-neon-green">
-                        清算済
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <PersonBadge person={carryover.person} />
+                      <span className={`truncate ${carryover.isCleared ? 'line-through' : ''}`}>
+                        {carryover.label}
                       </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className={`font-medium font-mono font-tabular ${
+                      {carryover.isCleared && (
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-neon-green/10 text-neon-green shrink-0">
+                          清算済
+                        </span>
+                      )}
+                    </div>
+                    <span className={`font-medium font-mono font-tabular shrink-0 ml-2 ${
                       carryover.isCleared ? 'text-neon-green line-through' : 'text-muted-foreground'
                     }`}>
                       {formatCurrency(carryover.amount)}
                     </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-1 mt-1">
                     <form action={async () => {
                       await toggleCarryoverCleared(carryover.id, !carryover.isCleared)
                     }}>
                       <button
                         type="submit"
-                        className={`h-9 w-9 flex items-center justify-center rounded-lg text-xs transition-colors ${
+                        className={`h-8 w-8 flex items-center justify-center rounded-lg text-xs transition-colors ${
                           carryover.isCleared
                             ? 'text-neon-green bg-neon-green/10'
                             : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'

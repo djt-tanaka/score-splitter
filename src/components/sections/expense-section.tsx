@@ -40,29 +40,31 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
           {expenses.map((expense) => (
             <div
               key={expense.id}
-              className={`flex items-center justify-between py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
+              className={`py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
                 expense.isCarryover ? 'opacity-60' : ''
               }`}
             >
-              <div className="flex items-center gap-2">
-                <PersonBadge person={expense.person} />
-                <span>{expense.label}</span>
-                {expense.isCarryover && (
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                    繰越
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-1">
-                <span className={`font-medium font-mono font-tabular ${expense.isCarryover ? 'text-muted-foreground' : 'text-neon-red'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <PersonBadge person={expense.person} />
+                  <span className="truncate">{expense.label}</span>
+                  {expense.isCarryover && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
+                      繰越
+                    </span>
+                  )}
+                </div>
+                <span className={`font-medium font-mono font-tabular shrink-0 ml-2 ${expense.isCarryover ? 'text-muted-foreground' : 'text-neon-red'}`}>
                   {formatCurrency(expense.amount)}
                 </span>
+              </div>
+              <div className="flex items-center justify-end gap-1 mt-1">
                 <form action={async () => {
                   await toggleExpenseCarryover(expense.id, !expense.isCarryover)
                 }}>
                   <button
                     type="submit"
-                    className={`h-9 w-9 flex items-center justify-center rounded-lg text-xs transition-colors ${
+                    className={`h-8 w-8 flex items-center justify-center rounded-lg text-xs transition-colors ${
                       expense.isCarryover
                         ? 'text-accent bg-accent/10'
                         : 'text-muted-foreground hover:text-accent hover:bg-accent/10'
