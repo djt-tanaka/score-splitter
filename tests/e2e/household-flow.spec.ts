@@ -296,7 +296,7 @@ test.describe('項目の編集', () => {
   test('収入を編集できる', async ({ page }) => {
     // 副業の行を見つける（PersonBadge + ラベルがある行）
     const incomeCard = getIncomeCard(page)
-    const row = incomeCard.locator('div.rounded-lg').filter({
+    const row = incomeCard.locator('[data-testid="item-row"]').filter({
       hasText: '副業',
     })
     // 編集ボタン（Pencilアイコン）をクリック
@@ -320,7 +320,7 @@ test.describe('項目の編集', () => {
 
   test('編集ダイアログのキャンセルが動作する', async ({ page }) => {
     const incomeCard = getIncomeCard(page)
-    const row = incomeCard.locator('div.rounded-lg').filter({
+    const row = incomeCard.locator('[data-testid="item-row"]').filter({
       hasText: '副業',
     })
     await row.locator('button').filter({ has: page.locator('svg.lucide-pencil') }).click()
@@ -352,7 +352,7 @@ test.describe('項目の削除', () => {
     await expect(incomeCard.getByText('副業')).toBeVisible()
 
     // 副業の行の削除ボタンをクリック
-    const row = incomeCard.locator('div.rounded-lg').filter({
+    const row = incomeCard.locator('[data-testid="item-row"]').filter({
       hasText: '副業',
     })
     await row.locator('button').filter({ has: page.locator('svg.lucide-trash-2') }).click()

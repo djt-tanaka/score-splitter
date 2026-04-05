@@ -40,6 +40,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
           {expenses.map((expense) => (
             <div
               key={expense.id}
+              data-testid="item-row"
               className={`py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
                 expense.isCarryover ? 'opacity-60' : ''
               }`}

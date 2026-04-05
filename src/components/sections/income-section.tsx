@@ -30,6 +30,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
           {incomes.map((income) => (
             <div
               key={income.id}
+              data-testid="item-row"
               className="py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
             >
               <div className="flex items-center justify-between">
