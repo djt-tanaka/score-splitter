@@ -67,7 +67,6 @@ export interface CopyItem {
   amount: number
   person: Person
   type: 'income' | 'expense'
-  isCarryover?: boolean // 支出が繰越扱いの場合true
 }
 
 // 選択されたコピー項目（コピーモード付き）
