@@ -62,6 +62,11 @@ export async function getCopyMonthPreview(
     return { success: false, error: 'プレビューデータの取得に失敗しました' }
   }
 
+  // 繰越フラグ付き支出はリストから除外し、繰越の一括コピーに含める
+  const expenseData = expenses.data ?? []
+  const regularExpenses = expenseData.filter((item) => !item.is_carryover)
+  const carryoverExpenseCount = expenseData.filter((item) => item.is_carryover).length
+
   const items: CopyItem[] = [
     ...(incomes.data ?? []).map((item) => ({
       id: item.id,
@@ -70,13 +75,12 @@ export async function getCopyMonthPreview(
       person: item.person,
       type: 'income' as const,
     })),
-    ...(expenses.data ?? []).map((item) => ({
+    ...regularExpenses.map((item) => ({
       id: item.id,
       label: item.label,
       amount: item.amount,
       person: item.person,
       type: 'expense' as const,
-      isCarryover: item.is_carryover ?? false,
     })),
   ]
 
@@ -91,7 +95,7 @@ export async function getCopyMonthPreview(
       sourceMonth,
       targetMonth,
       items,
-      carryoverCount: carryovers.count ?? 0,
+      carryoverCount: (carryovers.count ?? 0) + carryoverExpenseCount,
       existingCount,
     },
   }
@@ -106,12 +110,20 @@ async function copyCarryovers(
   targetMonth: string,
   mode: 'add' | 'skip' | 'replace'
 ): Promise<{ copied: number; skipped: number }> {
-  const { data: sourceData, error } = await supabase
-    .from('carryovers')
-    .select('label, amount, person, is_cleared')
-    .eq('month', sourceMonth)
+  // 繰越テーブルのレコードと、繰越フラグ付き支出の両方を取得
+  const [carryoverResult, carryoverExpenseResult] = await Promise.all([
+    supabase
+      .from('carryovers')
+      .select('label, amount, person, is_cleared')
+      .eq('month', sourceMonth),
+    supabase
+      .from('expenses')
+      .select('label, amount, person')
+      .eq('month', sourceMonth)
+      .eq('is_carryover', true),
+  ])
 
-  if (error || !sourceData) {
+  if (carryoverResult.error || carryoverExpenseResult.error) {
     throw new Error('繰越の取得に失敗しました')
   }
 
@@ -137,13 +149,31 @@ async function copyCarryovers(
     person: string
   }> = []
 
-  for (const item of sourceData) {
-    // 清算済み繰越はコピーしない
+  // 繰越テーブルのレコードを処理（清算済みはスキップ）
+  for (const item of carryoverResult.data ?? []) {
     if (item.is_cleared) {
       skipped++
       continue
     }
 
+    const key = `${item.label}|${item.person}`
+
+    if (mode === 'skip' && existingKeys.has(key)) {
+      skipped++
+      continue
+    }
+
+    itemsToInsert.push({
+      month: targetMonth,
+      label: item.label,
+      amount: item.amount,
+      person: item.person,
+    })
+    copied++
+  }
+
+  // 繰越フラグ付き支出も繰越としてコピー
+  for (const item of carryoverExpenseResult.data ?? []) {
     const key = `${item.label}|${item.person}`
 
     if (mode === 'skip' && existingKeys.has(key)) {
@@ -255,13 +285,6 @@ export async function copyMonthData(
       amount: number
       person: string
     }> = []
-    // 繰越フラグ付き支出は繰越テーブルに変換
-    const carryoverFromExpenseItems: Array<{
-      month: string
-      label: string
-      amount: number
-      person: string
-    }> = []
 
     for (const item of options.selectedItems) {
       const key = `${item.label}|${item.person}`
@@ -291,10 +314,6 @@ export async function copyMonthData(
       if (item.type === 'income') {
         incomeItems.push(newItem)
         result.copied.incomes++
-      } else if (item.isCarryover) {
-        // 繰越フラグ付き支出は繰越テーブルに変換
-        carryoverFromExpenseItems.push(newItem)
-        result.copied.carryovers++
       } else {
         expenseItems.push(newItem)
         result.copied.expenses++
@@ -309,11 +328,6 @@ export async function copyMonthData(
     if (expenseItems.length > 0) {
       const { error } = await supabase.from('expenses').insert(expenseItems)
       if (error) throw new Error(`支出の挿入に失敗: ${error.message}`)
-    }
-
-    if (carryoverFromExpenseItems.length > 0) {
-      const { error } = await supabase.from('carryovers').insert(carryoverFromExpenseItems)
-      if (error) throw new Error(`繰越（支出からの変換）の挿入に失敗: ${error.message}`)
     }
 
     // 繰越を一括コピー
