@@ -15,7 +15,7 @@ export default function Loading() {
         </div>
       </header>
 
-      <main id="main" className="container mx-auto px-4 py-8 space-y-6 max-w-4xl animate-fade-in">
+      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-8 space-y-6 max-w-4xl animate-fade-in">
         {/* 月セレクター */}
         <div className="flex items-center justify-center gap-2">
           <Skeleton className="h-10 w-10 rounded-md" />

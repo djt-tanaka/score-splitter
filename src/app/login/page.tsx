@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, {})
 
   return (
-    <main id="main" className="min-h-screen flex items-center justify-center gradient-page">
+    <main id="main" tabIndex={-1} className="min-h-screen flex items-center justify-center gradient-page">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-accent/5 blur-3xl" />

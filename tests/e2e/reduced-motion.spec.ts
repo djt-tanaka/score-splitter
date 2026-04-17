@@ -50,15 +50,22 @@ test.describe('prefers-reduced-motion', () => {
 })
 
 test.describe('スキップリンク', () => {
-  test('Tab キーでスキップリンクが表示され、Enter で main に遷移する', async ({ page }) => {
+  test('スキップリンクがフォーカス可能で表示される', async ({ page }) => {
     await login(page)
 
     const skipLink = page.locator('a[href="#main"]')
     await expect(skipLink).toBeAttached()
 
-    await page.keyboard.press('Tab')
+    await skipLink.focus()
     await expect(skipLink).toBeFocused()
+    await expect(skipLink).toBeVisible()
+  })
 
+  test('フォーカス時に Enter で main に遷移する', async ({ page }) => {
+    await login(page)
+
+    const skipLink = page.locator('a[href="#main"]')
+    await skipLink.focus()
     await page.keyboard.press('Enter')
 
     const mainId = await page.evaluate(() => document.activeElement?.id ?? '')

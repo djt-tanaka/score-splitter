@@ -26,12 +26,24 @@ describe('スキップリンク', () => {
   it('href="#main" のスキップリンクが存在する', () => {
     const { container } = render(
       <RootLayout>
-        <main id="main">コンテンツ</main>
+        <main id="main" tabIndex={-1}>コンテンツ</main>
       </RootLayout>
     )
 
     const skipLink = container.querySelector('a[href="#main"]')
     expect(skipLink).toBeTruthy()
     expect(skipLink?.textContent).toBe('メインコンテンツへ')
+  })
+
+  it('main 要素が tabIndex={-1} でフォーカス可能である', () => {
+    const { container } = render(
+      <RootLayout>
+        <main id="main" tabIndex={-1}>コンテンツ</main>
+      </RootLayout>
+    )
+
+    const main = container.querySelector('main#main')
+    expect(main).toBeTruthy()
+    expect(main?.getAttribute('tabindex')).toBe('-1')
   })
 })

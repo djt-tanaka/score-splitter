@@ -171,14 +171,14 @@ test.describe('月ナビゲーション', () => {
   })
 
   test('前月に移動できる', async ({ page }) => {
-    await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left') }).click()
+    await page.getByRole('button', { name: '前月に移動' }).click()
 
     await expect(page).toHaveURL(/month=202601/)
     await expect(page.getByText('2026年1月')).toBeVisible()
   })
 
   test('翌月に移動できる', async ({ page }) => {
-    await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-right') }).click()
+    await page.getByRole('button', { name: '翌月に移動' }).click()
 
     await expect(page).toHaveURL(/month=202603/)
     await expect(page.getByText('2026年3月')).toBeVisible()
@@ -189,7 +189,7 @@ test.describe('月ナビゲーション', () => {
     await expect(page.getByText('副業')).toBeVisible()
 
     // 1月に移動
-    await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-left') }).click()
+    await page.getByRole('button', { name: '前月に移動' }).click()
     await page.waitForURL(/month=202601/)
 
     // 1月には副業がない
@@ -198,7 +198,7 @@ test.describe('月ナビゲーション', () => {
 
   test('データのない月では空メッセージが表示される', async ({ page }) => {
     // 2026年3月に移動（データなし）
-    await page.locator('button').filter({ has: page.locator('svg.lucide-chevron-right') }).click()
+    await page.getByRole('button', { name: '翌月に移動' }).click()
     await page.waitForURL(/month=202603/)
 
     await expect(page.getByText('収入がありません')).toBeVisible()
