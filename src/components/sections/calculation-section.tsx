@@ -81,11 +81,11 @@ export function CalculationSection({
             </div>
             <div className="relative h-3 bg-muted rounded-full overflow-hidden">
               <div
-                className="absolute left-0 top-0 h-full bg-husband rounded-l-full transition-all duration-500 ease-out"
+                className="absolute left-0 top-0 h-full bg-husband rounded-l-full transition-[width] motion-safe:duration-500 motion-reduce:duration-0 ease-out"
                 style={{ width: `${husbandRatio}%` }}
               />
               <div
-                className="absolute right-0 top-0 h-full bg-wife rounded-r-full transition-all duration-500 ease-out"
+                className="absolute right-0 top-0 h-full bg-wife rounded-r-full transition-[width] motion-safe:duration-500 motion-reduce:duration-0 ease-out"
                 style={{ width: `${wifeRatio}%` }}
               />
             </div>

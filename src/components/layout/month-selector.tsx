@@ -39,7 +39,8 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
         </Button>
         <button
           onClick={goToCurrentMonth}
-          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-all duration-200 hover:scale-105"
+          aria-label="今月に移動"
+          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-[color,transform] duration-200 motion-safe:hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md"
         >
           {formatMonth(currentMonth)}
         </button>

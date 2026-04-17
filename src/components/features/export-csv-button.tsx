@@ -27,7 +27,7 @@ export function ExportCsvButton({
 
   return (
     <Button variant="outline" size="sm" onClick={handleExport}>
-      <Download className="mr-1.5 h-4 w-4" />
+      <Download className="mr-1 h-4 w-4" />
       CSV出力
     </Button>
   )
