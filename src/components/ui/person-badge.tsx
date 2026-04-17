@@ -19,7 +19,7 @@ export function PersonBadge({ person }: PersonBadgeProps) {
   const config = personConfig[person]
 
   return (
-    <span className={`text-xs px-2.5 py-1 rounded-md font-semibold ${config.className}`}>
+    <span className={`text-xs px-2 py-1 rounded-md font-semibold ${config.className}`}>
       {config.label}
     </span>
   )

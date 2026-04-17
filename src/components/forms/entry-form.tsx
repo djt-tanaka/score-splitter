@@ -40,7 +40,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
     <form ref={formRef} action={handleSubmit} className="space-y-3 pt-4 border-t border-border/50">
       <div>
         <Label htmlFor={`${uniqueId}-label`} className="sr-only">項目名</Label>
-        <Input id={`${uniqueId}-label`} name="label" placeholder="項目名" required />
+        <Input id={`${uniqueId}-label`} name="label" placeholder="項目名…" autoComplete="off" required />
       </div>
       <div className="flex gap-3">
         <div className="flex-1">
@@ -49,7 +49,8 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
             id={`${uniqueId}-amount`}
             name="amount"
             type="number"
-            placeholder="金額"
+            placeholder="金額…"
+            autoComplete="off"
             min="1"
             required
           />
@@ -74,7 +75,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
             type="checkbox"
             name="is_carryover"
             value="true"
-            className="rounded border-border"
+            className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           繰越扱いにする
         </label>
@@ -86,7 +87,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
             type="checkbox"
             name="is_cleared"
             value="true"
-            className="rounded border-border"
+            className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           今月で清算する
         </label>

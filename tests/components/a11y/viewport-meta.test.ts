@@ -1,0 +1,33 @@
+import { describe, it, expect, vi } from 'vitest'
+
+vi.mock('next/font/google', () => ({
+  Geist: () => ({ variable: '--font-geist-sans' }),
+  Geist_Mono: () => ({ variable: '--font-geist-mono' }),
+}))
+
+vi.mock('@vercel/speed-insights/next', () => ({
+  SpeedInsights: () => null,
+}))
+
+vi.mock('@/components/ui/sonner', () => ({
+  Toaster: () => null,
+}))
+
+vi.mock('@/components/providers/theme-provider', () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+}))
+
+vi.mock('@/app/globals.css', () => ({}))
+
+import { viewport } from '@/app/layout'
+
+describe('viewport export', () => {
+  it('themeColor にライトとダーク両方を定義している', () => {
+    expect(viewport.themeColor).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ media: '(prefers-color-scheme: light)' }),
+        expect.objectContaining({ media: '(prefers-color-scheme: dark)' }),
+      ])
+    )
+  })
+})

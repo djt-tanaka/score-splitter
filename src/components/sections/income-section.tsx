@@ -31,7 +31,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
             <div
               key={income.id}
               data-testid="item-row"
-              className="py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
+              className="py-2 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">

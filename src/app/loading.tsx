@@ -15,7 +15,7 @@ export default function Loading() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-6 max-w-4xl animate-fade-in">
+      <main id="main" className="container mx-auto px-4 py-8 space-y-6 max-w-4xl animate-fade-in">
         {/* 月セレクター */}
         <div className="flex items-center justify-center gap-2">
           <Skeleton className="h-10 w-10 rounded-md" />
@@ -49,7 +49,7 @@ export default function Loading() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {[0, 1, 2].map((j) => (
-                  <div key={j} className="flex items-center justify-between py-2.5">
+                  <div key={j} className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-6 w-8 rounded-full" />
                       <Skeleton className="h-5 w-20" />
