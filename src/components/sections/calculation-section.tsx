@@ -1,7 +1,12 @@
+'use client'
+
+import { AnimatePresence, motion } from 'motion/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AnimatedYen } from '@/components/animations/animated-number'
+import { barSpring } from '@/components/animations/tokens'
+import { useMotionPrefs } from '@/components/animations/use-motion-prefs'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
-import { formatCurrency } from '@/lib/utils/format'
 import type { Income, Expense, Carryover } from '@/types'
 
 interface CalculationSectionProps {
@@ -17,18 +22,16 @@ export function CalculationSection({
 }: CalculationSectionProps) {
   const result = calculateSettlement(incomes, expenses, carryovers)
 
-  // 月の実績（繰越含む全支出）- 月一覧カードと同じ共通ロジックを使う
   const { expenseTotal: allExpenseTotal, balance: monthlyBalance } =
     calculateMonthBalance(incomes, expenses)
 
-  // 調整
   const carryoverExpenses = filterCarryoverExpenses(expenses)
   const clearedCarryovers = filterClearedCarryovers(carryovers)
   const carryoverExpenseTotal = carryoverExpenses.reduce((sum, e) => sum + e.amount, 0)
   const clearedCarryoverTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
+  const adjustedBalance = monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal
   const hasAdjustments = carryoverExpenses.length > 0 || clearedCarryovers.length > 0
 
-  // バランスバーの比率計算
   const totalContribution = Math.abs(result.husbandTotal) + Math.abs(result.wifeTotal)
   const husbandRatio = totalContribution > 0
     ? (Math.abs(result.husbandTotal) / totalContribution) * 100
@@ -36,6 +39,10 @@ export function CalculationSection({
   const wifeRatio = totalContribution > 0
     ? (Math.abs(result.wifeTotal) / totalContribution) * 100
     : 50
+
+  const settlementSign = result.settlement > 0 ? 'plus' : result.settlement < 0 ? 'minus' : 'zero'
+  const { reduced } = useMotionPrefs()
+  const barTransition = reduced ? { duration: 0 } : barSpring
 
   return (
     <div className="space-y-4">
@@ -48,29 +55,38 @@ export function CalculationSection({
               精算額
             </p>
             <div className="space-y-2">
-              {result.settlement > 0 ? (
-                <>
-                  <p className="text-5xl md:text-6xl font-bold text-neon-cyan font-mono font-tabular leading-none">
-                    {formatCurrency(result.settlement)}
-                  </p>
-                  <p className="text-base text-muted-foreground font-medium">
-                    夫 → 妻
-                  </p>
-                </>
-              ) : result.settlement < 0 ? (
-                <>
-                  <p className="text-5xl md:text-6xl font-bold text-neon-cyan font-mono font-tabular leading-none">
-                    {formatCurrency(Math.abs(result.settlement))}
-                  </p>
-                  <p className="text-base text-muted-foreground font-medium">
-                    妻 → 夫
-                  </p>
-                </>
-              ) : (
-                <p className="text-3xl md:text-4xl font-bold text-muted-foreground">
-                  精算なし
-                </p>
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                {result.settlement !== 0 ? (
+                  <motion.div
+                    key={`settlement-${settlementSign}`}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    className="space-y-2"
+                  >
+                    <AnimatedYen
+                      value={result.settlement}
+                      absolute
+                      className="text-5xl md:text-6xl font-bold text-neon-cyan font-mono font-tabular leading-none inline-block"
+                    />
+                    <p className="text-base text-muted-foreground font-medium">
+                      {result.settlement > 0 ? '夫 → 妻' : '妻 → 夫'}
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="settlement-zero"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    className="text-3xl md:text-4xl font-bold text-muted-foreground"
+                  >
+                    精算なし
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -81,18 +97,22 @@ export function CalculationSection({
               <span className="text-wife">妻</span>
             </div>
             <div className="relative h-3 bg-muted rounded-full overflow-hidden">
-              <div
-                className="absolute left-0 top-0 h-full bg-husband rounded-l-full transition-[width] motion-safe:duration-500 motion-reduce:duration-0 ease-out"
-                style={{ width: `${husbandRatio}%` }}
+              <motion.div
+                className="absolute left-0 top-0 h-full bg-husband rounded-l-full"
+                initial={false}
+                animate={{ width: `${husbandRatio}%` }}
+                transition={barTransition}
               />
-              <div
-                className="absolute right-0 top-0 h-full bg-wife rounded-r-full transition-[width] motion-safe:duration-500 motion-reduce:duration-0 ease-out"
-                style={{ width: `${wifeRatio}%` }}
+              <motion.div
+                className="absolute right-0 top-0 h-full bg-wife rounded-r-full"
+                initial={false}
+                animate={{ width: `${wifeRatio}%` }}
+                transition={barTransition}
               />
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground font-mono font-tabular">
-              <span>{formatCurrency(result.husbandTotal)}</span>
-              <span>{formatCurrency(result.wifeTotal)}</span>
+              <AnimatedYen value={result.husbandTotal} />
+              <AnimatedYen value={result.wifeTotal} />
             </div>
           </div>
         </CardContent>
@@ -107,22 +127,25 @@ export function CalculationSection({
           <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">収入合計</span>
-              <span className="font-medium text-neon-green font-mono font-tabular">
-                {formatCurrency(result.totalIncome)}
-              </span>
+              <AnimatedYen
+                value={result.totalIncome}
+                className="font-medium text-neon-green font-mono font-tabular"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">支出合計</span>
-              <span className="font-medium text-neon-red font-mono font-tabular">
-                {formatCurrency(allExpenseTotal)}
-              </span>
+              <AnimatedYen
+                value={allExpenseTotal}
+                className="font-medium text-neon-red font-mono font-tabular"
+              />
             </div>
             <div className="col-span-2 pt-3 border-t">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">月の収支</span>
-                <span className={`font-semibold font-mono font-tabular ${monthlyBalance >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
-                  {formatCurrency(monthlyBalance)}
-                </span>
+                <AnimatedYen
+                  value={monthlyBalance}
+                  className={`font-semibold font-mono font-tabular ${monthlyBalance >= 0 ? 'text-neon-green' : 'text-neon-red'}`}
+                />
               </div>
             </div>
           </div>
@@ -140,25 +163,28 @@ export function CalculationSection({
               {carryoverExpenses.length > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">繰越に回した支出</span>
-                  <span className="font-medium font-mono font-tabular">
-                    {formatCurrency(carryoverExpenseTotal)}
-                  </span>
+                  <AnimatedYen
+                    value={carryoverExpenseTotal}
+                    className="font-medium font-mono font-tabular"
+                  />
                 </div>
               )}
               {clearedCarryovers.length > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">清算した繰越</span>
-                  <span className="font-medium font-mono font-tabular">
-                    {formatCurrency(clearedCarryoverTotal)}
-                  </span>
+                  <AnimatedYen
+                    value={clearedCarryoverTotal}
+                    className="font-medium font-mono font-tabular"
+                  />
                 </div>
               )}
               <div className="pt-3 border-t">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">調整後の収支</span>
-                  <span className={`font-semibold font-mono font-tabular ${(monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal) >= 0 ? 'text-neon-green' : 'text-neon-red'}`}>
-                    {formatCurrency(monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal)}
-                  </span>
+                  <AnimatedYen
+                    value={adjustedBalance}
+                    className={`font-semibold font-mono font-tabular ${adjustedBalance >= 0 ? 'text-neon-green' : 'text-neon-red'}`}
+                  />
                 </div>
               </div>
             </div>
@@ -175,34 +201,39 @@ export function CalculationSection({
           <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">夫の支出</span>
-              <span className="font-medium font-mono font-tabular">
-                {formatCurrency(result.husbandExpense)}
-              </span>
+              <AnimatedYen
+                value={result.husbandExpense}
+                className="font-medium font-mono font-tabular"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">妻の支出</span>
-              <span className="font-medium font-mono font-tabular">
-                {formatCurrency(result.wifeExpense)}
-              </span>
+              <AnimatedYen
+                value={result.wifeExpense}
+                className="font-medium font-mono font-tabular"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">夫の合計</span>
-              <span className="font-semibold text-husband font-mono font-tabular">
-                {formatCurrency(result.husbandTotal)}
-              </span>
+              <AnimatedYen
+                value={result.husbandTotal}
+                className="font-semibold text-husband font-mono font-tabular"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">妻の合計</span>
-              <span className="font-semibold text-wife font-mono font-tabular">
-                {formatCurrency(result.wifeTotal)}
-              </span>
+              <AnimatedYen
+                value={result.wifeTotal}
+                className="font-semibold text-wife font-mono font-tabular"
+              />
             </div>
             <div className="col-span-2 pt-3 border-t">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">お小遣い（1人あたり）</span>
-                <span className="font-semibold font-mono font-tabular">
-                  {formatCurrency(result.allowance)}
-                </span>
+                <AnimatedYen
+                  value={result.allowance}
+                  className="font-semibold font-mono font-tabular"
+                />
               </div>
             </div>
           </div>
