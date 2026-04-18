@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -12,6 +13,8 @@ import { PersonBadge } from '@/components/ui/person-badge'
 import { DeleteButton } from '@/components/ui/delete-button'
 import { EntryForm } from '@/components/forms/entry-form'
 import { EditDialog } from '@/components/forms/edit-dialog'
+import { LottiePlayer } from '@/components/animations/lottie-player'
+import { listExit, listSpring } from '@/components/animations/tokens'
 import { createCarryover, updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Carryover } from '@/types'
@@ -63,14 +66,18 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
         <CollapsibleContent>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              {carryovers.map((carryover) => (
-                <div
-                  key={carryover.id}
-                  data-testid="item-row"
-                  className={`py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30 ${
-                    carryover.isCleared ? 'opacity-60' : ''
-                  }`}
-                >
+              <AnimatePresence initial={false}>
+                {carryovers.map((carryover) => (
+                  <motion.div
+                    key={carryover.id}
+                    data-testid="item-row"
+                    layout
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: carryover.isCleared ? 0.6 : 1, y: 0 }}
+                    exit={{ opacity: 0, x: -8, transition: listExit }}
+                    transition={listSpring}
+                    className="py-2.5 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
+                  >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0">
                       <PersonBadge person={carryover.person} />
@@ -120,13 +127,16 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                       <DeleteButton label={`${carryover.label}を削除`} />
                     </form>
                   </div>
-                </div>
-              ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               {carryovers.length === 0 && (
-                <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground animate-fade-in">
-                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                    <span className="text-lg opacity-50">+</span>
-                  </div>
+                <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground animate-fade-in">
+                  <LottiePlayer
+                    src="/lottie/empty-box.json"
+                    className="w-16 h-16"
+                    ariaLabel="繰越がありません"
+                  />
                   <p className="text-sm">繰越がありません</p>
                 </div>
               )}
