@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatCurrency, formatMonth, parseMonth } from '@/lib/utils/format'
+import { formatCurrency, formatMonth, parseMonth, isValidMonth } from '@/lib/utils/format'
 
 describe('formatCurrency', () => {
   it('正の値をカンマ区切りで表示する', () => {
@@ -42,5 +42,36 @@ describe('parseMonth', () => {
   it('月末の日付でも同じ月の文字列を返す', () => {
     const date = new Date(2026, 1, 28) // 2026年2月28日
     expect(parseMonth(date)).toBe('202602')
+  })
+})
+
+describe('isValidMonth', () => {
+  it('有効な月文字列（6桁、月が01-12）をtrueとする', () => {
+    expect(isValidMonth('202601')).toBe(true)
+    expect(isValidMonth('202604')).toBe(true)
+    expect(isValidMonth('202612')).toBe(true)
+    expect(isValidMonth('999912')).toBe(true)
+  })
+
+  it('6桁未満はfalseとする', () => {
+    expect(isValidMonth('20260')).toBe(false)
+    expect(isValidMonth('')).toBe(false)
+  })
+
+  it('6桁超過はfalseとする', () => {
+    expect(isValidMonth('2026010')).toBe(false)
+  })
+
+  it('月部分が不正（00や13以上）はfalseとする', () => {
+    expect(isValidMonth('202600')).toBe(false)
+    expect(isValidMonth('202613')).toBe(false)
+    expect(isValidMonth('202699')).toBe(false)
+  })
+
+  it('数字以外を含む場合はfalseとする', () => {
+    expect(isValidMonth('abcdef')).toBe(false)
+    expect(isValidMonth('2026-04')).toBe(false)
+    expect(isValidMonth('2026/04')).toBe(false)
+    expect(isValidMonth('20260a')).toBe(false)
   })
 })

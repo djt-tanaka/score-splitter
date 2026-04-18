@@ -6,6 +6,7 @@ import { AnimatedYen } from '@/components/animations/animated-number'
 import { barSpring } from '@/components/animations/tokens'
 import { useMotionPrefs } from '@/components/animations/use-motion-prefs'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
+import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
 import type { Income, Expense, Carryover } from '@/types'
 
 interface CalculationSectionProps {
@@ -21,8 +22,8 @@ export function CalculationSection({
 }: CalculationSectionProps) {
   const result = calculateSettlement(incomes, expenses, carryovers)
 
-  const allExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const monthlyBalance = result.totalIncome + allExpenseTotal
+  const { expenseTotal: allExpenseTotal, balance: monthlyBalance } =
+    calculateMonthBalance(incomes, expenses)
 
   const carryoverExpenses = filterCarryoverExpenses(expenses)
   const clearedCarryovers = filterClearedCarryovers(carryovers)

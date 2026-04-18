@@ -11,7 +11,7 @@ export type Person = 'husband' | 'wife'
 // 収入
 export interface Income {
   id: string
-  month: string // YYYY-MM-DD形式（月初日）
+  month: string // YYYYMM形式
   label: string
   amount: number // 正の値
   person: Person
@@ -21,7 +21,7 @@ export interface Income {
 // 支出
 export interface Expense {
   id: string
-  month: string
+  month: string // YYYYMM形式
   label: string
   amount: number // 負の値
   person: Person
@@ -32,12 +32,24 @@ export interface Expense {
 // 繰越（記録用、計算には含めない。清算済みの場合は精算に含む）
 export interface Carryover {
   id: string
-  month: string
+  month: string // YYYYMM形式
   label: string
   amount: number // 負の値
   person: Person
   isCleared: boolean // trueの場合、今月の黒字で清算（精算に含む）
   createdAt?: string
+}
+
+// 集計入力用の最小行（month + amount のみ保持）
+// Income も Expense も month: string と amount: number を含むため共通互換
+export type MonthlyAmountRow = Pick<Income, 'month' | 'amount'>
+
+// 月別サマリー（月一覧カード表示用）
+export interface MonthlySummary {
+  month: string // YYYYMM形式
+  incomeTotal: number // 収入合計（正値）
+  expenseTotal: number // 支出合計（負値のまま）
+  balance: number // incomeTotal + expenseTotal
 }
 
 // 計算結果

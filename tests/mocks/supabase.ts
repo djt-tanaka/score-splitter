@@ -92,6 +92,22 @@ export function mockSelectError(message: string) {
     })
 }
 
+// SELECT用（orderなし）: .select() が直接 Promise を返すケース向け
+export function mockSelectNoOrderSuccess<T>(data: T[]) {
+  mockSupabaseClient._queryBuilder.select.mockResolvedValueOnce({
+    data,
+    error: null,
+  })
+}
+
+// SELECT用（orderなし）: エラーを返す
+export function mockSelectNoOrderError(message: string) {
+  mockSupabaseClient._queryBuilder.select.mockResolvedValueOnce({
+    data: null,
+    error: { message },
+  })
+}
+
 // INSERT/UPDATE用: 単一レコードを返す（single()の結果として）
 export function mockSingleSuccess<T>(data: T) {
   mockSupabaseClient._queryBuilder.single.mockResolvedValueOnce({
