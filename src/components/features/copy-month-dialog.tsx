@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { LottiePlayer } from '@/components/animations/lottie-player'
 import { getCopyMonthPreview, copyMonthData } from '@/app/actions/copy-month'
 import { formatMonth, formatCurrency } from '@/lib/utils/format'
 import type {
@@ -289,7 +290,14 @@ export function CopyMonthDialog({
         </DialogHeader>
 
         {!preview ? (
-          <div className="py-8 text-center text-muted-foreground">読み込み中…</div>
+          <div className="py-8 flex flex-col items-center gap-2 text-muted-foreground">
+            <LottiePlayer
+              src="/lottie/loader-dots.json"
+              className="w-20 h-8"
+              ariaLabel="読み込み中"
+            />
+            <span className="text-sm">読み込み中…</span>
+          </div>
         ) : (
           <div className="flex-1 overflow-hidden flex flex-col space-y-4">
             {/* 月情報 */}
