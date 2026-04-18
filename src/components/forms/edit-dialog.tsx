@@ -93,7 +93,7 @@ export function EditDialog({
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor={`${uniqueId}-label`}>項目名</Label>
-            <Input id={`${uniqueId}-label`} name="label" defaultValue={label} required />
+            <Input id={`${uniqueId}-label`} name="label" defaultValue={label} autoComplete="off" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor={`${uniqueId}-amount`}>金額</Label>
@@ -102,6 +102,7 @@ export function EditDialog({
               name="amount"
               type="number"
               defaultValue={displayAmount}
+              autoComplete="off"
               min="1"
               required
             />
@@ -126,7 +127,7 @@ export function EditDialog({
                 name="is_carryover"
                 value="true"
                 defaultChecked={isCarryover}
-                className="rounded border-border"
+                className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
               />
               繰越扱いにする
             </label>
@@ -139,7 +140,7 @@ export function EditDialog({
                 name="is_cleared"
                 value="true"
                 defaultChecked={isCleared}
-                className="rounded border-border"
+                className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
               />
               今月で清算する
             </label>

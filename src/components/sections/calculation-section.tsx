@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AnimatedYen } from '@/components/animations/animated-number'
 import { barSpring } from '@/components/animations/tokens'
+import { useMotionPrefs } from '@/components/animations/use-motion-prefs'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import type { Income, Expense, Carryover } from '@/types'
 
@@ -39,6 +40,8 @@ export function CalculationSection({
     : 50
 
   const settlementSign = result.settlement > 0 ? 'plus' : result.settlement < 0 ? 'minus' : 'zero'
+  const { reduced } = useMotionPrefs()
+  const barTransition = reduced ? { duration: 0 } : barSpring
 
   return (
     <div className="space-y-4">
@@ -97,13 +100,13 @@ export function CalculationSection({
                 className="absolute left-0 top-0 h-full bg-husband rounded-l-full"
                 initial={false}
                 animate={{ width: `${husbandRatio}%` }}
-                transition={barSpring}
+                transition={barTransition}
               />
               <motion.div
                 className="absolute right-0 top-0 h-full bg-wife rounded-r-full"
                 initial={false}
                 animate={{ width: `${wifeRatio}%` }}
-                transition={barSpring}
+                transition={barTransition}
               />
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground font-mono font-tabular">

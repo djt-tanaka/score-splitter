@@ -59,9 +59,11 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <button
+          type="button"
           onClick={goToCurrentMonth}
-          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-colors duration-200 overflow-hidden"
+          aria-label="今月に移動"
           aria-live="polite"
+          className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-[color,transform] duration-200 motion-safe:hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md overflow-hidden"
         >
           <AnimatePresence mode="wait" initial={false} custom={direction}>
             <motion.span

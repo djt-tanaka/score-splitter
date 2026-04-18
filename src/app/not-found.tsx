@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen gradient-page flex items-center justify-center">
+    <main id="main" tabIndex={-1} className="min-h-screen gradient-page flex items-center justify-center">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-accent/5 blur-3xl" />
@@ -31,6 +31,6 @@ export default function NotFound() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   )
 }

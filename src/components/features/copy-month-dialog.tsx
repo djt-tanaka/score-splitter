@@ -221,7 +221,7 @@ export function CopyMonthDialog({
               if (el) el.indeterminate = someSelected
             }}
             onChange={() => toggleAllInType(type)}
-            className="h-4 w-4 rounded border-input"
+            className="h-4 w-4 rounded border-input focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           <span className="font-medium">{typeLabel}</span>
           <span className="text-sm text-muted-foreground">({items.length}件)</span>
@@ -234,7 +234,7 @@ export function CopyMonthDialog({
             return (
               <div
                 key={item.id}
-                className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50"
+                className="flex items-center gap-2 rounded px-2 py-1 hover:bg-muted/50"
               >
                 <input
                   type="checkbox"
@@ -245,13 +245,14 @@ export function CopyMonthDialog({
                       isSelected ? 'none' : 'withAmount'
                     )
                   }
-                  className="h-4 w-4 rounded border-input"
+                  aria-label={`${item.label}を選択`}
+                  className="h-4 w-4 rounded border-input focus-visible:ring-2 focus-visible:ring-ring/50"
                 />
                 <span className="flex-1 text-sm">{item.label}</span>
                 <span className="text-xs text-muted-foreground">
                   {personLabels[item.person]}
                 </span>
-                <span className="text-sm tabular-nums w-20 text-right">
+                <span className="text-sm font-tabular w-20 text-right">
                   {formatCurrency(item.amount)}
                 </span>
                 {isSelected && (
@@ -260,7 +261,8 @@ export function CopyMonthDialog({
                     onChange={(e) =>
                       setItemSelection(item.id, e.target.value as ItemSelection)
                     }
-                    className="text-xs border border-input rounded px-1.5 py-0.5 bg-background"
+                    aria-label={`${item.label}のコピーモード`}
+                    className="text-xs border border-input rounded px-2 py-1 bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                   >
                     <option value="withAmount">金額込み</option>
                     <option value="labelOnly">項目名のみ</option>
@@ -294,7 +296,7 @@ export function CopyMonthDialog({
               className="w-20 h-8"
               ariaLabel="読み込み中"
             />
-            <span className="text-sm">読み込み中...</span>
+            <span className="text-sm">読み込み中…</span>
           </div>
         ) : (
           <div className="flex-1 overflow-hidden flex flex-col space-y-4">
@@ -317,7 +319,7 @@ export function CopyMonthDialog({
                     <button
                       type="button"
                       onClick={selectAll}
-                      className="text-xs text-accent hover:underline"
+                      className="text-xs text-accent hover:underline outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded"
                     >
                       すべて選択
                     </button>
@@ -325,7 +327,7 @@ export function CopyMonthDialog({
                     <button
                       type="button"
                       onClick={deselectAll}
-                      className="text-xs text-accent hover:underline"
+                      className="text-xs text-accent hover:underline outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded"
                     >
                       すべて解除
                     </button>
@@ -344,7 +346,7 @@ export function CopyMonthDialog({
                           type="checkbox"
                           checked={includeCarryover}
                           onChange={(e) => setIncludeCarryover(e.target.checked)}
-                          className="h-4 w-4 rounded border-input"
+                          className="h-4 w-4 rounded border-input focus-visible:ring-2 focus-visible:ring-ring/50"
                         />
                         <span className="font-medium">繰越</span>
                         <span className="text-sm text-muted-foreground">
@@ -397,7 +399,7 @@ export function CopyMonthDialog({
             onClick={handleCopy}
             disabled={isPending || !hasSourceData || !canCopy}
           >
-            {isPending ? 'コピー中...' : `コピーする (${totalSelected}件)`}
+            {isPending ? 'コピー中…' : `コピーする (${totalSelected}件)`}
           </Button>
         </div>
       </DialogContent>
