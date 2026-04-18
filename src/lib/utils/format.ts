@@ -42,3 +42,14 @@ export function getPreviousMonth(month: string): string {
   const date = new Date(year, m - 2, 1)
   return parseMonth(date)
 }
+
+/**
+ * 月文字列が YYYYMM 形式（月は01-12）として有効か判定する
+ * @param month 判定対象の文字列
+ * @returns 有効ならtrue
+ */
+export function isValidMonth(month: string): boolean {
+  if (!/^\d{6}$/.test(month)) return false
+  const m = parseInt(month.slice(4, 6), 10)
+  return m >= 1 && m <= 12
+}

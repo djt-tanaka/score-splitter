@@ -65,22 +65,80 @@ test.describe('ログインページ', () => {
     ).toBeVisible()
   })
 
-  test('正しいパスワードでホームに遷移する', async ({ page }) => {
+  test('正しいパスワードで月一覧に遷移する', async ({ page }) => {
     await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
     await page.getByRole('button', { name: 'ログイン' }).click()
     await page.waitForURL(/\/(\?|$)/)
 
-    // ホームページの要素を確認（精算額は常に表示される）
-    await expect(page.getByText('精算額', { exact: true })).toBeVisible()
+    // 月一覧画面の注記が表示される
+    await expect(
+      page.getByText('※各月の収支は繰越に回す前の金額です')
+    ).toBeVisible()
   })
 })
 
 // =============================================
-// ホームページ（認証後）
+// 月一覧ページ（認証後のランディング）
 // =============================================
-test.describe('ホームページ', () => {
+test.describe('月一覧ページ', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
+  })
+
+  test('月一覧の注記が表示される', async ({ page }) => {
+    await expect(
+      page.getByText('※各月の収支は繰越に回す前の金額です')
+    ).toBeVisible()
+  })
+
+  test('データのある月のカードが表示される', async ({ page }) => {
+    // シードデータには 202601/202602 が存在
+    await expect(
+      page.getByRole('link', { name: /2026年2月の詳細を開く/ })
+    ).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: /2026年1月の詳細を開く/ })
+    ).toBeVisible()
+  })
+
+  test('月カードをクリックすると月詳細に遷移する', async ({ page }) => {
+    await page.getByRole('link', { name: /2026年2月の詳細を開く/ }).click()
+    await expect(page).toHaveURL(/\?month=202602/)
+    await expect(page.getByText('精算額', { exact: true })).toBeVisible()
+  })
+
+  test('月詳細の「一覧へ」リンクで/に戻れる', async ({ page }) => {
+    await page.goto('/?month=202602')
+    await page.getByRole('link', { name: '月の一覧へ戻る' }).click()
+    await expect(page).toHaveURL(/\/$/)
+    await expect(
+      page.getByText('※各月の収支は繰越に回す前の金額です')
+    ).toBeVisible()
+  })
+
+  test('不正な月パラメータは/にリダイレクトされる', async ({ page }) => {
+    await page.goto('/?month=invalid')
+    await expect(page).toHaveURL(/\/$/)
+    await expect(
+      page.getByText('※各月の収支は繰越に回す前の金額です')
+    ).toBeVisible()
+  })
+
+  test('月範囲外（13月など）の月パラメータも/にリダイレクトされる', async ({
+    page,
+  }) => {
+    await page.goto('/?month=202613')
+    await expect(page).toHaveURL(/\/$/)
+  })
+})
+
+// =============================================
+// 月詳細ページ（認証後）
+// =============================================
+test.describe('月詳細ページ', () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page)
+    await page.goto('/?month=202602')
   })
 
   test('ヘッダーが表示される', async ({ page }) => {

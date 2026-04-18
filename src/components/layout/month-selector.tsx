@@ -1,7 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
 import { ExportCsvButton } from '@/components/features/export-csv-button'
@@ -33,6 +34,12 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
 
   return (
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+      <Button variant="outline" size="sm" asChild>
+        <Link href="/" aria-label="月の一覧へ戻る">
+          <ArrowLeft className="h-4 w-4" />
+          <span>一覧へ</span>
+        </Link>
+      </Button>
       <div className="flex items-center gap-2">
         <Button variant="outline" size="icon" aria-label="前月に移動" onClick={() => navigateMonth(-1)}>
           <ChevronLeft className="h-4 w-4" />

@@ -1,13 +1,16 @@
+import { redirect } from 'next/navigation'
 import { Header } from '@/components/layout/header'
 import { MonthSelector } from '@/components/layout/month-selector'
 import { IncomeSection } from '@/components/sections/income-section'
 import { ExpenseSection } from '@/components/sections/expense-section'
 import { CarryoverSection } from '@/components/sections/carryover-section'
 import { CalculationSection } from '@/components/sections/calculation-section'
+import { MonthlyListSection } from '@/components/sections/monthly-list-section'
 import { getIncomesByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expense'
 import { getCarryoversByMonth } from '@/app/actions/carryover'
-import { parseMonth } from '@/lib/utils/format'
+import { getMonthlySummaries } from '@/app/actions/monthly-summary'
+import { isValidMonth } from '@/lib/utils/format'
 
 interface HomeProps {
   searchParams: Promise<{ month?: string }>
@@ -15,8 +18,36 @@ interface HomeProps {
 
 export default async function HomePage({ searchParams }: HomeProps) {
   const params = await searchParams
-  const month = params.month ?? parseMonth(new Date())
 
+  // 月パラメータの検証
+  if (params.month !== undefined && !isValidMonth(params.month)) {
+    redirect('/')
+  }
+
+  // 月未指定 → 月一覧画面
+  if (!params.month) {
+    const summariesResult = await getMonthlySummaries()
+    if (!summariesResult.success) {
+      throw new Error(summariesResult.error ?? '月別サマリーの取得に失敗しました')
+    }
+    const summaries = summariesResult.data ?? []
+
+    return (
+      <div className="min-h-screen gradient-page">
+        <Header />
+        <main
+          id="main"
+          tabIndex={-1}
+          className="container mx-auto px-4 py-8 space-y-6 max-w-4xl"
+        >
+          <MonthlyListSection summaries={summaries} />
+        </main>
+      </div>
+    )
+  }
+
+  // 月指定 → 既存の月画面
+  const month = params.month
   const [incomesResult, expensesResult, carryoversResult] = await Promise.all([
     getIncomesByMonth(month),
     getExpensesByMonth(month),

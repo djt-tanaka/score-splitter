@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
+import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Income, Expense, Carryover } from '@/types'
 
@@ -16,9 +17,9 @@ export function CalculationSection({
 }: CalculationSectionProps) {
   const result = calculateSettlement(incomes, expenses, carryovers)
 
-  // 月の実績（繰越含む全支出）
-  const allExpenseTotal = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const monthlyBalance = result.totalIncome + allExpenseTotal
+  // 月の実績（繰越含む全支出）- 月一覧カードと同じ共通ロジックを使う
+  const { expenseTotal: allExpenseTotal, balance: monthlyBalance } =
+    calculateMonthBalance(incomes, expenses)
 
   // 調整
   const carryoverExpenses = filterCarryoverExpenses(expenses)
