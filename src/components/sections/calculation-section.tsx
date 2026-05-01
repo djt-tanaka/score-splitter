@@ -44,7 +44,6 @@ export function CalculationSection({
   const clearedCarryovers = filterClearedCarryovers(carryovers)
   const carryoverExpenseTotal = carryoverExpenses.reduce((sum, e) => sum + e.amount, 0)
   const clearedCarryoverTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
-  const adjustedBalance = monthlyBalance + carryoverExpenseTotal + clearedCarryoverTotal
   const hasAdjustments = carryoverExpenses.length > 0 || clearedCarryovers.length > 0
 
   const totalItems = incomes.length + expenses.length
@@ -76,13 +75,13 @@ export function CalculationSection({
         <div className="mt-6 md:mt-8 grid gap-8 md:gap-14 md:grid-cols-[1.5fr_1fr] items-end">
           <div>
             <div className="text-[12px] font-semibold tracking-[0.18em] uppercase text-sub-text">
-              {hasAdjustments ? '調整後の収支' : '月の収支'}
+              月の収支
             </div>
             <div className="mt-2 flex items-baseline">
               <AnimatedYen
-                value={hasAdjustments ? adjustedBalance : monthlyBalance}
+                value={monthlyBalance}
                 className={`text-[48px] md:text-[88px] font-bold tracking-[-0.04em] leading-[0.9] font-tabular ${
-                  (hasAdjustments ? adjustedBalance : monthlyBalance) >= 0
+                  monthlyBalance >= 0
                     ? 'text-neon-green'
                     : 'text-neon-red'
                 }`}
