@@ -89,6 +89,20 @@ type Person = 'husband' | 'wife'
 
 詳細: [docs/testing.md](docs/testing.md)
 
+## UI検証ワークフロー
+
+UIやフロントエンドの変更時は、必ず以下の手順でブラウザ上の表示を検証すること。
+
+1. `npm run dev:mock` でモック付きdevサーバーを起動（MSWがSupabaseをモック）
+2. Playwright MCPでブラウザを操作し、ログイン → 対象画面を表示（パスワード: `password`）
+3. スクリーンショットを撮影し、表示崩れ・データ表示・操作性を目視確認
+4. 正常系だけでなく、空データや境界値のケースも確認する
+
+- モックデータ: `src/mocks/data.ts`
+- MSWハンドラー: `src/mocks/handlers.ts`
+- インメモリDB: `src/mocks/db.ts`
+- 起動制御: `src/instrumentation.ts`（`USE_MOCKS=true` 時のみMSW起動）
+
 ## ドキュメント一覧
 
 | ファイル | 内容 |
