@@ -142,7 +142,7 @@ test.describe('月詳細ページ', () => {
 
     await expect(incomeSection.getByText(/350,000/)).toBeVisible()
     await expect(incomeSection.getByText(/280,000/)).toBeVisible()
-    await expect(incomeSection.getByText(/50,000/)).toBeVisible()
+    await expect(incomeSection.getByText(/\+50,000/)).toBeVisible()
   })
 
   test('シードデータの支出が表示される', async ({ page }) => {
