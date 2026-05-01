@@ -1,13 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
-import { EntryForm } from '@/components/forms/entry-form'
+import { AddEntryModal } from '@/components/forms/add-entry-modal'
 import { EditDialog } from '@/components/forms/edit-dialog'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
-import { createCarryover, updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
+import { updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Carryover } from '@/types'
 
@@ -17,7 +16,6 @@ interface CarryoverSectionProps {
 }
 
 export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
-  const [showForm, setShowForm] = useState(false)
   const clearedCarryovers = carryovers.filter((c) => c.isCleared)
   const total = carryovers.reduce((sum, c) => sum + Math.abs(c.amount), 0)
 
@@ -116,21 +114,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
         )}
       </div>
 
-      {!showForm && (
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 py-3 text-sm text-sub-text hover:text-foreground transition-colors"
-        >
-          + 項目を追加
-        </button>
-      )}
-
-      {showForm && (
-        <div className="pt-1">
-          <EntryForm type="carryover" month={month} onSubmit={createCarryover} />
-        </div>
-      )}
+      <AddEntryModal type="carryover" month={month} />
     </section>
   )
 }

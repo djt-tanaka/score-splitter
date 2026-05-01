@@ -1,13 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
-import { EntryForm } from '@/components/forms/entry-form'
+import { AddEntryModal } from '@/components/forms/add-entry-modal'
 import { EditDialog } from '@/components/forms/edit-dialog'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
-import { createExpense, updateExpense, deleteExpense, toggleExpenseCarryover } from '@/app/actions/expense'
+import { updateExpense, deleteExpense, toggleExpenseCarryover } from '@/app/actions/expense'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Expense } from '@/types'
 
@@ -17,7 +16,6 @@ interface ExpenseSectionProps {
 }
 
 export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
-  const [showForm, setShowForm] = useState(false)
   const carryoverExpenses = expenses.filter((e) => e.isCarryover)
   const actualTotal = expenses.filter((e) => !e.isCarryover).reduce((sum, e) => sum + e.amount, 0)
 
@@ -109,21 +107,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
         )}
       </div>
 
-      {!showForm && (
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 py-3 text-sm text-sub-text hover:text-foreground transition-colors"
-        >
-          + 項目を追加
-        </button>
-      )}
-
-      {showForm && (
-        <div className="pt-1">
-          <EntryForm type="expense" month={month} onSubmit={createExpense} />
-        </div>
-      )}
+      <AddEntryModal type="expense" month={month} />
 
       <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
         <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">

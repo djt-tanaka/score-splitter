@@ -1,13 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
-import { EntryForm } from '@/components/forms/entry-form'
+import { AddEntryModal } from '@/components/forms/add-entry-modal'
 import { EditDialog } from '@/components/forms/edit-dialog'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
-import { createIncome, updateIncome, deleteIncome } from '@/app/actions/income'
+import { updateIncome, deleteIncome } from '@/app/actions/income'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Income } from '@/types'
 
@@ -17,7 +16,6 @@ interface IncomeSectionProps {
 }
 
 export function IncomeSection({ incomes, month }: IncomeSectionProps) {
-  const [showForm, setShowForm] = useState(false)
   const total = incomes.reduce((sum, i) => sum + i.amount, 0)
 
   return (
@@ -85,21 +83,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
         )}
       </div>
 
-      {!showForm && (
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 py-3 text-sm text-sub-text hover:text-foreground transition-colors"
-        >
-          + 項目を追加
-        </button>
-      )}
-
-      {showForm && (
-        <div className="pt-1">
-          <EntryForm type="income" month={month} onSubmit={createIncome} />
-        </div>
-      )}
+      <AddEntryModal type="income" month={month} />
 
       <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
         <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">

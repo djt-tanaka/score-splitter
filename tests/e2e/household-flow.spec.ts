@@ -236,10 +236,14 @@ test.describe('収入の追加', () => {
     const section = getIncomeSection(page)
     await section.getByText('+ 項目を追加').click()
 
-    await section.getByPlaceholder('項目名').fill('テスト給料')
-    await section.getByPlaceholder('金額').fill('300000')
-    await section.getByRole('button', { name: /収入.*追加/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
+    await dialog.getByPlaceholder('項目名…').fill('テスト給料')
+    await dialog.getByPlaceholder('金額…').fill('300000')
+    await dialog.getByRole('button', { name: /収入.*追加/ }).click()
+
+    await expect(dialog).not.toBeVisible()
     await expect(section.getByText('テスト給料')).toBeVisible()
     await expect(section.getByText(/300,000/).first()).toBeVisible()
   })
@@ -248,14 +252,18 @@ test.describe('収入の追加', () => {
     const section = getIncomeSection(page)
     await section.getByText('+ 項目を追加').click()
 
-    await section.getByPlaceholder('項目名').fill('妻のパート')
-    await section.getByPlaceholder('金額').fill('150000')
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
-    await section.locator('[role="combobox"]').click()
+    await dialog.getByPlaceholder('項目名…').fill('妻のパート')
+    await dialog.getByPlaceholder('金額…').fill('150000')
+
+    await dialog.locator('[role="combobox"]').click()
     await page.getByRole('option', { name: '妻' }).click()
 
-    await section.getByRole('button', { name: /収入.*追加/ }).click()
+    await dialog.getByRole('button', { name: /収入.*追加/ }).click()
 
+    await expect(dialog).not.toBeVisible()
     await expect(section.getByText('妻のパート')).toBeVisible()
     await expect(section.getByText(/150,000/).first()).toBeVisible()
   })
@@ -274,10 +282,14 @@ test.describe('支出の追加', () => {
     const section = getExpenseSection(page)
     await section.getByText('+ 項目を追加').click()
 
-    await section.getByPlaceholder('項目名').fill('テスト家賃')
-    await section.getByPlaceholder('金額').fill('100000')
-    await section.getByRole('button', { name: /支出.*追加/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
+    await dialog.getByPlaceholder('項目名…').fill('テスト家賃')
+    await dialog.getByPlaceholder('金額…').fill('100000')
+    await dialog.getByRole('button', { name: /支出.*追加/ }).click()
+
+    await expect(dialog).not.toBeVisible()
     await expect(page.getByText('テスト家賃')).toBeVisible()
   })
 })
@@ -295,10 +307,14 @@ test.describe('繰越の追加', () => {
     const section = getCarryoverSection(page)
     await section.getByText('+ 項目を追加').click()
 
-    await section.getByPlaceholder('項目名').fill('テスト繰越')
-    await section.getByPlaceholder('金額').fill('5000')
-    await section.getByRole('button', { name: /繰越.*追加/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
 
+    await dialog.getByPlaceholder('項目名…').fill('テスト繰越')
+    await dialog.getByPlaceholder('金額…').fill('5000')
+    await dialog.getByRole('button', { name: /繰越.*追加/ }).click()
+
+    await expect(dialog).not.toBeVisible()
     await expect(page.getByText('テスト繰越')).toBeVisible()
   })
 })
@@ -386,9 +402,14 @@ test.describe('精算額の更新', () => {
     const section = getIncomeSection(page)
     await section.getByText('+ 項目を追加').click()
 
-    await section.getByPlaceholder('項目名').fill('給料')
-    await section.getByPlaceholder('金額').fill('400000')
-    await section.getByRole('button', { name: /収入.*追加/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+
+    await dialog.getByPlaceholder('項目名…').fill('給料')
+    await dialog.getByPlaceholder('金額…').fill('400000')
+    await dialog.getByRole('button', { name: /収入.*追加/ }).click()
+
+    await expect(dialog).not.toBeVisible()
 
     await expect(page.getByText('夫').first()).toBeVisible()
   })

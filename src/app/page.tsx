@@ -6,7 +6,6 @@ import { ExpenseSection } from '@/components/sections/expense-section'
 import { CarryoverSection } from '@/components/sections/carryover-section'
 import { CalculationSection } from '@/components/sections/calculation-section'
 import { MonthlyListSection } from '@/components/sections/monthly-list-section'
-import { AddEntryFab } from '@/components/features/add-entry-fab'
 import { getIncomesByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expense'
 import { getCarryoversByMonth } from '@/app/actions/carryover'
@@ -83,7 +82,6 @@ export default async function HomePage({ searchParams }: HomeProps) {
         </section>
         <CarryoverSection carryovers={carryovers} month={month} />
       </main>
-      <AddEntryFab month={month} />
     </div>
   )
 }
