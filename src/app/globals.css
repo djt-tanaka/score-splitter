@@ -306,6 +306,15 @@
   }
 }
 
+@keyframes caretBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@utility animate-caret-blink {
+  animation: caretBlink 1s step-end infinite;
+}
+
 /* ===== prefers-reduced-motion ===== */
 @media (prefers-reduced-motion: reduce) {
   *,

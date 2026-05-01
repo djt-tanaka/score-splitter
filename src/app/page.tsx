@@ -37,7 +37,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         <main
           id="main"
           tabIndex={-1}
-          className="container mx-auto px-4 py-8 space-y-6 max-w-4xl"
+          className="container mx-auto px-4 py-4 space-y-0 max-w-4xl"
         >
           <MonthlyListSection summaries={summaries} />
         </main>

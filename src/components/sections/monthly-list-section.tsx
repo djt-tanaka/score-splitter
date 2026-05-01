@@ -1,6 +1,10 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { MonthCard } from '@/components/features/month-card'
-import { parseMonth } from '@/lib/utils/format'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { MonthRow } from '@/components/features/month-row'
+import { formatCurrency, parseMonth } from '@/lib/utils/format'
 import type { MonthlySummary } from '@/types'
 
 interface MonthlyListSectionProps {
@@ -8,8 +12,11 @@ interface MonthlyListSectionProps {
 }
 
 export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
+  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear())
+  const currentMonth = parseMonth(new Date())
+
   if (summaries.length === 0) {
-    const thisMonth = parseMonth(new Date())
+    const thisMonth = currentMonth
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <p className="text-muted-foreground">まだ記録がありません。</p>
@@ -23,14 +30,145 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
     )
   }
 
+  const yearSummaries = summaries.filter((s) =>
+    s.month.startsWith(String(selectedYear))
+  )
+  const recordedCount = yearSummaries.length
+  const balanceYTD = yearSummaries.reduce((sum, s) => sum + s.balance, 0)
+  const incomeYTD = yearSummaries.reduce((sum, s) => sum + s.incomeTotal, 0)
+  const expenseYTD = yearSummaries.reduce(
+    (sum, s) => sum + Math.abs(s.expenseTotal),
+    0
+  )
+
+  const allMonths = Array.from({ length: 12 }, (_, i) => {
+    const m = `${selectedYear}${String(i + 1).padStart(2, '0')}`
+    return {
+      month: m,
+      index: i + 1,
+      summary: yearSummaries.find((s) => s.month === m) ?? null,
+    }
+  })
+
+  const maxIncome = Math.max(...yearSummaries.map((s) => s.incomeTotal), 1)
+  const maxExpense = Math.max(
+    ...yearSummaries.map((s) => Math.abs(s.expenseTotal)),
+    1
+  )
+
+  const isBalancePositive = balanceYTD >= 0
+
   return (
-    <section aria-label="月の一覧" className="space-y-4">
-      <p className="text-xs text-muted-foreground">
+    <section aria-label="月の一覧">
+      {/* タイトルバー */}
+      <div className="pb-4">
+        <div className="text-[10px] font-bold tracking-[0.22em] uppercase text-sub-text">
+          Months / 月一覧
+        </div>
+        <div className="text-[32px] font-bold tracking-[-0.03em] font-tabular mt-1.5 leading-none">
+          {selectedYear}
+        </div>
+        <p className="text-xs text-sub-text mt-2">
+          {recordedCount > 0
+            ? `${recordedCount}ヶ月分の記録があります`
+            : 'この年の記録はまだありません'}
+        </p>
+      </div>
+
+      {/* 年ナビゲーション */}
+      <div className="flex items-center justify-between pb-4 border-b border-border">
+        <button
+          type="button"
+          onClick={() => setSelectedYear((y) => y - 1)}
+          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm bg-background hover:bg-muted/50 transition-colors"
+          aria-label="前年に移動"
+        >
+          <ChevronLeft className="h-3.5 w-3.5" />
+        </button>
+        <div className="text-center">
+          <div className="text-lg font-bold tracking-[-0.01em] font-tabular">
+            {selectedYear}
+          </div>
+          <div className="text-[10px] text-sub-text tracking-[0.12em] uppercase mt-0.5">
+            Year
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setSelectedYear((y) => y + 1)}
+          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm bg-background hover:bg-muted/50 transition-colors"
+          aria-label="翌年に移動"
+        >
+          <ChevronRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {/* 年間サマリー */}
+      {recordedCount > 0 && (
+        <div className="py-5 border-b border-border">
+          <div className="text-[10px] font-bold tracking-[0.22em] uppercase text-sub-text">
+            Year-to-date / 年間収支
+          </div>
+          <div className="flex items-baseline mt-2">
+            <span
+              className={`text-[44px] font-bold tracking-[-0.04em] leading-[0.9] font-tabular ${
+                isBalancePositive ? 'text-neon-green' : 'text-neon-red'
+              }`}
+            >
+              {isBalancePositive ? '+' : ''}
+              {balanceYTD.toLocaleString('ja-JP')}
+            </span>
+            <span className="text-[13px] font-semibold text-sub-text ml-1">円</span>
+          </div>
+
+          <div className="grid grid-cols-2 mt-4 border-t border-border">
+            <div className="py-3 pr-3.5 border-r border-border">
+              <div className="text-[9px] font-bold tracking-[0.2em] uppercase text-sub-text">
+                Income
+              </div>
+              <div className="text-[18px] font-bold tracking-[-0.02em] font-tabular mt-1">
+                {formatCurrency(incomeYTD)}
+              </div>
+            </div>
+            <div className="py-3 pl-3.5">
+              <div className="text-[9px] font-bold tracking-[0.2em] uppercase text-sub-text">
+                Expense
+              </div>
+              <div className="text-[18px] font-bold tracking-[-0.02em] font-tabular mt-1">
+                {formatCurrency(expenseYTD)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 注記 */}
+      <p className="text-xs text-muted-foreground py-3">
         ※各月の収支は繰越に回す前の金額です
       </p>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {summaries.map((summary) => (
-          <MonthCard key={summary.month} summary={summary} />
+
+      {/* 月一覧ヘッダー */}
+      <div className="flex items-baseline justify-between py-2">
+        <span className="text-[11px] font-bold tracking-[0.16em] uppercase">
+          By month / 月別
+        </span>
+        <span className="text-[10px] text-sub-text font-tabular">
+          12 / {recordedCount} 件
+        </span>
+      </div>
+
+      {/* 月リスト */}
+      <div className="border-t border-foreground">
+        {allMonths.map((m) => (
+          <MonthRow
+            key={m.month}
+            month={m.month}
+            index={m.index}
+            summary={m.summary}
+            isCurrentMonth={m.month === currentMonth}
+            maxIncome={maxIncome}
+            maxExpense={maxExpense}
+          />
         ))}
       </div>
     </section>
