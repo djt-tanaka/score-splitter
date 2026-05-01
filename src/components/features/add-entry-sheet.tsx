@@ -27,21 +27,21 @@ interface AddEntrySheetProps {
 const typeConfig = {
   income: {
     label: '収入',
-    bg: 'oklch(0.94 0.08 155)',
-    fg: 'oklch(0.42 0.16 155)',
-    border: 'oklch(0.65 0.16 155)',
+    bg: 'var(--neon-green-light)',
+    fg: 'var(--neon-green)',
+    border: 'var(--neon-green)',
   },
   expense: {
     label: '支出',
-    bg: 'oklch(0.94 0.07 25)',
-    fg: 'oklch(0.50 0.18 25)',
-    border: 'oklch(0.70 0.16 25)',
+    bg: 'var(--neon-red-light)',
+    fg: 'var(--neon-red)',
+    border: 'var(--neon-red)',
   },
   carryover: {
     label: '繰越',
-    bg: 'oklch(0.94 0.05 250)',
-    fg: 'oklch(0.45 0.18 250)',
-    border: 'oklch(0.65 0.16 250)',
+    bg: 'var(--neon-cyan-light)',
+    fg: 'var(--neon-cyan)',
+    border: 'var(--neon-cyan)',
   },
 } as const
 

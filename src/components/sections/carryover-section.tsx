@@ -52,8 +52,8 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                 className="w-7 h-7 rounded-full text-white text-[11px] font-bold inline-flex items-center justify-center shrink-0"
                 style={{
                   background: carryover.person === 'husband'
-                    ? 'linear-gradient(135deg, oklch(0.65 0.16 250), oklch(0.55 0.18 260))'
-                    : 'linear-gradient(135deg, oklch(0.75 0.16 350), oklch(0.65 0.18 20))',
+                    ? 'var(--gradient-husband)'
+                    : 'var(--gradient-wife)',
                 }}
               >
                 {carryover.person === 'husband' ? '夫' : '妻'}

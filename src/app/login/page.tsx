@@ -52,7 +52,7 @@ export default function LoginPage() {
                 </span>
               </div>
 
-              <div className="rounded-[14px] bg-[oklch(0.98_0.005_260)] dark:bg-muted border border-input flex items-center px-4 py-3.5">
+              <div className="rounded-[14px] bg-secondary dark:bg-muted border border-input flex items-center px-4 py-3.5">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}

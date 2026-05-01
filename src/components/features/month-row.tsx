@@ -77,8 +77,8 @@ export function MonthRow({
       <div
         className={`w-10 h-10 rounded-[12px] flex items-center justify-center text-[13px] font-bold font-tabular ${
           tone === 'pos'
-            ? 'bg-[oklch(0.94_0.08_155)] text-[oklch(0.42_0.16_155)]'
-            : 'bg-[oklch(0.94_0.07_25)] text-[oklch(0.50_0.18_25)]'
+            ? 'bg-neon-green-light text-neon-green'
+            : 'bg-neon-red-light text-neon-red'
         }`}
       >
         {String(index).padStart(2, '0')}
