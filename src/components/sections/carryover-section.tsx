@@ -1,21 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import { PersonBadge } from '@/components/ui/person-badge'
 import { DeleteButton } from '@/components/ui/delete-button'
-import { EntryForm } from '@/components/forms/entry-form'
-import { EditDialog } from '@/components/forms/edit-dialog'
+import { AddEntryModal } from '@/components/forms/add-entry-modal'
+import { EditModal } from '@/components/forms/edit-modal'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
-import { createCarryover, updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
+import { updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
 import { formatCurrency } from '@/lib/utils/format'
 import type { Carryover } from '@/types'
 
@@ -25,136 +16,107 @@ interface CarryoverSectionProps {
 }
 
 export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
-  const [isOpen, setIsOpen] = useState(false)
   const clearedCarryovers = carryovers.filter((c) => c.isCleared)
-  const unclearedCarryovers = carryovers.filter((c) => !c.isCleared)
-  const total = carryovers.reduce((sum, c) => sum + c.amount, 0)
-  const clearedTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
+  const total = carryovers.reduce((sum, c) => sum + Math.abs(c.amount), 0)
 
   return (
-    <Card className="shadow-card card-interactive">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CardHeader className="pb-3">
-          <CollapsibleTrigger asChild>
-            <button
-              type="button"
-              data-testid="carryover-title"
-              className="w-full text-left cursor-pointer hover:bg-muted/50 -mx-6 -my-4 px-6 py-4 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+    <section data-section="carryover" className="py-6 md:py-8 md:px-6 border-t border-border">
+      <div className="flex items-baseline justify-between border-b border-foreground pb-2.5 mb-1">
+        <h3
+          data-testid="carryover-title"
+          className="text-[11px] md:text-sm font-bold tracking-[0.16em] uppercase"
+        >
+          Carryover / 繰越
+        </h3>
+        <span className="text-[10px] md:text-xs text-sub-text font-tabular">
+          合計 {formatCurrency(total)}{clearedCarryovers.length > 0 && ` / 清算済み ${clearedCarryovers.length}件`}
+        </span>
+      </div>
+
+      <div>
+        <AnimatePresence initial={false}>
+          {carryovers.map((carryover) => (
+            <motion.div
+              key={carryover.id}
+              data-testid="item-row"
+              layout
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: carryover.isCleared ? 0.6 : 1, y: 0 }}
+              exit={{ opacity: 0, x: -8, transition: listExit }}
+              transition={listSpring}
+              className="group flex items-center justify-between gap-3 py-3 border-b border-border"
             >
-              <CardTitle>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    {isOpen ? (
-                      <ChevronDown className="h-4 w-4 shrink-0" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 shrink-0" />
-                    )}
-                    <span>繰越</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {clearedCarryovers.length > 0 && (
-                      <span className="text-xs text-neon-green font-mono font-tabular">
-                        清算 {formatCurrency(clearedTotal)}
-                      </span>
-                    )}
-                    <span className="text-muted-foreground font-mono font-tabular">{formatCurrency(total)}</span>
-                  </div>
-                </div>
-              </CardTitle>
-              <p className="text-xs text-muted-foreground font-normal mt-1 ml-6">
-                {clearedCarryovers.length > 0
-                  ? `※清算済み ${clearedCarryovers.length}件 は精算に含まれます`
-                  : '※精算額には含まれません'}
-              </p>
-            </button>
-          </CollapsibleTrigger>
-        </CardHeader>
-        <CollapsibleContent>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <AnimatePresence initial={false}>
-                {carryovers.map((carryover) => (
-                  <motion.div
-                    key={carryover.id}
-                    data-testid="item-row"
-                    layout
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: carryover.isCleared ? 0.6 : 1, y: 0 }}
-                    exit={{ opacity: 0, x: -8, transition: listExit }}
-                    transition={listSpring}
-                    className="py-2 px-2 -mx-2 border-b last:border-0 rounded-lg transition-colors hover:bg-muted/30"
-                  >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <PersonBadge person={carryover.person} />
-                      <span className={`truncate ${carryover.isCleared ? 'line-through' : ''}`}>
-                        {carryover.label}
-                      </span>
-                      {carryover.isCleared && (
-                        <span className="text-xs px-1 py-0.5 rounded bg-neon-green/10 text-neon-green shrink-0">
-                          清算済
-                        </span>
-                      )}
-                    </div>
-                    <span className={`font-medium font-mono font-tabular shrink-0 ml-2 ${
-                      carryover.isCleared ? 'text-neon-green line-through' : 'text-muted-foreground'
-                    }`}>
-                      {formatCurrency(carryover.amount)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-end gap-1 mt-1">
-                    <form action={async () => {
-                      await toggleCarryoverCleared(carryover.id, !carryover.isCleared)
-                    }}>
-                      <button
-                        type="submit"
-                        className={`h-8 w-8 flex items-center justify-center rounded-lg text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
-                          carryover.isCleared
-                            ? 'text-neon-green bg-neon-green/10'
-                            : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'
-                        }`}
-                        aria-label={carryover.isCleared ? `${carryover.label}の清算を取消` : `${carryover.label}を清算する`}
-                        title={carryover.isCleared ? '清算を取消' : '清算する'}
-                      >
-                        {carryover.isCleared ? '✓' : '○'}
-                      </button>
-                    </form>
-                    <EditDialog
-                      id={carryover.id}
-                      month={month}
-                      label={carryover.label}
-                      amount={carryover.amount}
-                      person={carryover.person}
-                      type="carryover"
-                      isCleared={carryover.isCleared}
-                      onUpdate={updateCarryover}
-                    />
-                    <form action={async () => { await deleteCarryover(carryover.id) }}>
-                      <DeleteButton label={`${carryover.label}を削除`} />
-                    </form>
-                  </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              {carryovers.length === 0 && (
-                <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground animate-fade-in">
-                  <LottiePlayer
-                    src="/lottie/empty-box.json"
-                    className="w-16 h-16"
-                    ariaLabel="繰越がありません"
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="text-[10px] font-bold shrink-0"
+                  style={{ color: `var(--${carryover.person})` }}
+                >
+                  {carryover.person === 'husband' ? '夫' : '妻'}
+                </span>
+                <span className={`text-sm md:text-base font-medium truncate ${carryover.isCleared ? 'line-through opacity-60' : ''}`}>
+                  {carryover.label}
+                </span>
+                {carryover.isCleared && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-neon-green/10 text-neon-green font-bold tracking-[0.06em] shrink-0">
+                    清算済
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm md:text-base font-semibold font-tabular ${
+                  carryover.isCleared ? 'text-neon-green line-through' : 'text-sub-text'
+                }`}>
+                  {formatCurrency(Math.abs(carryover.amount))}
+                </span>
+                <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                  <form action={async () => {
+                    await toggleCarryoverCleared(carryover.id, !carryover.isCleared)
+                  }}>
+                    <button
+                      type="submit"
+                      className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
+                        carryover.isCleared
+                          ? 'text-neon-green bg-neon-green/10'
+                          : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'
+                      }`}
+                      aria-label={carryover.isCleared ? `${carryover.label}の清算を取消` : `${carryover.label}を清算する`}
+                    >
+                      {carryover.isCleared ? '✓' : '○'}
+                    </button>
+                  </form>
+                  <EditModal
+                    id={carryover.id}
+                    month={month}
+                    label={carryover.label}
+                    amount={carryover.amount}
+                    person={carryover.person}
+                    type="carryover"
+                    isCleared={carryover.isCleared}
+                    onUpdate={updateCarryover}
                   />
-                  <p className="text-sm">繰越がありません</p>
+                  <form action={async () => { await deleteCarryover(carryover.id) }}>
+                    <DeleteButton label={`${carryover.label}を削除`} />
+                  </form>
                 </div>
-              )}
-            </div>
-            <EntryForm
-              type="carryover"
-              month={month}
-              onSubmit={createCarryover}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {carryovers.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground animate-fade-in">
+            <LottiePlayer
+              src="/lottie/empty-box.json"
+              className="w-12 h-12"
+              ariaLabel="繰越がありません"
             />
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+            <p className="text-xs">繰越がありません</p>
+          </div>
+        )}
+      </div>
+
+      <div className="pb-4">
+        <AddEntryModal type="carryover" month={month} />
+      </div>
+    </section>
   )
 }

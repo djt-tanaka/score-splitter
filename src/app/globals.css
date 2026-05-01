@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -54,6 +54,7 @@
   --color-wife: var(--wife);
   --color-wife-light: var(--wife-light);
   --color-warning: var(--warning);
+  --color-sub-text: var(--sub-text);
 }
 
 /* ===== ライトモード（デフォルト） ===== */
@@ -61,16 +62,19 @@
   --radius: 0.75rem;
 
   /* 背景系 — ライト */
-  --background: oklch(0.97 0.01 260);
-  --foreground: oklch(0.15 0.02 260);
+  --background: oklch(0.99 0.005 260);
+  --foreground: oklch(0.13 0.02 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 260);
+  --card-foreground: oklch(0.13 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 260);
+  --popover-foreground: oklch(0.13 0.02 260);
+
+  /* サブテキスト */
+  --sub-text: oklch(0.45 0.02 260);
 
   /* プライマリ */
   --primary: oklch(0.20 0.02 260);
-  --primary-foreground: oklch(0.97 0.01 260);
+  --primary-foreground: oklch(0.99 0.005 260);
 
   /* セカンダリ */
   --secondary: oklch(0.94 0.01 260);
@@ -88,14 +92,14 @@
   --destructive: oklch(0.55 0.22 25);
 
   /* ボーダー・入力 */
-  --border: oklch(0.90 0.01 260);
-  --input: oklch(0.90 0.01 260);
-  --ring: oklch(0.55 0.18 195);
+  --border: oklch(0.92 0.01 260);
+  --input: oklch(0.92 0.01 260);
+  --ring: oklch(0.50 0.16 195);
 
   /* ドメインカラー */
-  --neon-green: oklch(0.50 0.18 155);
+  --neon-green: oklch(0.45 0.18 155);
   --neon-red: oklch(0.50 0.20 25);
-  --neon-cyan: oklch(0.55 0.15 195);
+  --neon-cyan: oklch(0.50 0.16 195);
 
   /* 担当者カラー */
   --husband: oklch(0.50 0.18 250);
@@ -110,8 +114,8 @@
   --glow-lg: 0 4px 16px oklch(0 0 0 / 0.12);
 
   /* グラデーション背景 */
-  --gradient-page-from: oklch(0.97 0.01 260);
-  --gradient-page-to: oklch(0.95 0.03 195);
+  --gradient-page-from: oklch(0.99 0.005 260);
+  --gradient-page-to: oklch(0.98 0.01 260);
   --gradient-hero-from: oklch(0.55 0.18 195 / 8%);
   --gradient-hero-via: oklch(0.55 0.18 195 / 3%);
   --gradient-hero-to: oklch(0.50 0.18 250 / 5%);
@@ -175,10 +179,13 @@
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.72 0.16 195);
 
+  /* サブテキスト — ダーク */
+  --sub-text: oklch(0.65 0.02 260);
+
   /* ドメインカラー — ネオンアクセント */
-  --neon-green: oklch(0.75 0.20 155);
+  --neon-green: oklch(0.70 0.20 155);
   --neon-red: oklch(0.70 0.20 25);
-  --neon-cyan: oklch(0.80 0.15 195);
+  --neon-cyan: oklch(0.75 0.16 195);
 
   /* 担当者カラー */
   --husband: oklch(0.70 0.18 250);
@@ -297,6 +304,15 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes caretBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@utility animate-caret-blink {
+  animation: caretBlink 1s step-end infinite;
 }
 
 /* ===== prefers-reduced-motion ===== */
