@@ -52,7 +52,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
                 <span className="text-sm md:text-base font-semibold font-tabular text-neon-green">
                   +{formatCurrency(income.amount).slice(1)}
                 </span>
-                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <EditModal
                     id={income.id}
                     month={month}
