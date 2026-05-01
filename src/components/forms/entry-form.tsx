@@ -37,7 +37,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-3 pt-4 border-t border-border/50">
+    <form ref={formRef} action={handleSubmit} className="space-y-2.5 pt-3 border-t border-border/50">
       <div>
         <Label htmlFor={`${uniqueId}-label`} className="sr-only">項目名</Label>
         <Input id={`${uniqueId}-label`} name="label" placeholder="項目名…" autoComplete="off" required />
@@ -93,7 +93,7 @@ export function EntryForm({ type, month, onSubmit }: EntryFormProps) {
         </label>
       )}
       <SubmitButton
-        className="w-full h-12 glow-sm hover:glow-md transition-shadow"
+        className="w-full h-10 glow-sm hover:glow-md transition-shadow"
         pendingChildren="追加中..."
       >
         {typeLabels[type]}を追加

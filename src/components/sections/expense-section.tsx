@@ -120,7 +120,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
       )}
 
       {showForm && (
-        <div className="pt-3">
+        <div className="pt-1">
           <EntryForm type="expense" month={month} onSubmit={createExpense} />
         </div>
       )}

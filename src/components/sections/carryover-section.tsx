@@ -127,7 +127,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
       )}
 
       {showForm && (
-        <div className="pt-3">
+        <div className="pt-1">
           <EntryForm type="carryover" month={month} onSubmit={createCarryover} />
         </div>
       )}

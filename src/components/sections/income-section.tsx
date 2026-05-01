@@ -96,7 +96,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
       )}
 
       {showForm && (
-        <div className="pt-3">
+        <div className="pt-1">
           <EntryForm type="income" month={month} onSubmit={createIncome} />
         </div>
       )}
