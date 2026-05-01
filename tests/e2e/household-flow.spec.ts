@@ -234,7 +234,7 @@ test.describe('収入の追加', () => {
 
   test('収入を追加できる', async ({ page }) => {
     const section = getIncomeSection(page)
-    await section.getByText('+ 項目を追加').click()
+    await section.getByRole('button', { name: '項目を追加' }).click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -250,7 +250,7 @@ test.describe('収入の追加', () => {
 
   test('担当者を妻にして収入を追加できる', async ({ page }) => {
     const section = getIncomeSection(page)
-    await section.getByText('+ 項目を追加').click()
+    await section.getByRole('button', { name: '項目を追加' }).click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -280,7 +280,7 @@ test.describe('支出の追加', () => {
 
   test('支出を追加できる', async ({ page }) => {
     const section = getExpenseSection(page)
-    await section.getByText('+ 項目を追加').click()
+    await section.getByRole('button', { name: '項目を追加' }).click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -305,7 +305,7 @@ test.describe('繰越の追加', () => {
 
   test('繰越を追加できる', async ({ page }) => {
     const section = getCarryoverSection(page)
-    await section.getByText('+ 項目を追加').click()
+    await section.getByRole('button', { name: '項目を追加' }).click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -400,7 +400,7 @@ test.describe('精算額の更新', () => {
     await expect(page.getByText('精算なし')).toBeVisible()
 
     const section = getIncomeSection(page)
-    await section.getByText('+ 項目を追加').click()
+    await section.getByRole('button', { name: '項目を追加' }).click()
 
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()

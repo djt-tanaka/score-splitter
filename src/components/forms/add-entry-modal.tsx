@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-is-mobile'
+import { Button } from '@/components/ui/button'
 import { AddEntryForm } from '@/components/forms/add-entry-form'
 import {
   Dialog,
@@ -36,12 +38,10 @@ export function AddEntryModal({ type, month }: AddEntryModalProps) {
   const title = `${typeLabels[type]}を追加`
 
   const trigger = (
-    <button
-      type="button"
-      className="flex items-center gap-2 py-3 text-sm text-sub-text hover:text-foreground transition-colors"
-    >
-      + 項目を追加
-    </button>
+    <Button variant="outline" size="sm" className="mt-2 w-full">
+      <Plus className="size-3.5" />
+      項目を追加
+    </Button>
   )
 
   const form = (

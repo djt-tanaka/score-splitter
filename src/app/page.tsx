@@ -10,6 +10,7 @@ import { getIncomesByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expense'
 import { getCarryoversByMonth } from '@/app/actions/carryover'
 import { getMonthlySummaries } from '@/app/actions/monthly-summary'
+import { AddEntryFab } from '@/components/features/add-entry-fab'
 import { isValidMonth } from '@/lib/utils/format'
 
 interface HomeProps {
@@ -82,6 +83,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         </section>
         <CarryoverSection carryovers={carryovers} month={month} />
       </main>
+      <AddEntryFab month={month} />
     </div>
   )
 }
