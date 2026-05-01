@@ -107,7 +107,9 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
         )}
       </div>
 
-      <AddEntryModal type="expense" month={month} />
+      <div className="pb-4">
+        <AddEntryModal type="expense" month={month} />
+      </div>
 
       <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
         <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">

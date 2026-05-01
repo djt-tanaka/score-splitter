@@ -114,7 +114,9 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
         )}
       </div>
 
-      <AddEntryModal type="carryover" month={month} />
+      <div className="pb-4">
+        <AddEntryModal type="carryover" month={month} />
+      </div>
     </section>
   )
 }
