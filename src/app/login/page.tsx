@@ -13,26 +13,23 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* ヘッダー */}
       <header className="flex items-center justify-between px-5 py-3.5 border-b border-border">
-        <span className="text-[11px] font-bold tracking-[0.18em] uppercase">
+        <span className="text-[11px] font-bold tracking-[0.18em] uppercase text-sub-text">
           Score Splitter
         </span>
         <ThemeToggle />
       </header>
 
       {/* メイン */}
-      <main id="main" tabIndex={-1} className="flex-1 px-5 pt-14 pb-4 flex flex-col max-w-md mx-auto w-full">
+      <main id="main" tabIndex={-1} className="flex-1 px-5 pt-10 pb-4 flex flex-col max-w-md mx-auto w-full">
         {/* ヒーロー */}
-        <section className="pb-8 border-b border-border">
-          <div className="text-[10px] font-bold tracking-[0.22em] uppercase text-sub-text">
-            Sign in / ログイン
+        <section className="pb-6">
+          <div className="w-14 h-14 rounded-2xl gradient-fab text-white flex items-center justify-center shadow-fab">
+            <span className="text-2xl font-bold tracking-[-0.02em]">家</span>
           </div>
-          <div className="mt-3.5 w-14 h-14 rounded-xl bg-foreground flex items-center justify-center">
-            <span className="text-background text-2xl font-bold tracking-[-0.02em]">家</span>
-          </div>
-          <h1 className="text-[36px] font-bold tracking-[-0.04em] leading-[0.95] mt-4">
+          <h1 className="text-[28px] font-bold tracking-[-0.03em] leading-[1.05] mt-4">
             家計計算アプリ
           </h1>
-          <p className="text-[13px] text-sub-text mt-3 leading-relaxed">
+          <p className="text-[13px] text-sub-text mt-2.5 leading-relaxed">
             パスワードを入力してログインしてください。
             <br />
             セッションは7日間保持されます。
@@ -40,64 +37,68 @@ export default function LoginPage() {
         </section>
 
         {/* パスワードフォーム */}
-        <form action={formAction} className="pt-8 flex flex-col gap-3.5">
-          <div className="flex items-baseline justify-between">
-            <label
-              htmlFor="password"
-              className="text-[10px] font-bold tracking-[0.2em] uppercase text-sub-text"
-            >
-              パスワード
-            </label>
-            <span className="text-[10px] text-sub-text font-tabular tracking-[0.06em]">
-              {showPassword ? 'visible' : 'hidden'}
-            </span>
-          </div>
+        <div className="rounded-[20px] shadow-soft-lg p-[18px]">
+          <form action={formAction} className="flex flex-col gap-3.5">
+            <div>
+              <div className="flex items-baseline justify-between mb-2">
+                <label
+                  htmlFor="password"
+                  className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text"
+                >
+                  パスワード
+                </label>
+                <span className="text-[10px] text-sub-text font-tabular">
+                  {showPassword ? 'visible' : 'hidden'}
+                </span>
+              </div>
 
-          <div className="border-b-[1.5px] border-foreground flex items-center pb-2.5">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              placeholder="パスワード"
-              required
-              autoFocus
-              className="flex-1 text-[26px] font-medium tracking-[0.32em] bg-transparent border-none outline-none font-tabular placeholder:text-muted-foreground/40 placeholder:tracking-normal placeholder:text-base"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text hover:text-foreground transition-colors shrink-0"
-            >
-              {showPassword ? '隠す' : '表示'}
-            </button>
-          </div>
-
-          {state.error && (
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
-              <span className="text-[12px] font-semibold text-destructive">{state.error}</span>
+              <div className="rounded-[14px] bg-[oklch(0.98_0.005_260)] dark:bg-muted border border-input flex items-center px-4 py-3.5">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="パスワード"
+                  required
+                  autoFocus
+                  className="flex-1 text-[20px] font-semibold tracking-[0.30em] bg-transparent border-none outline-none font-tabular placeholder:text-muted-foreground/40 placeholder:tracking-normal placeholder:text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="text-[11px] font-bold tracking-[0.10em] uppercase text-accent shrink-0"
+                >
+                  {showPassword ? '隠す' : '表示'}
+                </button>
+              </div>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="mt-3.5 py-[18px] px-4 bg-foreground text-background rounded-xl text-[13px] font-bold tracking-[0.18em] uppercase flex items-center justify-between disabled:opacity-50 transition-opacity"
-          >
-            <span>{isPending ? 'ログイン中…' : 'ログイン'}</span>
-            {!isPending && <span className="text-lg font-normal">→</span>}
-          </button>
-        </form>
+            {state.error && (
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
+                <span className="text-[12px] font-semibold text-destructive">{state.error}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="mt-1 py-4 px-5 gradient-fab text-white rounded-full text-[13px] font-bold tracking-[0.14em] uppercase flex items-center justify-between shadow-fab disabled:opacity-50 transition-opacity"
+            >
+              <span>{isPending ? 'ログイン中…' : 'ログイン'}</span>
+              {!isPending && <span className="text-lg font-normal">→</span>}
+            </button>
+          </form>
+        </div>
       </main>
 
       {/* フッター */}
-      <footer className="px-5 py-5 border-t border-border flex items-baseline justify-between">
+      <footer className="px-5 py-5 flex items-baseline justify-between">
         <p className="text-[11px] text-sub-text leading-relaxed">
           パスワードを忘れた場合は
           <br />
           管理者に問い合わせてください。
         </p>
-        <span className="text-[10px] font-bold tracking-[0.16em] uppercase shrink-0">
+        <span className="text-[11px] font-bold tracking-[0.12em] uppercase text-accent shrink-0">
           Help ›
         </span>
       </footer>

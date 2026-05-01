@@ -2,7 +2,6 @@
 
 import { MiniBarChart } from '@/components/charts/mini-bar-chart'
 import { AnimatedYen } from '@/components/animations/animated-number'
-import { PersonBadge } from '@/components/ui/person-badge'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
 import { formatCurrency } from '@/lib/utils/format'
@@ -52,91 +51,85 @@ export function CalculationSection({
 
 
   return (
-    <div data-section="calculation">
+    <div data-section="calculation" className="space-y-4">
       {/* ヒーロー: 月表示 + 収支 + チャート */}
-      <section className="py-8 md:py-10 md:px-6 border-b border-border">
-        <div className="flex items-baseline justify-between gap-4">
-          <div>
-            <div className="text-[11px] font-bold tracking-[0.22em] uppercase text-sub-text">
-              Balance / 月の収支
-            </div>
-            <div className="text-[36px] md:text-[56px] font-bold tracking-[-0.04em] leading-[0.95] font-tabular mt-2">
-              {formatMonthDot(currentMonth)}
-            </div>
-            <div className="text-xs md:text-sm text-sub-text mt-1.5">
-              {m}月度 — {days}日間 / {totalItems}件の取引
-            </div>
+      <section className="rounded-[22px] gradient-hero-card shadow-soft-lg p-5 md:p-6">
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-accent">
+          Balance / 月の収支
+        </div>
+        <div className="text-[30px] md:text-[44px] font-bold tracking-[-0.03em] leading-[0.95] font-tabular mt-2">
+          {formatMonthDot(currentMonth)}
+        </div>
+        <div className="text-xs text-sub-text mt-1.5">
+          {m}月度 — {days}日間 / {totalItems}件の取引
+        </div>
+
+        <div className="mt-5 md:mt-6">
+          <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text">
+            月の収支
+          </div>
+          <div className="mt-1.5 flex items-baseline">
+            <AnimatedYen
+              value={monthlyBalance}
+              className={`text-[44px] md:text-[64px] font-bold tracking-[-0.04em] leading-[0.9] font-tabular ${
+                monthlyBalance >= 0
+                  ? 'text-neon-green'
+                  : 'text-neon-red'
+              }`}
+            />
+          </div>
+          <div className="text-xs text-sub-text mt-2.5 leading-relaxed">
+            収入 {formatCurrency(result.totalIncome)} − 支出 {formatCurrency(Math.abs(allExpenseTotal))}
           </div>
         </div>
 
-        <div className="mt-6 md:mt-8 grid gap-8 md:gap-14 md:grid-cols-[1.5fr_1fr] items-end">
-          <div>
-            <div className="text-[12px] font-semibold tracking-[0.18em] uppercase text-sub-text">
-              月の収支
-            </div>
-            <div className="mt-2 flex items-baseline">
-              <AnimatedYen
-                value={monthlyBalance}
-                className={`text-[48px] md:text-[88px] font-bold tracking-[-0.04em] leading-[0.9] font-tabular ${
-                  monthlyBalance >= 0
-                    ? 'text-neon-green'
-                    : 'text-neon-red'
-                }`}
-              />
-            </div>
-            <div className="text-xs md:text-sm text-sub-text mt-3 leading-relaxed">
-              収入 {formatCurrency(result.totalIncome)} − 支出 {formatCurrency(Math.abs(allExpenseTotal))}
-            </div>
-          </div>
-
-          {recentSummaries.length > 0 && (
+        {recentSummaries.length > 0 && (
+          <div className="mt-5">
             <MiniBarChart summaries={recentSummaries} currentMonth={currentMonth} />
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* 第2階層: お小遣い + 精算 */}
-      <section className="grid md:grid-cols-[1.4fr_1fr] border-b border-border">
-        <div className="py-5 md:py-7 md:px-6 flex flex-col gap-1.5 border-b md:border-b-0 border-border">
-          <div className="text-[10px] md:text-[11px] font-bold tracking-[0.22em] uppercase text-sub-text">
+      <section className="flex flex-col gap-3">
+        <div className="rounded-[18px] bg-card shadow-soft p-4">
+          <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">
             Allowance / お小遣い（1人あたり）
           </div>
           <AnimatedYen
             value={result.allowance}
-            className="text-[28px] md:text-[44px] font-bold tracking-[-0.03em] leading-[0.95] font-tabular"
+            className="text-[26px] md:text-[36px] font-bold tracking-[-0.03em] leading-[0.95] font-tabular mt-2"
           />
-          <div className="text-[11px] md:text-[13px] text-sub-text mt-1">
+          <div className="text-[11px] text-sub-text mt-2 leading-relaxed">
             {hasAdjustments
               ? `収支 ${formatCurrency(monthlyBalance)} ＋ 調整 ${formatCurrency(carryoverExpenseTotal + clearedCarryoverTotal)} の余剰を等分`
               : '余剰を2人で等分'}
           </div>
         </div>
 
-        <div className="py-5 md:py-7 md:px-6 flex flex-col gap-1.5 md:border-l border-border md:bg-muted/30">
-          <div className="text-[10px] md:text-[11px] font-bold tracking-[0.22em] uppercase text-sub-text">
+        <div className="rounded-[18px] bg-card shadow-soft p-4">
+          <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">
             Settlement / 精算額
           </div>
           {result.settlement !== 0 ? (
-            <>
+            <div className="flex items-center justify-between mt-2">
               <AnimatedYen
                 value={result.settlement}
                 absolute
-                className="text-[22px] md:text-[28px] font-bold tracking-[-0.02em] leading-[0.95] font-tabular text-neon-cyan"
+                className="text-[22px] md:text-[28px] font-bold tracking-[-0.02em] leading-[0.95] font-tabular text-accent"
               />
-              <div className="flex items-center gap-2.5 mt-2">
-                <span className="inline-flex items-center gap-1.5 text-[11px] md:text-[13px] font-semibold text-husband">
-                  <span className="w-2 h-2 rounded-full bg-husband" />
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-husband-light text-[11px] font-bold text-husband">
                   夫
                 </span>
-                <span className="text-sub-text text-sm">──→</span>
-                <span className="inline-flex items-center gap-1.5 text-[11px] md:text-[13px] font-semibold text-wife">
-                  <span className="w-2 h-2 rounded-full bg-wife" />
+                <span className="text-sub-text text-xs">→</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-wife-light text-[11px] font-bold text-wife">
                   妻
                 </span>
               </div>
-            </>
+            </div>
           ) : (
-            <span className="text-[22px] md:text-[28px] font-bold text-muted-foreground">
+            <span className="text-[22px] md:text-[28px] font-bold text-muted-foreground mt-2 block">
               精算なし
             </span>
           )}

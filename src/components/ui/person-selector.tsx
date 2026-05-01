@@ -19,7 +19,7 @@ export function PersonSelector({ value, onChange, name }: PersonSelectorProps) {
             key={p}
             type="button"
             onClick={() => onChange(p)}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors"
+            className="flex-1 py-3 rounded-[14px] text-sm font-semibold text-center transition-colors"
             style={{
               background: active ? `var(--${p}-light)` : 'var(--card)',
               color: active ? `var(--${p})` : 'var(--sub-text)',

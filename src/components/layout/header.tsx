@@ -48,20 +48,20 @@ export function Header({ currentMonth }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between max-w-4xl">
-        <span className="text-[13px] font-bold tracking-[0.18em] uppercase text-foreground">
-          Score Splitter
+    <header className="sticky top-0 z-50 bg-background border-b border-border">
+      <div className="container mx-auto px-4 py-3.5 flex items-center justify-between max-w-4xl">
+        <span className="text-[12px] font-bold tracking-[0.16em] uppercase text-sub-text">
+          Splitter
         </span>
 
         {currentMonth && (
           <nav className="flex items-center gap-2" aria-label="月ナビゲーション">
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon-sm"
               aria-label="前月に移動"
               onClick={() => navigateMonth(-1)}
-              className="h-7 w-7 rounded-lg border-border"
+              className="h-7 w-7 rounded-full bg-muted text-accent"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
@@ -88,11 +88,11 @@ export function Header({ currentMonth }: HeaderProps) {
               </AnimatePresence>
             </button>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon-sm"
               aria-label="翌月に移動"
               onClick={() => navigateMonth(1)}
-              className="h-7 w-7 rounded-lg border-border"
+              className="h-7 w-7 rounded-full bg-muted text-accent"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>

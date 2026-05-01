@@ -37,7 +37,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         <main
           id="main"
           tabIndex={-1}
-          className="container mx-auto px-4 py-4 space-y-0 max-w-4xl"
+          className="container mx-auto px-4 py-5 space-y-4 max-w-4xl"
         >
           <MonthlyListSection summaries={summaries} />
         </main>
@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
   return (
     <div className="min-h-screen bg-background">
       <Header currentMonth={month} />
-      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-4 space-y-0 max-w-4xl">
+      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-5 space-y-4 max-w-4xl">
         <MonthToolbar currentMonth={month} incomes={incomes} expenses={expenses} carryovers={carryovers} />
         <CalculationSection
           incomes={incomes}
@@ -77,7 +77,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
           currentMonth={month}
           recentSummaries={recentSummaries}
         />
-        <section className="py-8 md:py-10 md:px-6 grid gap-8 md:gap-16 md:grid-cols-2">
+        <section className="grid gap-4 md:gap-5 md:grid-cols-2">
           <IncomeSection incomes={incomes} month={month} />
           <ExpenseSection expenses={expenses} month={month} />
         </section>

@@ -76,27 +76,22 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
       </div>
 
       {/* 年ナビゲーション */}
-      <div className="flex items-center justify-between pb-4 border-b border-border">
+      <div className="flex items-center justify-between pb-4">
         <button
           type="button"
           onClick={() => setSelectedYear((y) => y - 1)}
-          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm bg-background hover:bg-muted/50 transition-colors"
+          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm text-accent transition-colors"
           aria-label="前年に移動"
         >
           <ChevronLeft className="h-3.5 w-3.5" />
         </button>
-        <div className="text-center">
-          <div className="text-lg font-bold tracking-[-0.01em] font-tabular">
-            {selectedYear}
-          </div>
-          <div className="text-[10px] text-sub-text tracking-[0.12em] uppercase mt-0.5">
-            Year
-          </div>
+        <div className="px-4 py-1.5 rounded-full bg-card shadow-soft text-sm font-semibold font-tabular">
+          {selectedYear}
         </div>
         <button
           type="button"
           onClick={() => setSelectedYear((y) => y + 1)}
-          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm bg-background hover:bg-muted/50 transition-colors"
+          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm text-accent transition-colors"
           aria-label="翌年に移動"
         >
           <ChevronRight className="h-3.5 w-3.5" />
@@ -105,39 +100,21 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
 
       {/* 年間サマリー */}
       {recordedCount > 0 && (
-        <div className="py-5 border-b border-border">
-          <div className="text-[10px] font-bold tracking-[0.22em] uppercase text-sub-text">
-            Year-to-date / 年間収支
-          </div>
-          <div className="flex items-baseline mt-2">
+        <div className="rounded-[18px] shadow-soft p-4">
+          <div className="text-[11px] text-sub-text font-medium">Year-to-date</div>
+          <div className="flex items-baseline mt-1">
             <span
-              className={`text-[44px] font-bold tracking-[-0.04em] leading-[0.9] font-tabular ${
-                isBalancePositive ? 'text-neon-green' : 'text-neon-red'
+              className={`text-[26px] font-bold tracking-[-0.03em] font-tabular ${
+                isBalancePositive ? 'text-accent' : 'text-neon-red'
               }`}
             >
               {isBalancePositive ? '+' : ''}
               {balanceYTD.toLocaleString('ja-JP')}
             </span>
-            <span className="text-[13px] font-semibold text-sub-text ml-1">円</span>
+            <span className="text-xs text-sub-text ml-1">円</span>
           </div>
-
-          <div className="grid grid-cols-2 mt-4 border-t border-border">
-            <div className="py-3 pr-3.5 border-r border-border">
-              <div className="text-[9px] font-bold tracking-[0.2em] uppercase text-sub-text">
-                Income
-              </div>
-              <div className="text-[18px] font-bold tracking-[-0.02em] font-tabular mt-1">
-                {formatCurrency(incomeYTD)}
-              </div>
-            </div>
-            <div className="py-3 pl-3.5">
-              <div className="text-[9px] font-bold tracking-[0.2em] uppercase text-sub-text">
-                Expense
-              </div>
-              <div className="text-[18px] font-bold tracking-[-0.02em] font-tabular mt-1">
-                {formatCurrency(expenseYTD)}
-              </div>
-            </div>
+          <div className="text-[11px] text-sub-text mt-1">
+            {recordedCount}ヶ月分 · 収入 {formatCurrency(incomeYTD)} · 支出 {formatCurrency(expenseYTD)}
           </div>
         </div>
       )}
@@ -158,7 +135,7 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
       </div>
 
       {/* 月リスト */}
-      <div className="border-t border-foreground">
+      <div className="flex flex-col gap-2">
         {allMonths.map((m) => (
           <MonthRow
             key={m.month}

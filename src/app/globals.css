@@ -61,74 +61,80 @@
 :root {
   --radius: 0.75rem;
 
-  /* 背景系 — ライト */
-  --background: oklch(0.99 0.005 260);
-  --foreground: oklch(0.13 0.02 260);
+  /* 背景系 — Soft Cards: 純白 */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.20 0.04 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.02 260);
+  --card-foreground: oklch(0.20 0.04 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.02 260);
+  --popover-foreground: oklch(0.20 0.04 260);
 
   /* サブテキスト */
-  --sub-text: oklch(0.45 0.02 260);
+  --sub-text: oklch(0.50 0.04 260);
 
   /* プライマリ */
-  --primary: oklch(0.20 0.02 260);
-  --primary-foreground: oklch(0.99 0.005 260);
+  --primary: oklch(0.20 0.04 260);
+  --primary-foreground: oklch(1 0 0);
 
   /* セカンダリ */
-  --secondary: oklch(0.94 0.01 260);
-  --secondary-foreground: oklch(0.20 0.02 260);
+  --secondary: oklch(0.97 0.01 240);
+  --secondary-foreground: oklch(0.20 0.04 260);
 
-  /* ミュート */
-  --muted: oklch(0.94 0.01 260);
-  --muted-foreground: oklch(0.45 0.02 260);
+  /* ミュート — chip/toolbar背景 */
+  --muted: oklch(0.97 0.01 240);
+  --muted-foreground: oklch(0.50 0.04 260);
 
-  /* アクセント */
-  --accent: oklch(0.55 0.18 195);
+  /* アクセント — ブルー系 */
+  --accent: oklch(0.50 0.18 250);
   --accent-foreground: oklch(1 0 0);
 
   /* デストラクティブ */
-  --destructive: oklch(0.55 0.22 25);
+  --destructive: oklch(0.55 0.20 25);
 
   /* ボーダー・入力 */
-  --border: oklch(0.92 0.01 260);
-  --input: oklch(0.92 0.01 260);
-  --ring: oklch(0.50 0.16 195);
+  --border: oklch(0.95 0.005 260);
+  --input: oklch(0.94 0.005 260);
+  --ring: oklch(0.50 0.18 250);
 
   /* ドメインカラー */
-  --neon-green: oklch(0.45 0.18 155);
-  --neon-red: oklch(0.50 0.20 25);
-  --neon-cyan: oklch(0.50 0.16 195);
+  --neon-green: oklch(0.45 0.16 155);
+  --neon-red: oklch(0.55 0.18 25);
+  --neon-cyan: oklch(0.50 0.18 250);
 
   /* 担当者カラー */
   --husband: oklch(0.50 0.18 250);
-  --husband-light: oklch(0.50 0.18 250 / 10%);
+  --husband-light: oklch(0.94 0.05 250);
   --wife: oklch(0.55 0.18 350);
-  --wife-light: oklch(0.55 0.18 350 / 10%);
+  --wife-light: oklch(0.95 0.04 350);
 
-  /* シャドウ効果（ライト用） */
-  --glow-accent: oklch(0.55 0.18 195);
+  /* シャドウ効果 */
+  --glow-accent: oklch(0.50 0.18 250);
   --glow-sm: 0 1px 3px oklch(0 0 0 / 0.08);
   --glow-md: 0 2px 8px oklch(0 0 0 / 0.10);
   --glow-lg: 0 4px 16px oklch(0 0 0 / 0.12);
 
-  /* グラデーション背景 */
-  --gradient-page-from: oklch(0.99 0.005 260);
-  --gradient-page-to: oklch(0.98 0.01 260);
-  --gradient-hero-from: oklch(0.55 0.18 195 / 8%);
-  --gradient-hero-via: oklch(0.55 0.18 195 / 3%);
-  --gradient-hero-to: oklch(0.50 0.18 250 / 5%);
+  /* Soft Cards シャドウ */
+  --shadow-soft: 0 4px 14px oklch(0.50 0.10 250 / 6%), 0 0 0 1px oklch(0.95 0.005 260);
+  --shadow-soft-lg: 0 8px 24px oklch(0.50 0.10 250 / 7%), 0 0 0 1px oklch(0.95 0.005 260);
+  --shadow-fab: 0 12px 24px oklch(0.55 0.18 255 / 28%);
 
   /* カードシャドウ */
-  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.04);
-  --shadow-card-hover: 0 4px 12px oklch(0 0 0 / 0.08), 0 2px 4px oklch(0 0 0 / 0.04);
+  --shadow-card: 0 4px 14px oklch(0.50 0.10 250 / 6%), 0 0 0 1px oklch(0.95 0.005 260);
+  --shadow-card-hover: 0 8px 22px oklch(0.55 0.18 250 / 18%), 0 0 0 1.5px oklch(0.55 0.18 250);
+
+  /* グラデーション */
+  --gradient-hero-card: linear-gradient(160deg, oklch(0.97 0.025 235) 0%, oklch(0.99 0.01 240) 100%);
+  --gradient-fab: linear-gradient(160deg, oklch(0.55 0.18 255), oklch(0.48 0.20 265));
+
+  /* サーフェス */
+  --surface-chip: oklch(0.97 0.01 240);
+  --surface-total: oklch(0.99 0.005 240);
 
   /* 警告カラー */
   --warning: oklch(0.65 0.16 70);
 
   /* チャート */
-  --chart-1: oklch(0.55 0.18 195);
+  --chart-1: oklch(0.55 0.18 250);
   --chart-2: oklch(0.50 0.18 155);
   --chart-3: oklch(0.50 0.18 250);
   --chart-4: oklch(0.55 0.18 350);
@@ -137,12 +143,12 @@
   /* サイドバー（互換性のため） */
   --sidebar: oklch(0.97 0.01 260);
   --sidebar-foreground: oklch(0.15 0.02 260);
-  --sidebar-primary: oklch(0.55 0.18 195);
+  --sidebar-primary: oklch(0.50 0.18 250);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0.01 260);
-  --sidebar-accent-foreground: oklch(0.20 0.02 260);
-  --sidebar-border: oklch(0.90 0.01 260);
-  --sidebar-ring: oklch(0.55 0.18 195);
+  --sidebar-accent: oklch(0.97 0.01 240);
+  --sidebar-accent-foreground: oklch(0.20 0.04 260);
+  --sidebar-border: oklch(0.95 0.005 260);
+  --sidebar-ring: oklch(0.50 0.18 250);
 }
 
 /* ===== ダークモード ===== */
@@ -167,8 +173,8 @@
   --muted: oklch(0.25 0.02 260);
   --muted-foreground: oklch(0.60 0.02 260);
 
-  /* アクセント — ネオンシアン（明度を微調整して目に優しく） */
-  --accent: oklch(0.72 0.16 195);
+  /* アクセント — ブルー（ダーク版） */
+  --accent: oklch(0.70 0.18 250);
   --accent-foreground: oklch(0.16 0.02 260);
 
   /* デストラクティブ */
@@ -177,7 +183,7 @@
   /* ボーダー・入力 */
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.72 0.16 195);
+  --ring: oklch(0.70 0.18 250);
 
   /* サブテキスト — ダーク */
   --sub-text: oklch(0.65 0.02 260);
@@ -185,7 +191,7 @@
   /* ドメインカラー — ネオンアクセント */
   --neon-green: oklch(0.70 0.20 155);
   --neon-red: oklch(0.70 0.20 25);
-  --neon-cyan: oklch(0.75 0.16 195);
+  --neon-cyan: oklch(0.70 0.18 250);
 
   /* 担当者カラー */
   --husband: oklch(0.70 0.18 250);
@@ -194,27 +200,33 @@
   --wife-light: oklch(0.72 0.18 350 / 15%);
 
   /* グロー効果（ダーク用） */
-  --glow-accent: oklch(0.72 0.16 195);
-  --glow-sm: 0 0 8px oklch(0.72 0.16 195 / 15%);
-  --glow-md: 0 0 16px oklch(0.72 0.16 195 / 20%);
-  --glow-lg: 0 0 24px oklch(0.72 0.16 195 / 25%);
+  --glow-accent: oklch(0.70 0.18 250);
+  --glow-sm: 0 0 8px oklch(0.70 0.18 250 / 15%);
+  --glow-md: 0 0 16px oklch(0.70 0.18 250 / 20%);
+  --glow-lg: 0 0 24px oklch(0.70 0.18 250 / 25%);
 
-  /* グラデーション背景（ダーク用） */
-  --gradient-page-from: oklch(0.16 0.02 260);
-  --gradient-page-to: oklch(0.14 0.03 230);
-  --gradient-hero-from: oklch(0.72 0.16 195 / 12%);
-  --gradient-hero-via: oklch(0.72 0.16 195 / 5%);
-  --gradient-hero-to: oklch(0.70 0.18 250 / 8%);
+  /* Soft Cards シャドウ（ダーク用） */
+  --shadow-soft: 0 4px 14px oklch(0 0 0 / 0.3), 0 0 1px oklch(1 0 0 / 0.05);
+  --shadow-soft-lg: 0 8px 24px oklch(0 0 0 / 0.35), 0 0 1px oklch(1 0 0 / 0.08);
+  --shadow-fab: 0 12px 24px oklch(0.60 0.18 255 / 30%);
 
   /* カードシャドウ（ダーク用） */
-  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.3), 0 0 1px oklch(1 0 0 / 0.05);
-  --shadow-card-hover: 0 4px 16px oklch(0.72 0.16 195 / 15%), 0 0 1px oklch(1 0 0 / 0.08);
+  --shadow-card: 0 4px 14px oklch(0 0 0 / 0.3), 0 0 1px oklch(1 0 0 / 0.05);
+  --shadow-card-hover: 0 8px 22px oklch(0.70 0.18 250 / 18%), 0 0 1px oklch(1 0 0 / 0.08);
+
+  /* グラデーション（ダーク用） */
+  --gradient-hero-card: linear-gradient(160deg, oklch(0.22 0.03 250), oklch(0.18 0.02 260));
+  --gradient-fab: linear-gradient(160deg, oklch(0.60 0.18 255), oklch(0.55 0.20 265));
+
+  /* サーフェス（ダーク用） */
+  --surface-chip: oklch(0.25 0.02 260);
+  --surface-total: oklch(0.20 0.02 260);
 
   /* 警告カラー */
   --warning: oklch(0.75 0.16 70);
 
   /* チャート */
-  --chart-1: oklch(0.75 0.18 195);
+  --chart-1: oklch(0.70 0.18 250);
   --chart-2: oklch(0.75 0.20 155);
   --chart-3: oklch(0.70 0.18 250);
   --chart-4: oklch(0.72 0.18 350);
@@ -223,12 +235,12 @@
   /* サイドバー（互換性のため） */
   --sidebar: oklch(0.18 0.02 260);
   --sidebar-foreground: oklch(0.93 0.01 260);
-  --sidebar-primary: oklch(0.72 0.16 195);
+  --sidebar-primary: oklch(0.70 0.18 250);
   --sidebar-primary-foreground: oklch(0.16 0.02 260);
   --sidebar-accent: oklch(0.25 0.02 260);
   --sidebar-accent-foreground: oklch(0.93 0.01 260);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.72 0.16 195);
+  --sidebar-ring: oklch(0.70 0.18 250);
 }
 
 @layer base {
@@ -258,20 +270,24 @@
   box-shadow: var(--glow-lg);
 }
 
-@utility glass {
-  background: oklch(from var(--card) l c h / 60%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
 }
 
-@utility glass-strong {
-  background: oklch(from var(--card) l c h / 75%);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+@utility shadow-soft-lg {
+  box-shadow: var(--shadow-soft-lg);
 }
 
-@utility gradient-page {
-  background: linear-gradient(135deg, var(--gradient-page-from), var(--gradient-page-to));
+@utility shadow-fab {
+  box-shadow: var(--shadow-fab);
+}
+
+@utility gradient-hero-card {
+  background: var(--gradient-hero-card);
+}
+
+@utility gradient-fab {
+  background: var(--gradient-fab);
 }
 
 @utility shadow-card {

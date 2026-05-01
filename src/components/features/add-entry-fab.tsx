@@ -17,9 +17,12 @@ export function AddEntryFab({ month }: AddEntryFabProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="項目を追加"
-        className="fixed right-4 bottom-4 z-40 md:hidden w-[52px] h-[52px] rounded-full bg-foreground text-background flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+        className="fixed right-4 bottom-5 z-40 md:hidden rounded-full gradient-fab text-white px-5 py-3.5 shadow-fab flex items-center gap-2.5 active:scale-95 transition-transform"
       >
-        <Plus className="h-5 w-5" />
+        <span className="w-[30px] h-[30px] rounded-full bg-white/20 flex items-center justify-center">
+          <Plus className="h-4 w-4" />
+        </span>
+        <span className="text-sm font-bold">項目を追加</span>
       </button>
       <AddEntrySheet open={open} onOpenChange={setOpen} month={month} />
     </>

@@ -4,8 +4,8 @@ export default function Loading() {
   return (
     <div className="min-h-screen bg-background">
       {/* ヘッダー */}
-      <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between max-w-4xl">
+      <header className="sticky top-0 z-50 bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-3.5 flex items-center justify-between max-w-4xl">
           <Skeleton className="h-4 w-28" />
           <div className="flex items-center gap-1">
             <Skeleton className="h-7 w-7 rounded-lg" />
@@ -27,16 +27,16 @@ export default function Loading() {
         </div>
 
         {/* ヒーロー / サマリー */}
-        <div className="py-5 border-y border-border">
+        <div className="rounded-[22px] shadow-soft-lg p-5">
           <Skeleton className="h-2.5 w-32" />
           <Skeleton className="h-10 w-48 mt-3" />
           <Skeleton className="h-3 w-56 mt-3" />
-          <div className="grid grid-cols-2 mt-4 border-t border-border">
-            <div className="py-3 pr-3.5 border-r border-border">
+          <div className="grid grid-cols-2 mt-4 gap-3">
+            <div className="rounded-[18px] shadow-soft p-4">
               <Skeleton className="h-2 w-12" />
               <Skeleton className="h-5 w-24 mt-2" />
             </div>
-            <div className="py-3 pl-3.5">
+            <div className="rounded-[18px] shadow-soft p-4">
               <Skeleton className="h-2 w-12" />
               <Skeleton className="h-5 w-24 mt-2" />
             </div>
@@ -50,11 +50,11 @@ export default function Loading() {
         </div>
 
         {/* リスト行 */}
-        <div className="border-t border-foreground/20">
+        <div className="rounded-[18px] shadow-soft overflow-hidden">
           {Array.from({ length: 6 }, (_, i) => (
             <div
               key={i}
-              className="grid grid-cols-[64px_1fr_auto] items-center gap-3.5 px-5 py-4 border-b border-border/60"
+              className="grid grid-cols-[32px_1fr_auto] items-center gap-3 px-3.5 py-3 border-b border-border last:border-b-0"
             >
               <Skeleton className="h-3 w-5" />
               <div className="space-y-1.5">

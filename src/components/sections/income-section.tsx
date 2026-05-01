@@ -20,18 +20,18 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
 
   return (
     <div data-section="income">
-      <div className="flex items-baseline justify-between border-b border-foreground pb-2.5 mb-1">
-        <h3 className="text-[11px] md:text-sm font-bold tracking-[0.16em] uppercase">
+      <div className="flex items-baseline justify-between pb-2 mb-1">
+        <h3 className="text-[12px] font-bold tracking-[0.10em] uppercase">
           Income / 収入
         </h3>
-        <span className="text-[10px] md:text-xs text-sub-text font-tabular">
+        <span className="text-[10px] text-sub-text font-tabular">
           {incomes.length}件
         </span>
       </div>
 
-      <div>
+      <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
         <AnimatePresence initial={false}>
-          {incomes.map((income) => (
+          {incomes.map((income, i) => (
             <motion.div
               key={income.id}
               data-testid="item-row"
@@ -40,16 +40,23 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className="group grid grid-cols-[24px_1fr_auto] gap-3 py-3 border-b border-border items-baseline"
+              className={`group grid grid-cols-[32px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+                i < incomes.length - 1 ? 'border-b border-border' : ''
+              }`}
             >
-              <span className="text-[10px] font-bold text-husband group-[:nth-child(odd)]:text-husband group-[:nth-child(even)]:text-wife"
-                style={{ color: `var(--${income.person})` }}
+              <span
+                className="w-7 h-7 rounded-full text-white text-[11px] font-bold inline-flex items-center justify-center shrink-0"
+                style={{
+                  background: income.person === 'husband'
+                    ? 'linear-gradient(135deg, oklch(0.65 0.16 250), oklch(0.55 0.18 260))'
+                    : 'linear-gradient(135deg, oklch(0.75 0.16 350), oklch(0.65 0.18 20))',
+                }}
               >
                 {income.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className="text-sm md:text-base font-medium truncate">{income.label}</span>
+              <span className="text-sm font-medium truncate">{income.label}</span>
               <div className="flex items-center gap-1">
-                <span className="text-sm md:text-base font-semibold font-tabular text-neon-green">
+                <span className="text-sm font-semibold font-tabular text-neon-green">
                   +{formatCurrency(income.amount).slice(1)}
                 </span>
                 <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
@@ -81,19 +88,19 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
             <p className="text-xs">収入がありません</p>
           </div>
         )}
-      </div>
 
-      <div className="pb-4">
-        <AddEntryModal type="income" month={month} />
-      </div>
+        <div className="border-t border-border bg-[var(--surface-total)] px-3.5 py-2.5">
+          <AddEntryModal type="income" month={month} />
+        </div>
 
-      <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
-        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">
-          Total
-        </span>
-        <span className="text-xl md:text-[28px] font-bold font-tabular tracking-[-0.02em] text-neon-green">
-          {formatCurrency(total)}
-        </span>
+        <div className="flex items-baseline justify-between px-3.5 py-3 border-t border-border bg-[var(--surface-total)]">
+          <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-sub-text">
+            Total
+          </span>
+          <span className="text-lg font-bold font-tabular tracking-[-0.01em] text-neon-green">
+            {formatCurrency(total)}
+          </span>
+        </div>
       </div>
     </div>
   )

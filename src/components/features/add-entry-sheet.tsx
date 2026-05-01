@@ -27,21 +27,21 @@ interface AddEntrySheetProps {
 const typeConfig = {
   income: {
     label: '収入',
-    bg: 'oklch(0.45 0.18 155 / 12%)',
-    fg: 'oklch(0.42 0.18 155)',
-    border: 'oklch(0.45 0.18 155 / 30%)',
+    bg: 'oklch(0.94 0.08 155)',
+    fg: 'oklch(0.42 0.16 155)',
+    border: 'oklch(0.65 0.16 155)',
   },
   expense: {
     label: '支出',
-    bg: 'oklch(0.50 0.20 25 / 12%)',
-    fg: 'oklch(0.50 0.20 25)',
-    border: 'oklch(0.50 0.20 25 / 30%)',
+    bg: 'oklch(0.94 0.07 25)',
+    fg: 'oklch(0.50 0.18 25)',
+    border: 'oklch(0.70 0.16 25)',
   },
   carryover: {
     label: '繰越',
-    bg: 'oklch(0.50 0.16 195 / 12%)',
-    fg: 'oklch(0.45 0.16 195)',
-    border: 'oklch(0.50 0.16 195 / 30%)',
+    bg: 'oklch(0.94 0.05 250)',
+    fg: 'oklch(0.45 0.18 250)',
+    border: 'oklch(0.65 0.16 250)',
   },
 } as const
 
@@ -91,7 +91,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="rounded-t-[20px] pb-safe">
+      <DrawerContent className="rounded-t-[22px] pb-safe">
         <DrawerHeader className="flex flex-row items-center justify-between px-4 py-2">
           <DrawerClose className="text-sm font-semibold text-sub-text">
             キャンセル
@@ -103,7 +103,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             type="submit"
             form="add-entry-form"
             disabled={submitting}
-            className="text-sm font-bold text-neon-cyan disabled:opacity-50"
+            className="text-sm font-bold text-accent disabled:opacity-50"
           >
             保存
           </button>
@@ -123,7 +123,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
                   setIsCarryover(false)
                   setIsCleared(false)
                 }}
-                className="flex-1 py-2.5 rounded-[10px] text-[13px] font-semibold text-center transition-colors"
+                className="flex-1 py-2.5 rounded-[12px] text-[13px] font-bold text-center transition-colors"
                 style={{
                   background: active ? cfg.bg : 'var(--muted)',
                   color: active ? cfg.fg : 'var(--sub-text)',
@@ -150,7 +150,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             <Input
               name="label"
               placeholder="例：食費、家賃、給与"
-              className="h-12 rounded-xl"
+              className="h-12 rounded-[14px]"
               required
             />
           </div>
@@ -164,7 +164,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
               type="number"
               inputMode="numeric"
               placeholder="¥ 0"
-              className="h-14 rounded-xl text-[28px] font-bold text-right font-tabular tracking-[-0.02em]"
+              className="h-14 rounded-[14px] text-[28px] font-bold text-right font-tabular tracking-[-0.02em]"
               min={1}
               required
             />
@@ -205,7 +205,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             type="submit"
             form="add-entry-form"
             disabled={submitting}
-            className="w-full py-4 bg-foreground text-background rounded-xl text-[15px] font-bold text-center disabled:opacity-50 transition-opacity"
+            className="w-full py-4 gradient-fab text-white rounded-full text-[15px] font-bold text-center shadow-fab disabled:opacity-50 transition-opacity"
           >
             {submitting ? '追加中...' : `${typeConfig[entryType].label}を追加`}
           </button>

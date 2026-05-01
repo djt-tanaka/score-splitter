@@ -47,40 +47,50 @@ export function MonthRow({
 }: MonthRowProps) {
   if (!summary) {
     return (
-      <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3.5 px-5 py-4 border-b border-border/60 opacity-40">
-        <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text font-tabular">
+      <div className="rounded-[16px] shadow-soft p-3 grid grid-cols-[40px_1fr_auto] items-center gap-3 opacity-55">
+        <div className="w-10 h-10 rounded-[12px] bg-muted flex items-center justify-center text-[13px] font-bold font-tabular text-sub-text">
           {String(index).padStart(2, '0')}
-        </span>
-        <div>
-          <span className="text-[18px] font-bold tracking-[-0.02em] font-tabular">
-            {index}月
-          </span>
-          <div className="text-[11px] text-sub-text tracking-[0.06em] mt-0.5">未記録</div>
         </div>
-        <span className="text-[18px] font-bold text-muted-foreground text-right font-tabular">
-          —
-        </span>
+        <div>
+          <span className="text-sm font-semibold">{index}月</span>
+          <div className="text-[11px] text-sub-text mt-0.5">未記録</div>
+        </div>
+        <span className="text-sm text-muted-foreground font-tabular">—</span>
       </div>
     )
   }
 
   const isPositive = summary.balance >= 0
   const sign = isPositive ? '+' : '−'
+  const tone = isPositive ? 'pos' : 'neg'
 
   return (
     <Link
       href={`/?month=${month}`}
       aria-label={`${formatMonth(month)}の詳細を開く`}
-      className={`grid grid-cols-[64px_1fr_auto] items-center gap-3.5 px-5 py-4 border-b border-border/60 transition-colors hover:bg-muted/30 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
-        isCurrentMonth ? 'bg-muted/30' : ''
+      className={`rounded-[16px] p-3 grid grid-cols-[40px_1fr_auto] items-center gap-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
+        isCurrentMonth
+          ? 'shadow-card-hover ring-1.5 ring-accent'
+          : 'shadow-soft hover:shadow-card-hover'
       }`}
     >
-      <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text font-tabular">
+      <div
+        className={`w-10 h-10 rounded-[12px] flex items-center justify-center text-[13px] font-bold font-tabular ${
+          tone === 'pos'
+            ? 'bg-[oklch(0.94_0.08_155)] text-[oklch(0.42_0.16_155)]'
+            : 'bg-[oklch(0.94_0.07_25)] text-[oklch(0.50_0.18_25)]'
+        }`}
+      >
         {String(index).padStart(2, '0')}
-      </span>
+      </div>
       <div>
-        <span className="text-[18px] font-bold tracking-[-0.02em] font-tabular">
+        <span className="text-sm font-semibold">
           {index}月
+          {isCurrentMonth && (
+            <span className="ml-1.5 text-[9px] px-2 py-0.5 rounded-full bg-accent text-white font-bold tracking-[0.04em]">
+              NOW
+            </span>
+          )}
         </span>
         <div className="text-[11px] text-sub-text mt-0.5">
           収入 {formatCurrency(summary.incomeTotal)} · 支出 {formatCurrency(Math.abs(summary.expenseTotal))}
@@ -89,15 +99,13 @@ export function MonthRow({
       </div>
       <div className="text-right">
         <div
-          className={`text-[18px] font-bold tracking-[-0.02em] font-tabular ${
+          className={`text-sm font-bold font-tabular ${
             isPositive ? 'text-neon-green' : 'text-neon-red'
           }`}
         >
           {sign}{formatCurrency(Math.abs(summary.balance)).replace('¥', '¥')}
         </div>
-        <div className="text-[10px] text-sub-text mt-1 font-tabular tracking-[0.04em]">
-          {isCurrentMonth ? 'CURRENT ›' : 'View ›'}
-        </div>
+        <div className="text-[10px] text-sub-text mt-1">View ›</div>
       </div>
     </Link>
   )
