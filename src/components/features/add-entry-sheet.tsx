@@ -9,6 +9,8 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer'
 import { Input } from '@/components/ui/input'
+import { PersonSelector } from '@/components/ui/person-selector'
+import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { createIncome } from '@/app/actions/income'
 import { createExpense } from '@/app/actions/expense'
 import { createCarryover } from '@/app/actions/carryover'
@@ -172,80 +174,25 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             <label className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text mb-1.5 block">
               担当者
             </label>
-            <div className="flex gap-2">
-              {(['husband', 'wife'] as const).map((p) => {
-                const active = person === p
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPerson(p)}
-                    className="flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors"
-                    style={{
-                      background: active
-                        ? `var(--${p}-light)`
-                        : 'var(--card)',
-                      color: active
-                        ? `var(--${p})`
-                        : 'var(--sub-text)',
-                      border: active
-                        ? `1.5px solid var(--${p})`
-                        : '1px solid var(--border)',
-                    }}
-                  >
-                    {p === 'husband' ? '夫' : '妻'}
-                  </button>
-                )
-              })}
-            </div>
+            <PersonSelector value={person} onChange={setPerson} />
           </div>
 
           {entryType === 'expense' && (
-            <div
-              className="flex items-center justify-between py-3 px-3.5 rounded-xl border border-border bg-card"
-            >
-              <div>
-                <div className="text-sm font-semibold">繰越扱いにする</div>
-                <div className="text-[11px] text-sub-text mt-0.5">精算には含めず翌月へ</div>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isCarryover}
-                onClick={() => setIsCarryover(!isCarryover)}
-                className="relative w-11 h-[26px] rounded-full transition-colors"
-                style={{ background: isCarryover ? 'var(--neon-cyan)' : 'oklch(0.85 0.01 260)' }}
-              >
-                <span
-                  className="absolute top-[2px] w-[22px] h-[22px] rounded-full bg-white shadow-sm transition-[left]"
-                  style={{ left: isCarryover ? 20 : 2 }}
-                />
-              </button>
-            </div>
+            <ToggleSwitch
+              checked={isCarryover}
+              onChange={setIsCarryover}
+              label="繰越扱いにする"
+              description="精算には含めず翌月へ"
+            />
           )}
 
           {entryType === 'carryover' && (
-            <div
-              className="flex items-center justify-between py-3 px-3.5 rounded-xl border border-border bg-card"
-            >
-              <div>
-                <div className="text-sm font-semibold">今月で清算する</div>
-                <div className="text-[11px] text-sub-text mt-0.5">精算に含める</div>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isCleared}
-                onClick={() => setIsCleared(!isCleared)}
-                className="relative w-11 h-[26px] rounded-full transition-colors"
-                style={{ background: isCleared ? 'var(--neon-cyan)' : 'oklch(0.85 0.01 260)' }}
-              >
-                <span
-                  className="absolute top-[2px] w-[22px] h-[22px] rounded-full bg-white shadow-sm transition-[left]"
-                  style={{ left: isCleared ? 20 : 2 }}
-                />
-              </button>
-            </div>
+            <ToggleSwitch
+              checked={isCleared}
+              onChange={setIsCleared}
+              label="今月で清算する"
+              description="精算に含める"
+            />
           )}
 
           {error && (

@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
 import { AddEntryModal } from '@/components/forms/add-entry-modal'
-import { EditDialog } from '@/components/forms/edit-dialog'
+import { EditModal } from '@/components/forms/edit-modal'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
 import { updateIncome, deleteIncome } from '@/app/actions/income'
@@ -53,7 +53,7 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
                   +{formatCurrency(income.amount).slice(1)}
                 </span>
                 <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <EditDialog
+                  <EditModal
                     id={income.id}
                     month={month}
                     label={income.label}

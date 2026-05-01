@@ -1,20 +1,15 @@
 'use client'
 
-import { useState, useRef, useId } from 'react'
+import { useState, useRef } from 'react'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { SubmitButton } from '@/components/ui/submit-button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { PersonSelector } from '@/components/ui/person-selector'
+import { ToggleSwitch } from '@/components/ui/toggle-switch'
 import { createIncome } from '@/app/actions/income'
 import { createExpense } from '@/app/actions/expense'
 import { createCarryover } from '@/app/actions/carryover'
+import type { Person } from '@/types'
 
 interface AddEntryFormProps {
   type: 'income' | 'expense' | 'carryover'
@@ -37,17 +32,30 @@ const createActions = {
 
 export function AddEntryForm({ type, month, onSuccess, onCancel }: AddEntryFormProps) {
   const [error, setError] = useState<string | null>(null)
+  const [person, setPerson] = useState<Person>('husband')
+  const [isCarryover, setIsCarryover] = useState(false)
+  const [isCleared, setIsCleared] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const uniqueId = useId()
 
   async function handleSubmit(formData: FormData) {
     setError(null)
     formData.set('month', month)
+    formData.set('person', person)
+
+    if (type === 'expense') {
+      formData.set('is_carryover', String(isCarryover))
+    }
+    if (type === 'carryover') {
+      formData.set('is_cleared', String(isCleared))
+    }
 
     const result = await createActions[type](formData)
 
     if (result.success) {
       formRef.current?.reset()
+      setPerson('husband')
+      setIsCarryover(false)
+      setIsCleared(false)
       onSuccess()
     } else {
       setError(result.error ?? '追加に失敗しました')
@@ -55,64 +63,55 @@ export function AddEntryForm({ type, month, onSuccess, onCancel }: AddEntryFormP
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor={`${uniqueId}-label`}>項目名</Label>
+    <form ref={formRef} action={handleSubmit} className="flex flex-col gap-3">
+      <div>
+        <label className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text mb-1.5 block">
+          項目名
+        </label>
         <Input
-          id={`${uniqueId}-label`}
           name="label"
-          placeholder="項目名…"
+          placeholder="例：食費、家賃、給与"
+          className="h-12 rounded-xl"
           autoComplete="off"
           required
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor={`${uniqueId}-amount`}>金額</Label>
+      <div>
+        <label className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text mb-1.5 block">
+          金額
+        </label>
         <Input
-          id={`${uniqueId}-amount`}
           name="amount"
           type="number"
-          placeholder="金額…"
+          inputMode="numeric"
+          placeholder="¥ 0"
+          className="h-14 rounded-xl text-[28px] font-bold text-right font-tabular tracking-[-0.02em]"
           autoComplete="off"
-          min="1"
+          min={1}
           required
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor={`${uniqueId}-person`}>担当者</Label>
-        <Select name="person" defaultValue="husband">
-          <SelectTrigger id={`${uniqueId}-person`} className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="husband">夫</SelectItem>
-            <SelectItem value="wife">妻</SelectItem>
-          </SelectContent>
-        </Select>
+      <div>
+        <label className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text mb-1.5 block">
+          担当者
+        </label>
+        <PersonSelector value={person} onChange={setPerson} />
       </div>
       {type === 'expense' && (
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input type="hidden" name="is_carryover" value="false" />
-          <input
-            type="checkbox"
-            name="is_carryover"
-            value="true"
-            className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
-          />
-          繰越扱いにする
-        </label>
+        <ToggleSwitch
+          checked={isCarryover}
+          onChange={setIsCarryover}
+          label="繰越扱いにする"
+          description="精算には含めず翌月へ"
+        />
       )}
       {type === 'carryover' && (
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input type="hidden" name="is_cleared" value="false" />
-          <input
-            type="checkbox"
-            name="is_cleared"
-            value="true"
-            className="rounded border-border focus-visible:ring-2 focus-visible:ring-ring/50"
-          />
-          今月で清算する
-        </label>
+        <ToggleSwitch
+          checked={isCleared}
+          onChange={setIsCleared}
+          label="今月で清算する"
+          description="精算に含める"
+        />
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-3 pt-2">

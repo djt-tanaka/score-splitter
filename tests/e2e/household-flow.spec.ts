@@ -239,8 +239,8 @@ test.describe('収入の追加', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByPlaceholder('項目名…').fill('テスト給料')
-    await dialog.getByPlaceholder('金額…').fill('300000')
+    await dialog.getByPlaceholder('例：食費、家賃、給与').fill('テスト給料')
+    await dialog.getByPlaceholder('¥ 0').fill('300000')
     await dialog.getByRole('button', { name: /収入.*追加/ }).click()
 
     await expect(dialog).not.toBeVisible()
@@ -255,11 +255,10 @@ test.describe('収入の追加', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByPlaceholder('項目名…').fill('妻のパート')
-    await dialog.getByPlaceholder('金額…').fill('150000')
+    await dialog.getByPlaceholder('例：食費、家賃、給与').fill('妻のパート')
+    await dialog.getByPlaceholder('¥ 0').fill('150000')
 
-    await dialog.locator('[role="combobox"]').click()
-    await page.getByRole('option', { name: '妻' }).click()
+    await dialog.getByRole('button', { name: '妻' }).click()
 
     await dialog.getByRole('button', { name: /収入.*追加/ }).click()
 
@@ -285,8 +284,8 @@ test.describe('支出の追加', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByPlaceholder('項目名…').fill('テスト家賃')
-    await dialog.getByPlaceholder('金額…').fill('100000')
+    await dialog.getByPlaceholder('例：食費、家賃、給与').fill('テスト家賃')
+    await dialog.getByPlaceholder('¥ 0').fill('100000')
     await dialog.getByRole('button', { name: /支出.*追加/ }).click()
 
     await expect(dialog).not.toBeVisible()
@@ -310,8 +309,8 @@ test.describe('繰越の追加', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByPlaceholder('項目名…').fill('テスト繰越')
-    await dialog.getByPlaceholder('金額…').fill('5000')
+    await dialog.getByPlaceholder('例：食費、家賃、給与').fill('テスト繰越')
+    await dialog.getByPlaceholder('¥ 0').fill('5000')
     await dialog.getByRole('button', { name: /繰越.*追加/ }).click()
 
     await expect(dialog).not.toBeVisible()
@@ -405,8 +404,8 @@ test.describe('精算額の更新', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByPlaceholder('項目名…').fill('給料')
-    await dialog.getByPlaceholder('金額…').fill('400000')
+    await dialog.getByPlaceholder('例：食費、家賃、給与').fill('給料')
+    await dialog.getByPlaceholder('¥ 0').fill('400000')
     await dialog.getByRole('button', { name: /収入.*追加/ }).click()
 
     await expect(dialog).not.toBeVisible()

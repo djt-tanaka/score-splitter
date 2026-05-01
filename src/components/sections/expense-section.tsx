@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
 import { AddEntryModal } from '@/components/forms/add-entry-modal'
-import { EditDialog } from '@/components/forms/edit-dialog'
+import { EditModal } from '@/components/forms/edit-modal'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
 import { updateExpense, deleteExpense, toggleExpenseCarryover } from '@/app/actions/expense'
@@ -76,7 +76,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
                       {expense.isCarryover ? '↩' : '↪'}
                     </button>
                   </form>
-                  <EditDialog
+                  <EditModal
                     id={expense.id}
                     month={month}
                     label={expense.label}

@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
 import { AddEntryModal } from '@/components/forms/add-entry-modal'
-import { EditDialog } from '@/components/forms/edit-dialog'
+import { EditModal } from '@/components/forms/edit-modal'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
 import { updateCarryover, deleteCarryover, toggleCarryoverCleared } from '@/app/actions/carryover'
@@ -83,7 +83,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                       {carryover.isCleared ? '✓' : '○'}
                     </button>
                   </form>
-                  <EditDialog
+                  <EditModal
                     id={carryover.id}
                     month={month}
                     label={carryover.label}
