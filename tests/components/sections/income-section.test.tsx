@@ -45,8 +45,9 @@ describe('IncomeSection', () => {
   it('各項目の金額を表示する', () => {
     render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
-    expect(screen.getByText('¥300,000')).toBeInTheDocument()
-    expect(screen.getByText('¥100,000')).toBeInTheDocument()
+    // 金額は +NNN,NNN 形式（¥なし、+プレフィックス付き）
+    expect(screen.getByText('+300,000')).toBeInTheDocument()
+    expect(screen.getByText('+100,000')).toBeInTheDocument()
   })
 
   it('収入がない場合メッセージを表示する', () => {
@@ -58,7 +59,8 @@ describe('IncomeSection', () => {
   it('タイトル「収入」を表示する', () => {
     render(<IncomeSection incomes={mockIncomes} month="202601" />)
 
-    expect(screen.getByText('収入')).toBeInTheDocument()
+    // タイトルは "Income / 収入" 形式
+    expect(screen.getByText('Income / 収入')).toBeInTheDocument()
   })
 
   it('担当者バッジを表示する', () => {

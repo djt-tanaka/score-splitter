@@ -41,15 +41,16 @@ describe('ExpenseSection', () => {
   it('合計金額を表示する（負の値）', () => {
     render(<ExpenseSection expenses={mockExpenses} month="202601" />)
 
-    // 合計は-150,000円
-    expect(screen.getByText('-¥150,000')).toBeInTheDocument()
+    // 合計は−150,000円（U+2212 数学マイナス記号）
+    expect(screen.getByText('−¥150,000')).toBeInTheDocument()
   })
 
   it('各項目の金額を表示する', () => {
     render(<ExpenseSection expenses={mockExpenses} month="202601" />)
 
-    expect(screen.getByText('-¥50,000')).toBeInTheDocument()
-    expect(screen.getByText('-¥100,000')).toBeInTheDocument()
+    // 金額は −¥NNN,NNN 形式（U+2212 数学マイナス記号）
+    expect(screen.getByText('−¥50,000')).toBeInTheDocument()
+    expect(screen.getByText('−¥100,000')).toBeInTheDocument()
   })
 
   it('支出がない場合メッセージを表示する', () => {
@@ -61,7 +62,8 @@ describe('ExpenseSection', () => {
   it('タイトル「支出」を表示する', () => {
     render(<ExpenseSection expenses={mockExpenses} month="202601" />)
 
-    expect(screen.getByText('支出')).toBeInTheDocument()
+    // タイトルは "Expense / 支出" 形式
+    expect(screen.getByText('Expense / 支出')).toBeInTheDocument()
   })
 
   it('担当者バッジを表示する', () => {
@@ -106,12 +108,12 @@ describe('ExpenseSection', () => {
     // 繰越バッジが表示されない
     expect(screen.queryByText('繰越')).not.toBeInTheDocument()
 
-    // 金額がtext-neon-redクラスで表示される
-    const amountElement = screen.getByText('-¥50,000')
+    // 金額がtext-neon-redクラスで表示される（U+2212 数学マイナス記号）
+    const amountElement = screen.getByText('−¥50,000')
     expect(amountElement).toHaveClass('text-neon-red')
   })
 
-  it('ヘッダーに実績合計と繰越合計を分けて表示する', () => {
+  it('ヘッダーに繰越件数を表示する', () => {
     const mixedExpenses: Expense[] = [
       {
         id: '1',
@@ -133,11 +135,11 @@ describe('ExpenseSection', () => {
 
     render(<ExpenseSection expenses={mixedExpenses} month="202601" />)
 
-    // 実績合計（isCarryover: falseの合計）: -50,000（ヘッダーと行アイテムの両方に表示）
-    const amounts = screen.getAllByText('-¥50,000')
+    // 実績合計（isCarryover: falseの合計）: −50,000（行アイテムに表示）
+    const amounts = screen.getAllByText('−¥50,000')
     expect(amounts.length).toBeGreaterThanOrEqual(1)
 
-    // 繰越合計テキストがヘッダーに表示される（「繰越 -¥30,000」）
-    expect(screen.getByText(/繰越\s+-¥30,000/)).toBeInTheDocument()
+    // ヘッダーに繰越件数が表示される（「2件 — 繰越 1件」）
+    expect(screen.getByText(/繰越\s+1件/)).toBeInTheDocument()
   })
 })

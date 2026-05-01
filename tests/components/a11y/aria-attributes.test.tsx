@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { CarryoverSection } from '@/components/sections/carryover-section'
 import type { Carryover } from '@/types'
 
@@ -23,43 +22,25 @@ const mockCarryovers: Carryover[] = [
 ]
 
 describe('CarryoverSection a11y', () => {
-  it('折りたたみトリガーが button 要素である', () => {
+  it('carryover-title が h3 要素である', () => {
     render(<CarryoverSection carryovers={mockCarryovers} month="202601" />)
 
-    const trigger = screen.getByTestId('carryover-title')
-    expect(trigger.tagName).toBe('BUTTON')
+    const title = screen.getByTestId('carryover-title')
+    expect(title.tagName).toBe('H3')
   })
 
-  it('折りたたみトリガーに aria-expanded 属性がある', () => {
+  it('項目が常時表示される（折りたたみ廃止）', () => {
     render(<CarryoverSection carryovers={mockCarryovers} month="202601" />)
 
-    const trigger = screen.getByTestId('carryover-title')
-    expect(trigger).toHaveAttribute('aria-expanded')
-  })
-
-  it('Enter キーで折りたたみを開閉できる', async () => {
-    const user = userEvent.setup()
-    render(<CarryoverSection carryovers={mockCarryovers} month="202601" />)
-
-    const trigger = screen.getByTestId('carryover-title')
-
-    expect(screen.queryByText('前月繰越')).not.toBeInTheDocument()
-
-    trigger.focus()
-    await user.keyboard('{Enter}')
-
+    // 折りたたみ廃止により初期状態から項目が表示される
     expect(screen.getByText('前月繰越')).toBeInTheDocument()
   })
 
-  it('Space キーで折りたたみを開閉できる', async () => {
-    const user = userEvent.setup()
+  it('清算ボタンに aria-label が設定されている', () => {
     render(<CarryoverSection carryovers={mockCarryovers} month="202601" />)
 
-    const trigger = screen.getByTestId('carryover-title')
-
-    trigger.focus()
-    await user.keyboard(' ')
-
-    expect(screen.getByText('前月繰越')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: '前月繰越を清算する' })
+    ).toBeInTheDocument()
   })
 })

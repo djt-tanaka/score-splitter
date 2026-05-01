@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/layout/header'
-import { MonthSelector } from '@/components/layout/month-selector'
+import { MonthToolbar } from '@/components/layout/month-toolbar'
 import { IncomeSection } from '@/components/sections/income-section'
 import { ExpenseSection } from '@/components/sections/expense-section'
 import { CarryoverSection } from '@/components/sections/carryover-section'
 import { CalculationSection } from '@/components/sections/calculation-section'
 import { MonthlyListSection } from '@/components/sections/monthly-list-section'
+import { AddEntryFab } from '@/components/features/add-entry-fab'
 import { getIncomesByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expense'
 import { getCarryoversByMonth } from '@/app/actions/carryover'
@@ -19,12 +20,10 @@ interface HomeProps {
 export default async function HomePage({ searchParams }: HomeProps) {
   const params = await searchParams
 
-  // 月パラメータの検証
   if (params.month !== undefined && !isValidMonth(params.month)) {
     redirect('/')
   }
 
-  // 月未指定 → 月一覧画面
   if (!params.month) {
     const summariesResult = await getMonthlySummaries()
     if (!summariesResult.success) {
@@ -33,7 +32,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
     const summaries = summariesResult.data ?? []
 
     return (
-      <div className="min-h-screen gradient-page">
+      <div className="min-h-screen bg-background">
         <Header />
         <main
           id="main"
@@ -46,12 +45,12 @@ export default async function HomePage({ searchParams }: HomeProps) {
     )
   }
 
-  // 月指定 → 既存の月画面
   const month = params.month
-  const [incomesResult, expensesResult, carryoversResult] = await Promise.all([
+  const [incomesResult, expensesResult, carryoversResult, summariesResult] = await Promise.all([
     getIncomesByMonth(month),
     getExpensesByMonth(month),
     getCarryoversByMonth(month),
+    getMonthlySummaries(),
   ])
 
   if (!incomesResult.success || !expensesResult.success || !carryoversResult.success) {
@@ -63,19 +62,28 @@ export default async function HomePage({ searchParams }: HomeProps) {
   const incomes = incomesResult.data ?? []
   const expenses = expensesResult.data ?? []
   const carryovers = carryoversResult.data ?? []
+  const allSummaries = summariesResult.success ? (summariesResult.data ?? []) : []
+  const recentSummaries = allSummaries.slice(0, 6)
 
   return (
-    <div className="min-h-screen gradient-page">
-      <Header />
-      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-8 space-y-6 max-w-4xl">
-        <MonthSelector currentMonth={month} incomes={incomes} expenses={expenses} carryovers={carryovers} />
-        <CalculationSection incomes={incomes} expenses={expenses} carryovers={carryovers} />
-        <div className="grid gap-6 md:grid-cols-2">
+    <div className="min-h-screen bg-background">
+      <Header currentMonth={month} />
+      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-4 space-y-0 max-w-4xl">
+        <MonthToolbar currentMonth={month} incomes={incomes} expenses={expenses} carryovers={carryovers} />
+        <CalculationSection
+          incomes={incomes}
+          expenses={expenses}
+          carryovers={carryovers}
+          currentMonth={month}
+          recentSummaries={recentSummaries}
+        />
+        <section className="py-8 md:py-10 md:px-6 grid gap-8 md:gap-16 md:grid-cols-2">
           <IncomeSection incomes={incomes} month={month} />
           <ExpenseSection expenses={expenses} month={month} />
-        </div>
+        </section>
         <CarryoverSection carryovers={carryovers} month={month} />
       </main>
+      <AddEntryFab month={month} />
     </div>
   )
 }
