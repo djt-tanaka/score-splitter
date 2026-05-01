@@ -50,9 +50,6 @@ export function CalculationSection({
   const days = getDaysInMonth(currentMonth)
   const m = parseInt(currentMonth.slice(4, 6), 10)
 
-  const adjustmentText = hasAdjustments
-    ? ` ＋ 調整 ${formatCurrency(carryoverExpenseTotal + clearedCarryoverTotal)}`
-    : ''
 
   return (
     <div data-section="calculation">
@@ -88,7 +85,7 @@ export function CalculationSection({
               />
             </div>
             <div className="text-xs md:text-sm text-sub-text mt-3 leading-relaxed">
-              収入 {formatCurrency(result.totalIncome)} − 支出 {formatCurrency(Math.abs(allExpenseTotal))}{adjustmentText}
+              収入 {formatCurrency(result.totalIncome)} − 支出 {formatCurrency(Math.abs(allExpenseTotal))}
             </div>
           </div>
 
@@ -109,7 +106,9 @@ export function CalculationSection({
             className="text-[28px] md:text-[44px] font-bold tracking-[-0.03em] leading-[0.95] font-tabular"
           />
           <div className="text-[11px] md:text-[13px] text-sub-text mt-1">
-            調整後の余剰を2人で等分
+            {hasAdjustments
+              ? `収支 ${formatCurrency(monthlyBalance)} ＋ 調整 ${formatCurrency(carryoverExpenseTotal + clearedCarryoverTotal)} の余剰を等分`
+              : '余剰を2人で等分'}
           </div>
         </div>
 
