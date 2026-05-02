@@ -21,6 +21,7 @@ interface HeroSectionProps {
   expenses: Expense[]
   carryovers: Carryover[]
   recentSummaries: MonthlySummary[]
+  children?: React.ReactNode
 }
 
 function useMonthDirection(currentMonth: string) {
@@ -55,6 +56,7 @@ export function HeroSection({
   incomes,
   expenses,
   carryovers,
+  children,
 }: HeroSectionProps) {
   const router = useRouter()
   const { setTheme, resolvedTheme } = useTheme()
@@ -91,7 +93,7 @@ export function HeroSection({
       className="relative overflow-hidden"
       style={{
         background: `
-          linear-gradient(to bottom, transparent 55%, #FAFBFCAA 80%, #FAFBFC 100%),
+          linear-gradient(to bottom, transparent 65%, #FAFBFCAA 85%, #FAFBFC 100%),
           radial-gradient(at 0% 0%, #3454D1 0%, transparent 50%),
           radial-gradient(at 50% 0%, #4C3BCF 0%, transparent 50%),
           radial-gradient(at 100% 0%, #3B82F6 0%, transparent 50%),
@@ -255,6 +257,12 @@ export function HeroSection({
             )}
           </div>
         </div>
+
+        {children && (
+          <div className="px-5 pt-2 pb-4">
+            {children}
+          </div>
+        )}
       </div>
     </section>
   )

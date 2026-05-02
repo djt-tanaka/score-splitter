@@ -73,9 +73,10 @@ export default async function HomePage({ searchParams }: HomeProps) {
         expenses={expenses}
         carryovers={carryovers}
         recentSummaries={recentSummaries}
-      />
-      <main id="main" tabIndex={-1} className="px-5 pt-2 pb-8 space-y-4 max-w-4xl mx-auto">
+      >
         <TrendCard summaries={recentSummaries} currentMonth={month} />
+      </HeroSection>
+      <main id="main" tabIndex={-1} className="px-5 pt-2 pb-8 space-y-4 max-w-4xl mx-auto">
         <IncomeSection incomes={incomes} month={month} />
         <ExpenseSection expenses={expenses} month={month} />
         <CarryoverSection carryovers={carryovers} month={month} />
