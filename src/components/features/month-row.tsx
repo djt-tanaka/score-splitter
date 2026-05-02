@@ -21,7 +21,7 @@ export function MonthRow({
 
   if (!summary) {
     return (
-      <div className="flex items-center gap-2.5 py-3.5 border-b border-[#F3F4F6]">
+      <div className="flex items-center gap-2.5 py-3.5 border-b border-border">
         <span className="font-mono text-[11px] font-medium text-[#999999]">
           {monthNumber}
         </span>
@@ -43,7 +43,7 @@ export function MonthRow({
     <Link
       href={`/?month=${month}`}
       aria-label={`${formatMonth(month)}の詳細を開く`}
-      className="flex items-center gap-2.5 py-3.5 border-b border-[#F3F4F6] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      className="flex items-center gap-2.5 py-3.5 border-b border-border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     >
       {/* 月番号 */}
       <span className="font-mono text-[11px] font-medium text-[#999999]">
