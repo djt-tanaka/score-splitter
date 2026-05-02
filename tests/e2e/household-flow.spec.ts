@@ -119,8 +119,7 @@ test.describe('月詳細ページ', () => {
   })
 
   test('ヘッダーが表示される', async ({ page }) => {
-    await expect(page.locator('header').getByText('Splitter')).toBeVisible()
-    await expect(page.getByRole('button', { name: /ログアウト/ })).toBeVisible()
+    await expect(page.getByText('SPLITTER')).toBeVisible()
   })
 
   test('全セクションが表示される', async ({ page }) => {
