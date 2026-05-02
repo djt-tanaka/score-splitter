@@ -146,18 +146,18 @@ export function HeroSection({
           </div>
         </div>
 
-        {/* Nav — 一覧へ戻る + 月ナビ + アクション */}
+        {/* Nav — 一覧へ戻る + 月ナビ */}
         <div className="flex items-center justify-between">
           <Link
             href="/"
             aria-label="月の一覧へ戻る"
-            className="inline-flex items-center gap-1 text-white/70 text-xs hover:text-white transition-colors"
+            className="inline-flex items-center gap-1 text-white/70 text-xs hover:text-white transition-colors shrink-0"
           >
             <span>←</span>
             <span>一覧へ</span>
           </Link>
 
-          <nav className="flex items-center gap-2" aria-label="月ナビゲーション">
+          <nav className="flex items-center gap-1" aria-label="月ナビゲーション">
             <button
               type="button"
               aria-label="前月に移動"
@@ -171,7 +171,7 @@ export function HeroSection({
               onClick={goToCurrentMonth}
               aria-label="今月に移動"
               aria-live="polite"
-              className="text-[13px] font-semibold text-white min-w-[90px] text-center overflow-hidden"
+              className="text-[13px] font-semibold text-white min-w-[80px] text-center overflow-hidden"
             >
               <AnimatePresence mode="wait" initial={false} custom={direction}>
                 <motion.span
@@ -198,7 +198,7 @@ export function HeroSection({
             </button>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <CopyMonthDialog
               currentMonth={currentMonth}
               previousMonth={previousMonth}
@@ -211,6 +211,7 @@ export function HeroSection({
             />
           </div>
         </div>
+
 
         {/* 区切り線 */}
         <div className="h-px bg-white/10 w-full" />
