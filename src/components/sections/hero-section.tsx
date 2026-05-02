@@ -126,11 +126,36 @@ export function HeroSection({
       <div className="absolute w-[80px] h-[80px] rounded-full bg-[#A5B4FC] opacity-[0.08] right-[20px] bottom-[200px] pointer-events-none" />
 
       <div className="relative flex flex-col gap-3 pt-[calc(env(safe-area-inset-top)+16px)] px-5 pb-7">
-        {/* Top Bar */}
+        {/* Header — 月一覧と同じ */}
         <div className="flex items-center justify-between">
-          <span className="text-[13px] font-bold tracking-[1.5px] text-white">
-            SPLITTER
+          <span className="text-[12px] font-bold tracking-[1px] text-white uppercase">
+            Score Splitter
           </span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label="テーマ切り替え"
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+              className="text-white/70 hover:text-white transition-colors"
+            >
+              <Moon className="h-4 w-4" />
+            </button>
+            <button type="button" aria-label="設定" className="text-white/70 hover:text-white transition-colors">
+              <Settings className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Nav — 一覧へ戻る + 月ナビ + アクション */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            aria-label="月の一覧へ戻る"
+            className="inline-flex items-center gap-1 text-white/70 text-xs hover:text-white transition-colors"
+          >
+            <span>←</span>
+            <span>一覧へ</span>
+          </Link>
 
           <nav className="flex items-center gap-2" aria-label="月ナビゲーション">
             <button
@@ -173,31 +198,6 @@ export function HeroSection({
             </button>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label="テーマ切り替え"
-              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-              className="text-white/70 hover:text-white transition-colors"
-            >
-              <Moon className="h-4 w-4" />
-            </button>
-            <button type="button" aria-label="設定" className="text-white/70 hover:text-white transition-colors">
-              <Settings className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Sub Nav */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            aria-label="月の一覧へ戻る"
-            className="inline-flex items-center gap-1 text-white/70 text-xs hover:text-white transition-colors"
-          >
-            <span>←</span>
-            <span>一覧へ</span>
-          </Link>
           <div className="flex items-center gap-3">
             <CopyMonthDialog
               currentMonth={currentMonth}
