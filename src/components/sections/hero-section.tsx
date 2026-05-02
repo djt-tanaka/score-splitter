@@ -60,6 +60,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const router = useRouter()
   const { setTheme, resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
   const direction = useMonthDirection(currentMonth)
   const previousMonth = getPreviousMonth(currentMonth)
 
@@ -92,18 +93,31 @@ export function HeroSection({
     <section
       className="relative overflow-hidden"
       style={{
-        background: `
-          linear-gradient(to bottom, transparent 65%, #FAFBFCAA 85%, #FAFBFC 100%),
-          radial-gradient(at 0% 0%, #3454D1 0%, transparent 50%),
-          radial-gradient(at 50% 0%, #4C3BCF 0%, transparent 50%),
-          radial-gradient(at 100% 0%, #3B82F6 0%, transparent 50%),
-          radial-gradient(at 0% 50%, #6366F1 0%, transparent 50%),
-          radial-gradient(at 50% 50%, #5B8DEF 0%, transparent 50%),
-          radial-gradient(at 100% 50%, #38BDF8 0%, transparent 50%),
-          radial-gradient(at 0% 100%, #C7D2FE 0%, transparent 50%),
-          radial-gradient(at 50% 100%, #DBEAFE 0%, transparent 50%),
-          radial-gradient(at 100% 100%, #BAE6FD 0%, transparent 50%)
-        `,
+        background: isDark
+          ? `
+            linear-gradient(to bottom, transparent 65%, #0F1117AA 85%, #0F1117 100%),
+            radial-gradient(at 0% 0%, #1E2A6E 0%, transparent 50%),
+            radial-gradient(at 50% 0%, #2A1F6E 0%, transparent 50%),
+            radial-gradient(at 100% 0%, #1E3A8A 0%, transparent 50%),
+            radial-gradient(at 0% 50%, #312E81 0%, transparent 50%),
+            radial-gradient(at 50% 50%, #2E4A8E 0%, transparent 50%),
+            radial-gradient(at 100% 50%, #1E5A8A 0%, transparent 50%),
+            radial-gradient(at 0% 100%, #1E1B4B 0%, transparent 50%),
+            radial-gradient(at 50% 100%, #172554 0%, transparent 50%),
+            radial-gradient(at 100% 100%, #164E63 0%, transparent 50%)
+          `
+          : `
+            linear-gradient(to bottom, transparent 65%, #FAFBFCAA 85%, #FAFBFC 100%),
+            radial-gradient(at 0% 0%, #3454D1 0%, transparent 50%),
+            radial-gradient(at 50% 0%, #4C3BCF 0%, transparent 50%),
+            radial-gradient(at 100% 0%, #3B82F6 0%, transparent 50%),
+            radial-gradient(at 0% 50%, #6366F1 0%, transparent 50%),
+            radial-gradient(at 50% 50%, #5B8DEF 0%, transparent 50%),
+            radial-gradient(at 100% 50%, #38BDF8 0%, transparent 50%),
+            radial-gradient(at 0% 100%, #C7D2FE 0%, transparent 50%),
+            radial-gradient(at 50% 100%, #DBEAFE 0%, transparent 50%),
+            radial-gradient(at 100% 100%, #BAE6FD 0%, transparent 50%)
+          `,
       }}
     >
       {/* 装飾blob */}
@@ -224,19 +238,19 @@ export function HeroSection({
         {/* Mini Cards */}
         <div className="flex gap-2.5">
           {/* Allowance */}
-          <div className="flex-1 rounded-[12px] bg-white shadow-sm p-3">
-            <span className="text-[9px] font-medium tracking-[0.5px] text-[#94A3B8] uppercase block">
+          <div className="flex-1 rounded-[12px] bg-card shadow-sm p-3">
+            <span className="text-[9px] font-medium tracking-[0.5px] text-muted-foreground uppercase block">
               Allowance / お小遣い
             </span>
             <AnimatedYen
               value={result.allowance}
-              className="text-lg font-bold font-mono text-[#1A1A1A] mt-1 block"
+              className="text-lg font-bold font-mono text-foreground mt-1 block"
             />
           </div>
 
           {/* Settlement */}
-          <div className="flex-1 rounded-[12px] bg-white shadow-sm p-3">
-            <span className="text-[9px] font-medium tracking-[0.5px] text-[#94A3B8] uppercase block">
+          <div className="flex-1 rounded-[12px] bg-card shadow-sm p-3">
+            <span className="text-[9px] font-medium tracking-[0.5px] text-muted-foreground uppercase block">
               Settlement / 精算額
             </span>
             {result.settlement !== 0 ? (
@@ -244,14 +258,14 @@ export function HeroSection({
                 <AnimatedYen
                   value={result.settlement}
                   absolute
-                  className="text-lg font-bold font-mono text-[#1A1A1A]"
+                  className="text-lg font-bold font-mono text-foreground"
                 />
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded-lg bg-[#EFF6FF] text-[8px] font-semibold text-[#2563EB]">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded-lg bg-accent/10 text-[8px] font-semibold text-accent">
                   夫 → 妻
                 </span>
               </div>
             ) : (
-              <span className="text-lg font-bold font-mono text-[#999999] mt-1 block">
+              <span className="text-lg font-bold font-mono text-muted-foreground mt-1 block">
                 精算なし
               </span>
             )}

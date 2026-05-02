@@ -24,12 +24,12 @@ export function YearlyBarChart({ summaries, year }: YearlyBarChartProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-medium text-[#999999]">
+        <span className="text-[10px] font-medium text-muted-foreground">
           月次推移 / 1月〜12月
         </span>
         <div className="flex items-center gap-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
-          <div className="w-1.5 h-1.5 rounded-full bg-[#E2483D]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+          <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
         </div>
       </div>
 
@@ -38,7 +38,7 @@ export function YearlyBarChart({ summaries, year }: YearlyBarChartProps) {
           if (!summary) {
             return (
               <div key={month} className="flex-1 flex items-end justify-center h-[80px]">
-                <div className="w-full rounded-sm bg-[#E5E7EB] h-2" />
+                <div className="w-full rounded-sm bg-chart-bar-muted h-2" />
               </div>
             )
           }
@@ -49,8 +49,7 @@ export function YearlyBarChart({ summaries, year }: YearlyBarChartProps) {
           return (
             <div key={month} className="flex-1 flex items-end justify-center h-[80px]">
               <motion.div
-                className="w-full rounded-sm"
-                style={{ backgroundColor: isPositive ? '#2563EB' : '#E2483D' }}
+                className={`w-full rounded-sm ${isPositive ? 'bg-accent' : 'bg-destructive'}`}
                 initial={{ height: 0 }}
                 animate={{ height: h }}
                 transition={barSpring}
@@ -64,7 +63,7 @@ export function YearlyBarChart({ summaries, year }: YearlyBarChartProps) {
         {months.map(({ month, label }) => (
           <span
             key={month}
-            className="flex-1 text-center text-[8px] font-mono font-medium text-[#999999]"
+            className="flex-1 text-center text-[8px] font-mono font-medium text-muted-foreground"
           >
             {label}
           </span>

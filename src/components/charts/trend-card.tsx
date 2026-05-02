@@ -22,24 +22,24 @@ export function TrendCard({ summaries, currentMonth }: TrendCardProps) {
   }, 1)
 
   return (
-    <div className="rounded-[16px] bg-white p-4 shadow-soft">
+    <div className="rounded-[16px] bg-card p-4 shadow-soft">
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold tracking-[0.8px] text-[#999999] uppercase">
+        <span className="text-[11px] font-semibold tracking-[0.8px] text-muted-foreground uppercase">
           Trend / 推移
         </span>
-        <span className="text-[10px] font-medium text-[#999999]">
+        <span className="text-[10px] font-medium text-muted-foreground">
           直近{summaries.length}ヶ月
         </span>
       </div>
 
       <div className="flex items-center justify-center gap-3 mt-2">
         <div className="flex items-center gap-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
-          <span className="text-[9px] text-[#666666]">収入</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-husband" />
+          <span className="text-[9px] text-sub-text">収入</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
-          <span className="text-[9px] text-[#666666]">支出</span>
+          <div className="w-1.5 h-1.5 rounded-full bg-wife" />
+          <span className="text-[9px] text-sub-text">支出</span>
         </div>
       </div>
 
@@ -53,20 +53,19 @@ export function TrendCard({ summaries, currentMonth }: TrendCardProps) {
             <div key={s.month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
               <div className="flex items-end gap-[3px] h-[84px] w-full justify-center">
                 <motion.div
-                  className="w-2 rounded-t-[3px]"
-                  style={{ backgroundColor: isCurrent ? '#2563EB' : '#3B82F6' }}
+                  className={`w-2 rounded-t-[3px] ${isCurrent ? 'bg-accent' : 'bg-husband'}`}
                   initial={{ height: 0 }}
                   animate={{ height: `${incomeH}%` }}
                   transition={barSpring}
                 />
                 <motion.div
-                  className="w-2 rounded-t-[3px] bg-[#EF4444]"
+                  className="w-2 rounded-t-[3px] bg-wife"
                   initial={{ height: 0 }}
                   animate={{ height: `${expenseH}%` }}
                   transition={barSpring}
                 />
               </div>
-              <span className={`text-[8px] font-mono ${isCurrent ? 'text-[#2563EB] font-bold' : 'text-[#999999]'}`}>
+              <span className={`text-[8px] font-mono ${isCurrent ? 'text-accent font-bold' : 'text-muted-foreground'}`}>
                 {formatShortMonth(s.month)}
               </span>
             </div>
