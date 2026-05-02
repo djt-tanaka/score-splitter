@@ -24,16 +24,17 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
       <div className="flex items-baseline justify-between pb-2 mb-1">
         <h3
           data-testid="carryover-title"
-          className="text-[12px] font-bold tracking-[0.10em] uppercase"
+          className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase"
         >
           Carryover / 繰越
         </h3>
-        <span className="text-[10px] text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           合計 {formatCurrency(total)}{clearedCarryovers.length > 0 && ` / 清算済み ${clearedCarryovers.length}件`}
         </span>
       </div>
 
       <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
           {carryovers.map((carryover, i) => (
             <motion.div
@@ -44,31 +45,28 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
               animate={{ opacity: carryover.isCleared ? 0.6 : 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className={`group grid grid-cols-[32px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
                 i < carryovers.length - 1 ? 'border-b border-border' : ''
               }`}
             >
               <span
-                className="w-7 h-7 rounded-full text-white text-[11px] font-bold inline-flex items-center justify-center shrink-0"
-                style={{
-                  background: carryover.person === 'husband'
-                    ? 'var(--gradient-husband)'
-                    : 'var(--gradient-wife)',
-                }}
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  carryover.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                }`}
               >
                 {carryover.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className={`text-sm font-medium truncate ${carryover.isCleared ? 'line-through opacity-60' : ''}`}>
+              <span className={`text-[13px] font-medium truncate ${carryover.isCleared ? 'line-through opacity-60' : ''}`}>
                 {carryover.label}
                 {carryover.isCleared && (
-                  <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-neon-green/10 text-neon-green font-bold no-underline inline-block">
+                  <span className="ml-1.5 text-[8px] px-1.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold no-underline inline-block">
                     清算済
                   </span>
                 )}
               </span>
               <div className="flex items-center gap-1">
-                <span className={`text-sm font-semibold font-tabular ${
-                  carryover.isCleared ? 'text-neon-green line-through' : 'text-sub-text'
+                <span className={`font-mono text-[13px] font-semibold ${
+                  carryover.isCleared ? 'text-foreground line-through' : 'text-foreground'
                 }`}>
                   {formatCurrency(Math.abs(carryover.amount))}
                 </span>

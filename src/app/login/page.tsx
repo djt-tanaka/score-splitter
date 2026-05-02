@@ -23,13 +23,13 @@ export default function LoginPage() {
       <main id="main" tabIndex={-1} className="flex-1 px-5 pt-10 pb-4 flex flex-col max-w-md mx-auto w-full">
         {/* ヒーロー */}
         <section className="pb-6">
-          <div className="w-14 h-14 rounded-2xl gradient-fab text-white flex items-center justify-center shadow-fab">
-            <span className="text-2xl font-bold tracking-[-0.02em]">家</span>
+          <div className="w-12 h-12 rounded-[12px] bg-[#2563EB] text-white flex items-center justify-center">
+            <span className="text-[22px] font-bold">家</span>
           </div>
-          <h1 className="text-[28px] font-bold tracking-[-0.03em] leading-[1.05] mt-4">
+          <h1 className="text-[22px] font-bold tracking-[-0.03em] leading-[1.05] mt-4">
             家計計算アプリ
           </h1>
-          <p className="text-[13px] text-sub-text mt-2.5 leading-relaxed">
+          <p className="text-[13px] text-[#666666] mt-2.5 leading-relaxed text-center">
             パスワードを入力してログインしてください。
             <br />
             セッションは7日間保持されます。
@@ -52,7 +52,7 @@ export default function LoginPage() {
                 </span>
               </div>
 
-              <div className="rounded-[14px] bg-secondary dark:bg-muted border border-input flex items-center px-4 py-3.5">
+              <div className="rounded-[12px] bg-[#F3F4F6] flex items-center px-4 h-12">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -82,7 +82,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="mt-1 py-4 px-5 gradient-fab text-white rounded-full text-[13px] font-bold tracking-[0.14em] uppercase flex items-center justify-between shadow-fab disabled:opacity-50 transition-opacity"
+              className="mt-1 h-12 px-5 bg-[#2563EB] text-white rounded-[12px] text-[13px] font-bold tracking-[0.14em] uppercase flex items-center justify-between shadow-[0_4px_12px_#2563EB33] disabled:opacity-50 transition-opacity"
             >
               <span>{isPending ? 'ログイン中…' : 'ログイン'}</span>
               {!isPending && <span className="text-lg font-normal">→</span>}
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <br />
           管理者に問い合わせてください。
         </p>
-        <span className="text-[11px] font-bold tracking-[0.12em] uppercase text-accent shrink-0">
+        <span className="text-[11px] font-bold tracking-[0.12em] uppercase text-[#2563EB] shrink-0">
           Help ›
         </span>
       </footer>

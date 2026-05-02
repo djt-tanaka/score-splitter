@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
+import { Geist_Mono } from 'next/font/google'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { MotionProvider } from '@/components/animations/motion-provider'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'oklch(0.97 0.01 260)' },
-    { media: '(prefers-color-scheme: dark)', color: 'oklch(0.16 0.02 260)' },
+    { media: '(prefers-color-scheme: light)', color: '#FAFBFC' },
+    { media: '(prefers-color-scheme: dark)', color: '#0F1117' },
   ],
 }
 
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${geistMono.variable} antialiased`}
       >
         <a
           href="#main"

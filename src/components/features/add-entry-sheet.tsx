@@ -27,21 +27,12 @@ interface AddEntrySheetProps {
 const typeConfig = {
   income: {
     label: '収入',
-    bg: 'var(--neon-green-light)',
-    fg: 'var(--neon-green)',
-    border: 'var(--neon-green)',
   },
   expense: {
     label: '支出',
-    bg: 'var(--neon-red-light)',
-    fg: 'var(--neon-red)',
-    border: 'var(--neon-red)',
   },
   carryover: {
     label: '繰越',
-    bg: 'var(--neon-cyan-light)',
-    fg: 'var(--neon-cyan)',
-    border: 'var(--neon-cyan)',
   },
 } as const
 
@@ -110,7 +101,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
         </DrawerHeader>
 
         {/* タイプタブ */}
-        <div className="flex gap-1 px-4 pb-3">
+        <div className="flex gap-1 mx-4 mb-3 bg-[#F3F4F6] rounded-[12px] h-9 p-[3px]">
           {(['income', 'expense', 'carryover'] as const).map((t) => {
             const active = entryType === t
             const cfg = typeConfig[t]
@@ -123,12 +114,11 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
                   setIsCarryover(false)
                   setIsCleared(false)
                 }}
-                className="flex-1 py-2.5 rounded-[12px] text-[13px] font-bold text-center transition-colors"
-                style={{
-                  background: active ? cfg.bg : 'var(--muted)',
-                  color: active ? cfg.fg : 'var(--sub-text)',
-                  border: active ? `1px solid ${cfg.border}` : '1px solid transparent',
-                }}
+                className={`flex-1 rounded-lg text-[13px] text-center transition-colors ${
+                  active
+                    ? 'bg-[#2563EB] text-white font-semibold'
+                    : 'text-[#666666]'
+                }`}
               >
                 {cfg.label}
               </button>
@@ -150,7 +140,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             <Input
               name="label"
               placeholder="例：食費、家賃、給与"
-              className="h-12 rounded-[14px]"
+              className="h-11 rounded-lg bg-[#F3F4F6]"
               required
             />
           </div>
@@ -159,15 +149,18 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             <label className="text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text mb-1.5 block">
               金額
             </label>
-            <Input
-              name="amount"
-              type="number"
-              inputMode="numeric"
-              placeholder="¥ 0"
-              className="h-14 rounded-[14px] text-[28px] font-bold text-right font-tabular tracking-[-0.02em]"
-              min={1}
-              required
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#666666] text-sm">¥</span>
+              <Input
+                name="amount"
+                type="number"
+                inputMode="numeric"
+                placeholder="0"
+                className="h-11 rounded-lg border border-[#E5E7EB] pl-7 text-[28px] font-bold text-right font-tabular tracking-[-0.02em]"
+                min={1}
+                required
+              />
+            </div>
           </div>
 
           <div>
@@ -205,7 +198,7 @@ export function AddEntrySheet({ open, onOpenChange, month }: AddEntrySheetProps)
             type="submit"
             form="add-entry-form"
             disabled={submitting}
-            className="w-full py-4 gradient-fab text-white rounded-full text-[15px] font-bold text-center shadow-fab disabled:opacity-50 transition-opacity"
+            className="w-full h-12 bg-[#2563EB] text-white rounded-[12px] text-[15px] font-bold text-center shadow-[0_4px_12px_#2563EB33] disabled:opacity-50 transition-opacity"
           >
             {submitting ? '追加中...' : `${typeConfig[entryType].label}を追加`}
           </button>

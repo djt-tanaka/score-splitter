@@ -21,15 +21,16 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
   return (
     <div data-section="income">
       <div className="flex items-baseline justify-between pb-2 mb-1">
-        <h3 className="text-[12px] font-bold tracking-[0.10em] uppercase">
+        <h3 className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase">
           Income / 収入
         </h3>
-        <span className="text-[10px] text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           {incomes.length}件
         </span>
       </div>
 
       <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
           {incomes.map((income, i) => (
             <motion.div
@@ -40,23 +41,20 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className={`group grid grid-cols-[32px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
                 i < incomes.length - 1 ? 'border-b border-border' : ''
               }`}
             >
               <span
-                className="w-7 h-7 rounded-full text-white text-[11px] font-bold inline-flex items-center justify-center shrink-0"
-                style={{
-                  background: income.person === 'husband'
-                    ? 'var(--gradient-husband)'
-                    : 'var(--gradient-wife)',
-                }}
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  income.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                }`}
               >
                 {income.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className="text-sm font-medium truncate">{income.label}</span>
+              <span className="text-[13px] font-medium truncate">{income.label}</span>
               <div className="flex items-center gap-1">
-                <span className="text-sm font-semibold font-tabular text-neon-green">
+                <span className="font-mono text-[13px] font-semibold text-[#2563EB]">
                   +{formatCurrency(income.amount).slice(1)}
                 </span>
                 <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
@@ -94,10 +92,10 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
         </div>
 
         <div className="flex items-baseline justify-between px-3.5 py-3 border-t border-border bg-[var(--surface-total)]">
-          <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-sub-text">
+          <span className="text-[11px] text-[#999999] font-semibold tracking-[0.8px] uppercase">
             Total
           </span>
-          <span className="text-lg font-bold font-tabular tracking-[-0.01em] text-neon-green">
+          <span className="font-mono text-[15px] font-bold text-[#2563EB]">
             {formatCurrency(total)}
           </span>
         </div>

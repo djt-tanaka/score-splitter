@@ -22,15 +22,16 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
   return (
     <div data-section="expense">
       <div className="flex items-baseline justify-between pb-2 mb-1">
-        <h3 className="text-[12px] font-bold tracking-[0.10em] uppercase">
+        <h3 className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase">
           Expense / 支出
         </h3>
-        <span className="text-[10px] text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           {expenses.length}件{carryoverExpenses.length > 0 && ` — 繰越 ${carryoverExpenses.length}件`}
         </span>
       </div>
 
       <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
           {expenses.map((expense, i) => (
             <motion.div
@@ -41,29 +42,26 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
               animate={{ opacity: expense.isCarryover ? 0.55 : 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className={`group grid grid-cols-[32px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
                 i < expenses.length - 1 ? 'border-b border-border' : ''
               }`}
             >
               <span
-                className="w-7 h-7 rounded-full text-white text-[11px] font-bold inline-flex items-center justify-center shrink-0"
-                style={{
-                  background: expense.person === 'husband'
-                    ? 'var(--gradient-husband)'
-                    : 'var(--gradient-wife)',
-                }}
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  expense.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                } ${expense.isCarryover ? 'opacity-50' : ''}`}
               >
                 {expense.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className="text-sm font-medium truncate">
+              <span className={`text-[13px] font-medium truncate ${expense.isCarryover ? 'text-[#999999]' : ''}`}>
                 {expense.label}
                 {expense.isCarryover && (
-                  <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-sub-text font-bold">繰越</span>
+                  <span className="ml-1.5 text-[8px] px-1.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold">繰越</span>
                 )}
               </span>
               <div className="flex items-center gap-1">
-                <span className={`text-sm font-semibold font-tabular ${
-                  expense.isCarryover ? 'text-muted-foreground' : 'text-neon-red'
+                <span className={`font-mono text-[13px] font-semibold ${
+                  expense.isCarryover ? 'text-[#999999]' : 'text-[#E2483D]'
                 }`}>
                   {expense.isCarryover ? '' : '−'}{formatCurrency(expense.amount).replace('-', '').replace('¥', '¥')}
                 </span>
@@ -118,10 +116,10 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
         </div>
 
         <div className="flex items-baseline justify-between px-3.5 py-3 border-t border-border bg-[var(--surface-total)]">
-          <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-sub-text">
+          <span className="text-[11px] text-[#999999] font-semibold tracking-[0.8px] uppercase">
             Total
           </span>
-          <span className="text-lg font-bold font-tabular tracking-[-0.01em] text-neon-red">
+          <span className="font-mono text-[15px] font-bold text-[#E2483D]">
             −{formatCurrency(actualTotal).replace('-', '')}
           </span>
         </div>
