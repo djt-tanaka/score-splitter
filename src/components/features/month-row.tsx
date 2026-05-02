@@ -7,34 +7,7 @@ interface MonthRowProps {
   index: number
   summary: MonthlySummary | null
   isCurrentMonth: boolean
-  maxIncome: number
-  maxExpense: number
-}
-
-function SparkBars({
-  summary,
-  maxIncome,
-  maxExpense,
-}: {
-  summary: MonthlySummary
-  maxIncome: number
-  maxExpense: number
-}) {
-  const incomeH = Math.round((summary.incomeTotal / maxIncome) * 100)
-  const expenseH = Math.round((Math.abs(summary.expenseTotal) / maxExpense) * 100)
-
-  return (
-    <div className="flex items-end gap-0.5 h-[22px] mt-1.5">
-      <div
-        className="w-1 rounded-sm bg-neon-green"
-        style={{ height: `${Math.max(incomeH, 8)}%` }}
-      />
-      <div
-        className="w-1 rounded-sm bg-neon-red"
-        style={{ height: `${Math.max(expenseH, 8)}%` }}
-      />
-    </div>
-  )
+  maxBalance: number
 }
 
 export function MonthRow({
@@ -42,62 +15,75 @@ export function MonthRow({
   index,
   summary,
   isCurrentMonth,
-  maxIncome,
-  maxExpense,
+  maxBalance,
 }: MonthRowProps) {
+  const monthNumber = String(index).padStart(2, '0')
+
   if (!summary) {
     return (
-      <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3.5 px-5 py-4 border-b border-border/60 opacity-40">
-        <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text font-tabular">
-          {String(index).padStart(2, '0')}
+      <div className="flex items-center gap-2.5 py-3.5 border-b border-border">
+        <span className="font-mono text-[11px] font-medium text-[#999999]">
+          {monthNumber}
         </span>
-        <div>
-          <span className="text-[18px] font-bold tracking-[-0.02em] font-tabular">
-            {index}月
-          </span>
-          <div className="text-[11px] text-sub-text tracking-[0.06em] mt-0.5">未記録</div>
+        <div className="flex-1">
+          <span className="text-base font-semibold text-[#999999]">{index}月</span>
         </div>
-        <span className="text-[18px] font-bold text-muted-foreground text-right font-tabular">
-          —
-        </span>
+        <span className="text-[11px] text-[#999999]">未記録</span>
       </div>
     )
   }
 
   const isPositive = summary.balance >= 0
-  const sign = isPositive ? '+' : '−'
+  const barWidth = Math.min(
+    (Math.abs(summary.balance) / maxBalance) * 80,
+    80
+  )
 
   return (
     <Link
       href={`/?month=${month}`}
       aria-label={`${formatMonth(month)}の詳細を開く`}
-      className={`grid grid-cols-[64px_1fr_auto] items-center gap-3.5 px-5 py-4 border-b border-border/60 transition-colors hover:bg-muted/30 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
-        isCurrentMonth ? 'bg-muted/30' : ''
-      }`}
+      className="flex items-center gap-2.5 py-3.5 border-b border-border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     >
-      <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-sub-text font-tabular">
-        {String(index).padStart(2, '0')}
+      {/* 月番号 */}
+      <span className="font-mono text-[11px] font-medium text-[#999999]">
+        {monthNumber}
       </span>
-      <div>
-        <span className="text-[18px] font-bold tracking-[-0.02em] font-tabular">
-          {index}月
-        </span>
-        <div className="text-[11px] text-sub-text mt-0.5">
+
+      {/* 中央部 */}
+      <div className="flex-1 flex flex-col gap-0.5">
+        <div className="flex items-center gap-1.5">
+          <span className="text-base font-semibold">{index}月</span>
+          {isCurrentMonth && (
+            <span className="bg-[#EFF6FF] text-[#2563EB] text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+              Now
+            </span>
+          )}
+        </div>
+        <div className="text-[10px] text-[#999999]">
           収入 {formatCurrency(summary.incomeTotal)} · 支出 {formatCurrency(Math.abs(summary.expenseTotal))}
         </div>
-        <SparkBars summary={summary} maxIncome={maxIncome} maxExpense={maxExpense} />
-      </div>
-      <div className="text-right">
+        {/* バランスバー */}
         <div
-          className={`text-[18px] font-bold tracking-[-0.02em] font-tabular ${
-            isPositive ? 'text-neon-green' : 'text-neon-red'
+          className={`h-[3px] rounded-sm mt-0.5 ${
+            isPositive ? 'bg-[#2563EB]' : 'bg-[#E2483D]'
+          }`}
+          style={{ width: `${Math.max(barWidth, 4)}px` }}
+        />
+      </div>
+
+      {/* 右側 */}
+      <div className="flex flex-col items-end gap-0.5">
+        <span
+          className={`font-mono text-[13px] font-semibold ${
+            isPositive ? 'text-[#2563EB]' : 'text-[#E2483D]'
           }`}
         >
-          {sign}{formatCurrency(Math.abs(summary.balance)).replace('¥', '¥')}
-        </div>
-        <div className="text-[10px] text-sub-text mt-1 font-tabular tracking-[0.04em]">
-          {isCurrentMonth ? 'CURRENT ›' : 'View ›'}
-        </div>
+          {isPositive ? '+' : '-'}{formatCurrency(Math.abs(summary.balance)).replace('¥', '¥')}
+        </span>
+        <span className="text-[10px] font-medium text-[#2563EB]">
+          View &gt;
+        </span>
       </div>
     </Link>
   )

@@ -43,8 +43,8 @@ export function MiniBarChart({ summaries, currentMonth }: MiniBarChartProps) {
                 backgroundColor: isCurrent
                   ? 'var(--neon-green)'
                   : isPositive
-                    ? 'oklch(0.88 0.01 260)'
-                    : 'oklch(0.50 0.20 25 / 30%)',
+                    ? 'var(--chart-bar-muted)'
+                    : 'var(--neon-red-light)',
               }}
               initial={{ height: 0 }}
               animate={{ height: `${heightPct}%` }}

@@ -19,12 +19,11 @@ export function PersonSelector({ value, onChange, name }: PersonSelectorProps) {
             key={p}
             type="button"
             onClick={() => onChange(p)}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold text-center transition-colors"
-            style={{
-              background: active ? `var(--${p}-light)` : 'var(--card)',
-              color: active ? `var(--${p})` : 'var(--sub-text)',
-              border: active ? `1.5px solid var(--${p})` : '1px solid var(--border)',
-            }}
+            className={`flex-1 py-3 rounded-[14px] text-sm font-semibold text-center transition-colors border ${
+              active
+                ? 'bg-[#DBEAFE] text-[#3B82F6] border-[#3B82F6]'
+                : 'bg-[var(--card)] text-[var(--sub-text)] border-[var(--border)]'
+            }`}
           >
             {p === 'husband' ? '夫' : '妻'}
           </button>

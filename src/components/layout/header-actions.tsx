@@ -1,0 +1,32 @@
+'use client'
+
+import { LogOut } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/features/theme-toggle'
+import { logout } from '@/app/actions/auth'
+
+interface HeaderActionsProps {
+  variant?: 'default' | 'hero'
+}
+
+export function HeaderActions({ variant = 'default' }: HeaderActionsProps) {
+  const iconClass = variant === 'hero'
+    ? 'text-white/70 hover:text-white'
+    : 'text-muted-foreground hover:text-accent'
+
+  return (
+    <div className="flex items-center gap-1">
+      <ThemeToggle className={iconClass} />
+      <form action={logout}>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className={iconClass}
+          aria-label="ログアウト"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </form>
+    </div>
+  )
+}

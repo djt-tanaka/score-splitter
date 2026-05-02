@@ -16,7 +16,7 @@ export function ToggleSwitch({
   name,
 }: ToggleSwitchProps) {
   return (
-    <div className="flex items-center justify-between py-3 px-3.5 rounded-xl border border-border bg-card">
+    <div className="flex items-center justify-between py-3 px-3.5 rounded-[12px] bg-[#F3F4F6]">
       {name && <input type="hidden" name={name} value={String(checked)} />}
       <div>
         <div className="text-sm font-semibold">{label}</div>
@@ -29,7 +29,7 @@ export function ToggleSwitch({
         onClick={() => onChange(!checked)}
         className="relative w-11 h-[26px] rounded-full transition-colors shrink-0 ml-3"
         style={{
-          background: checked ? 'var(--neon-cyan)' : 'oklch(0.85 0.01 260)',
+          background: checked ? 'var(--accent)' : 'var(--input)',
         }}
       >
         <span

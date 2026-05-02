@@ -21,42 +21,47 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
 
   return (
     <div data-section="expense">
-      <div className="flex items-baseline justify-between border-b border-foreground pb-2.5 mb-1">
-        <h3 className="text-[11px] md:text-sm font-bold tracking-[0.16em] uppercase">
+      <div className="flex items-baseline justify-between pb-2 mb-1">
+        <h3 className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase">
           Expense / 支出
         </h3>
-        <span className="text-[10px] md:text-xs text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           {expenses.length}件{carryoverExpenses.length > 0 && ` — 繰越 ${carryoverExpenses.length}件`}
         </span>
       </div>
 
-      <div>
+      <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
-          {expenses.map((expense) => (
+          {expenses.map((expense, i) => (
             <motion.div
               key={expense.id}
               data-testid="item-row"
               layout
               initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: expense.isCarryover ? 0.5 : 1, y: 0 }}
+              animate={{ opacity: expense.isCarryover ? 0.55 : 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className="group grid grid-cols-[24px_1fr_auto] gap-3 py-3 border-b border-border items-baseline"
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+                i < expenses.length - 1 ? 'border-b border-border' : ''
+              }`}
             >
-              <span className="text-[10px] font-bold"
-                style={{ color: `var(--${expense.person})` }}
+              <span
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  expense.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                } ${expense.isCarryover ? 'opacity-50' : ''}`}
               >
                 {expense.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className="text-sm md:text-base font-medium truncate">
+              <span className={`text-[13px] font-medium truncate ${expense.isCarryover ? 'text-[#999999]' : ''}`}>
                 {expense.label}
                 {expense.isCarryover && (
-                  <span className="ml-2 text-[10px] text-sub-text">繰越</span>
+                  <span className="ml-1.5 text-[8px] px-1.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold">繰越</span>
                 )}
               </span>
               <div className="flex items-center gap-1">
-                <span className={`text-sm md:text-base font-semibold font-tabular ${
-                  expense.isCarryover ? 'text-muted-foreground' : 'text-neon-red'
+                <span className={`font-mono text-[13px] font-semibold ${
+                  expense.isCarryover ? 'text-[#999999]' : 'text-[#E2483D]'
                 }`}>
                   {expense.isCarryover ? '' : '−'}{formatCurrency(expense.amount).replace('-', '').replace('¥', '¥')}
                 </span>
@@ -66,7 +71,7 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
                   }}>
                     <button
                       type="submit"
-                      className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
+                      className={`h-7 w-7 flex items-center justify-center rounded-full text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
                         expense.isCarryover
                           ? 'text-accent bg-accent/10'
                           : 'text-muted-foreground hover:text-accent hover:bg-accent/10'
@@ -105,19 +110,19 @@ export function ExpenseSection({ expenses, month }: ExpenseSectionProps) {
             <p className="text-xs">支出がありません</p>
           </div>
         )}
-      </div>
 
-      <div className="pb-4">
-        <AddEntryModal type="expense" month={month} />
-      </div>
+        <div className="border-t border-border bg-[var(--surface-total)] px-3.5 py-2.5">
+          <AddEntryModal type="expense" month={month} />
+        </div>
 
-      <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
-        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">
-          Total
-        </span>
-        <span className="text-xl md:text-[28px] font-bold font-tabular tracking-[-0.02em] text-neon-red">
-          −{formatCurrency(actualTotal).replace('-', '')}
-        </span>
+        <div className="flex items-baseline justify-between px-3.5 py-3 border-t border-border bg-[var(--surface-total)]">
+          <span className="text-[11px] text-[#999999] font-semibold tracking-[0.8px] uppercase">
+            Total
+          </span>
+          <span className="font-mono text-[15px] font-bold text-[#E2483D]">
+            −{formatCurrency(actualTotal).replace('-', '')}
+          </span>
+        </div>
       </div>
     </div>
   )

@@ -20,22 +20,23 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
   const total = carryovers.reduce((sum, c) => sum + Math.abs(c.amount), 0)
 
   return (
-    <section data-section="carryover" className="py-6 md:py-8 md:px-6 border-t border-border">
-      <div className="flex items-baseline justify-between border-b border-foreground pb-2.5 mb-1">
+    <section data-section="carryover">
+      <div className="flex items-baseline justify-between pb-2 mb-1">
         <h3
           data-testid="carryover-title"
-          className="text-[11px] md:text-sm font-bold tracking-[0.16em] uppercase"
+          className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase"
         >
           Carryover / 繰越
         </h3>
-        <span className="text-[10px] md:text-xs text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           合計 {formatCurrency(total)}{clearedCarryovers.length > 0 && ` / 清算済み ${clearedCarryovers.length}件`}
         </span>
       </div>
 
-      <div>
+      <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
-          {carryovers.map((carryover) => (
+          {carryovers.map((carryover, i) => (
             <motion.div
               key={carryover.id}
               data-testid="item-row"
@@ -44,26 +45,28 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
               animate={{ opacity: carryover.isCleared ? 0.6 : 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className="group flex items-center justify-between gap-3 py-3 border-b border-border"
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+                i < carryovers.length - 1 ? 'border-b border-border' : ''
+              }`}
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="text-[10px] font-bold shrink-0"
-                  style={{ color: `var(--${carryover.person})` }}
-                >
-                  {carryover.person === 'husband' ? '夫' : '妻'}
-                </span>
-                <span className={`text-sm md:text-base font-medium truncate ${carryover.isCleared ? 'line-through opacity-60' : ''}`}>
-                  {carryover.label}
-                </span>
+              <span
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  carryover.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                }`}
+              >
+                {carryover.person === 'husband' ? '夫' : '妻'}
+              </span>
+              <span className={`text-[13px] font-medium truncate ${carryover.isCleared ? 'line-through opacity-60' : ''}`}>
+                {carryover.label}
                 {carryover.isCleared && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-neon-green/10 text-neon-green font-bold tracking-[0.06em] shrink-0">
+                  <span className="ml-1.5 text-[8px] px-1.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold no-underline inline-block">
                     清算済
                   </span>
                 )}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-sm md:text-base font-semibold font-tabular ${
-                  carryover.isCleared ? 'text-neon-green line-through' : 'text-sub-text'
+              </span>
+              <div className="flex items-center gap-1">
+                <span className={`font-mono text-[13px] font-semibold ${
+                  carryover.isCleared ? 'text-foreground line-through' : 'text-foreground'
                 }`}>
                   {formatCurrency(Math.abs(carryover.amount))}
                 </span>
@@ -73,7 +76,7 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
                   }}>
                     <button
                       type="submit"
-                      className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
+                      className={`h-7 w-7 flex items-center justify-center rounded-full text-xs transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ${
                         carryover.isCleared
                           ? 'text-neon-green bg-neon-green/10'
                           : 'text-muted-foreground hover:text-neon-green hover:bg-neon-green/10'
@@ -112,10 +115,10 @@ export function CarryoverSection({ carryovers, month }: CarryoverSectionProps) {
             <p className="text-xs">繰越がありません</p>
           </div>
         )}
-      </div>
 
-      <div className="pb-4">
-        <AddEntryModal type="carryover" month={month} />
+        <div className="border-t border-border bg-[var(--surface-total)] px-3.5 py-2.5">
+          <AddEntryModal type="carryover" month={month} />
+        </div>
       </div>
     </section>
   )

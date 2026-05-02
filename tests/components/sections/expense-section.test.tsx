@@ -108,9 +108,9 @@ describe('ExpenseSection', () => {
     // 繰越バッジが表示されない
     expect(screen.queryByText('繰越')).not.toBeInTheDocument()
 
-    // 金額がtext-neon-redクラスで表示される（U+2212 数学マイナス記号）
+    // 金額が支出色で表示される（U+2212 数学マイナス記号）
     const amountElement = screen.getByText('−¥50,000')
-    expect(amountElement).toHaveClass('text-neon-red')
+    expect(amountElement).toHaveClass('text-[#E2483D]')
   })
 
   it('ヘッダーに繰越件数を表示する', () => {

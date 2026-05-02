@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/layout/header'
-import { MonthToolbar } from '@/components/layout/month-toolbar'
+import { HeroSection } from '@/components/sections/hero-section'
+import { TrendCard } from '@/components/charts/trend-card'
 import { IncomeSection } from '@/components/sections/income-section'
 import { ExpenseSection } from '@/components/sections/expense-section'
 import { CarryoverSection } from '@/components/sections/carryover-section'
-import { CalculationSection } from '@/components/sections/calculation-section'
 import { MonthlyListSection } from '@/components/sections/monthly-list-section'
 import { getIncomesByMonth } from '@/app/actions/income'
 import { getExpensesByMonth } from '@/app/actions/expense'
@@ -37,7 +37,7 @@ export default async function HomePage({ searchParams }: HomeProps) {
         <main
           id="main"
           tabIndex={-1}
-          className="container mx-auto px-4 py-4 space-y-0 max-w-4xl"
+          className="px-5 py-5 space-y-6 max-w-4xl mx-auto"
         >
           <MonthlyListSection summaries={summaries} />
         </main>
@@ -67,20 +67,18 @@ export default async function HomePage({ searchParams }: HomeProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentMonth={month} />
-      <main id="main" tabIndex={-1} className="container mx-auto px-4 py-4 space-y-0 max-w-4xl">
-        <MonthToolbar currentMonth={month} incomes={incomes} expenses={expenses} carryovers={carryovers} />
-        <CalculationSection
-          incomes={incomes}
-          expenses={expenses}
-          carryovers={carryovers}
-          currentMonth={month}
-          recentSummaries={recentSummaries}
-        />
-        <section className="py-8 md:py-10 md:px-6 grid gap-8 md:gap-16 md:grid-cols-2">
-          <IncomeSection incomes={incomes} month={month} />
-          <ExpenseSection expenses={expenses} month={month} />
-        </section>
+      <HeroSection
+        currentMonth={month}
+        incomes={incomes}
+        expenses={expenses}
+        carryovers={carryovers}
+        recentSummaries={recentSummaries}
+      >
+        <TrendCard summaries={recentSummaries} currentMonth={month} />
+      </HeroSection>
+      <main id="main" tabIndex={-1} className="px-5 pt-2 pb-8 space-y-4 max-w-4xl mx-auto">
+        <IncomeSection incomes={incomes} month={month} />
+        <ExpenseSection expenses={expenses} month={month} />
         <CarryoverSection carryovers={carryovers} month={month} />
       </main>
       <AddEntryFab month={month} />

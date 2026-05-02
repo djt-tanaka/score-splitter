@@ -281,7 +281,7 @@ export function CopyMonthDialog({
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-1">
           <Copy className="h-4 w-4" />
-          前月からコピー
+          <span className="hidden sm:inline">前月からコピー</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-hidden flex flex-col">

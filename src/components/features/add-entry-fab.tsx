@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
 import { AddEntrySheet } from '@/components/features/add-entry-sheet'
 
 interface AddEntryFabProps {
@@ -17,9 +16,10 @@ export function AddEntryFab({ month }: AddEntryFabProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="項目を追加"
-        className="fixed right-4 bottom-4 z-40 md:hidden w-[52px] h-[52px] rounded-full bg-foreground text-background flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+        className="fixed right-4 bottom-5 z-40 md:hidden rounded-full bg-[#2563EB] text-white px-5 py-3.5 shadow-[0_4px_12px_#2563EB33] flex items-center gap-1.5 active:scale-95 transition-transform"
       >
-        <Plus className="h-5 w-5" />
+        <span className="text-base font-semibold">+</span>
+        <span className="text-[13px] font-semibold">項目を追加</span>
       </button>
       <AddEntrySheet open={open} onOpenChange={setOpen} month={month} />
     </>

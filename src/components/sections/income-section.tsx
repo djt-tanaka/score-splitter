@@ -20,18 +20,19 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
 
   return (
     <div data-section="income">
-      <div className="flex items-baseline justify-between border-b border-foreground pb-2.5 mb-1">
-        <h3 className="text-[11px] md:text-sm font-bold tracking-[0.16em] uppercase">
+      <div className="flex items-baseline justify-between pb-2 mb-1">
+        <h3 className="text-[11px] font-bold tracking-[0.8px] text-foreground uppercase">
           Income / 収入
         </h3>
-        <span className="text-[10px] md:text-xs text-sub-text font-tabular">
+        <span className="text-[11px] text-[#999999]">
           {incomes.length}件
         </span>
       </div>
 
-      <div>
+      <div className="rounded-[18px] bg-card shadow-soft overflow-hidden">
+        <div className="border-b border-[#E5E7EB]" />
         <AnimatePresence initial={false}>
-          {incomes.map((income) => (
+          {incomes.map((income, i) => (
             <motion.div
               key={income.id}
               data-testid="item-row"
@@ -40,16 +41,20 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -8, transition: listExit }}
               transition={listSpring}
-              className="group grid grid-cols-[24px_1fr_auto] gap-3 py-3 border-b border-border items-baseline"
+              className={`group grid grid-cols-[22px_1fr_auto] gap-3 px-3.5 py-3 items-center ${
+                i < incomes.length - 1 ? 'border-b border-border' : ''
+              }`}
             >
-              <span className="text-[10px] font-bold text-husband group-[:nth-child(odd)]:text-husband group-[:nth-child(even)]:text-wife"
-                style={{ color: `var(--${income.person})` }}
+              <span
+                className={`w-[22px] h-[22px] rounded-full text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0 ${
+                  income.person === 'husband' ? 'bg-husband' : 'bg-wife'
+                }`}
               >
                 {income.person === 'husband' ? '夫' : '妻'}
               </span>
-              <span className="text-sm md:text-base font-medium truncate">{income.label}</span>
+              <span className="text-[13px] font-medium truncate">{income.label}</span>
               <div className="flex items-center gap-1">
-                <span className="text-sm md:text-base font-semibold font-tabular text-neon-green">
+                <span className="font-mono text-[13px] font-semibold text-[#2563EB]">
                   +{formatCurrency(income.amount).slice(1)}
                 </span>
                 <div className="flex items-center gap-0.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
@@ -81,19 +86,19 @@ export function IncomeSection({ incomes, month }: IncomeSectionProps) {
             <p className="text-xs">収入がありません</p>
           </div>
         )}
-      </div>
 
-      <div className="pb-4">
-        <AddEntryModal type="income" month={month} />
-      </div>
+        <div className="border-t border-border bg-[var(--surface-total)] px-3.5 py-2.5">
+          <AddEntryModal type="income" month={month} />
+        </div>
 
-      <div className="flex items-baseline justify-between pt-4 border-t-2 border-foreground">
-        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-sub-text">
-          Total
-        </span>
-        <span className="text-xl md:text-[28px] font-bold font-tabular tracking-[-0.02em] text-neon-green">
-          {formatCurrency(total)}
-        </span>
+        <div className="flex items-baseline justify-between px-3.5 py-3 border-t border-border bg-[var(--surface-total)]">
+          <span className="text-[11px] text-[#999999] font-semibold tracking-[0.8px] uppercase">
+            Total
+          </span>
+          <span className="font-mono text-[15px] font-bold text-[#2563EB]">
+            {formatCurrency(total)}
+          </span>
+        </div>
       </div>
     </div>
   )

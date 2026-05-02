@@ -2,24 +2,25 @@ import type { Person } from '@/types'
 
 interface PersonBadgeProps {
   person: Person
+  className?: string
 }
 
 const personConfig = {
   husband: {
     label: '夫',
-    className: 'bg-gradient-to-r from-husband-light to-husband-light/50 text-husband border border-husband/25',
+    className: 'bg-husband',
   },
   wife: {
     label: '妻',
-    className: 'bg-gradient-to-r from-wife-light to-wife-light/50 text-wife border border-wife/25',
+    className: 'bg-wife',
   },
 } as const
 
-export function PersonBadge({ person }: PersonBadgeProps) {
+export function PersonBadge({ person, className = '' }: PersonBadgeProps) {
   const config = personConfig[person]
 
   return (
-    <span className={`text-xs px-2 py-1 rounded-md font-semibold ${config.className}`}>
+    <span className={`w-[22px] h-[22px] rounded-full text-[8px] font-bold text-white inline-flex items-center justify-center shrink-0 ${config.className} ${className}`}>
       {config.label}
     </span>
   )
