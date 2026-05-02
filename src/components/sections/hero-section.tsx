@@ -88,7 +88,7 @@ export function HeroSection({
 
   return (
     <section
-      className="relative overflow-hidden rounded-t-[20px]"
+      className="relative overflow-hidden"
       style={{
         background: `
           linear-gradient(to bottom, transparent 55%, #FAFBFCAA 80%, #FAFBFC 100%),
@@ -109,7 +109,7 @@ export function HeroSection({
       <div className="absolute w-[120px] h-[120px] rounded-full bg-white opacity-[0.05] left-[-30px] top-[140px] pointer-events-none" />
       <div className="absolute w-[80px] h-[80px] rounded-full bg-[#A5B4FC] opacity-[0.08] right-[20px] bottom-[200px] pointer-events-none" />
 
-      <div className="relative flex flex-col gap-3 pt-4 px-5 pb-7">
+      <div className="relative flex flex-col gap-3 pt-[calc(env(safe-area-inset-top)+16px)] px-5 pb-7">
         {/* Top Bar */}
         <div className="flex items-center justify-between">
           <span className="text-[13px] font-bold tracking-[1.5px] text-white">
