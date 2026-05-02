@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Moon, Settings, LogOut } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { AnimatedYen } from '@/components/animations/animated-number'
 import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
 import { ExportCsvButton } from '@/components/features/export-csv-button'
+import { HeaderActions } from '@/components/layout/header-actions'
 import { useTheme } from 'next-themes'
 import { labelSlide, motionDuration, motionEase } from '@/components/animations/tokens'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
@@ -59,7 +60,7 @@ export function HeroSection({
   children,
 }: HeroSectionProps) {
   const router = useRouter()
-  const { setTheme, resolvedTheme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
   const direction = useMonthDirection(currentMonth)
   const previousMonth = getPreviousMonth(currentMonth)
@@ -131,19 +132,7 @@ export function HeroSection({
           <span className="text-[12px] font-bold tracking-[1px] text-white uppercase">
             Score Splitter
           </span>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label="テーマ切り替え"
-              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-              className="text-white/70 hover:text-white transition-colors"
-            >
-              <Moon className="h-4 w-4" />
-            </button>
-            <button type="button" aria-label="設定" className="text-white/70 hover:text-white transition-colors">
-              <Settings className="h-4 w-4" />
-            </button>
-          </div>
+          <HeaderActions variant="hero" />
         </div>
 
         {/* Nav — 一覧へ戻る + 月ナビ */}
