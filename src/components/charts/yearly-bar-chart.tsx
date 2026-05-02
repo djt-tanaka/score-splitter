@@ -33,26 +33,26 @@ export function YearlyBarChart({ summaries, year }: YearlyBarChartProps) {
         </div>
       </div>
 
-      <div className="flex items-end gap-1 h-[80px]">
+      <div className="flex items-end gap-1">
         {months.map(({ month, summary }) => {
           if (!summary) {
             return (
-              <div key={month} className="flex-1 flex items-end justify-center">
+              <div key={month} className="flex-1 flex items-end justify-center h-[80px]">
                 <div className="w-full rounded-sm bg-[#E5E7EB] h-2" />
               </div>
             )
           }
 
-          const h = (Math.abs(summary.balance) / maxVal) * 100
+          const h = Math.max((Math.abs(summary.balance) / maxVal) * 80, 4)
           const isPositive = summary.balance >= 0
 
           return (
-            <div key={month} className="flex-1 flex items-end justify-center">
+            <div key={month} className="flex-1 flex items-end justify-center h-[80px]">
               <motion.div
                 className="w-full rounded-sm"
                 style={{ backgroundColor: isPositive ? '#2563EB' : '#E2483D' }}
                 initial={{ height: 0 }}
-                animate={{ height: `${Math.max(h, 5)}%` }}
+                animate={{ height: h }}
                 transition={barSpring}
               />
             </div>

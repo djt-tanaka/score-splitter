@@ -50,8 +50,8 @@ export function TrendCard({ summaries, currentMonth }: TrendCardProps) {
           const isCurrent = s.month === currentMonth
 
           return (
-            <div key={s.month} className="flex-1 flex flex-col items-center gap-1">
-              <div className="flex items-end gap-[3px] h-full w-full justify-center">
+            <div key={s.month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
+              <div className="flex items-end gap-[3px] h-[84px] w-full justify-center">
                 <motion.div
                   className="w-2 rounded-t-[3px]"
                   style={{ backgroundColor: isCurrent ? '#2563EB' : '#3B82F6' }}
