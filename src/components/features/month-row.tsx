@@ -43,7 +43,7 @@ export function MonthRow({
     <Link
       href={monthToPath(month)}
       aria-label={`${formatMonth(month)}の詳細を開く`}
-      className="flex items-center gap-2.5 py-3.5 border-b border-border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      className="flex items-center gap-2.5 py-3.5 border-b border-border transition-[color,background-color,transform] active:scale-[0.99] active:bg-muted/50 outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     >
       {/* 月番号 */}
       <span className="font-mono text-[11px] font-medium text-[#999999]">

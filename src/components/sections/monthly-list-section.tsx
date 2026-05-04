@@ -1,5 +1,6 @@
 'use client'
 
+import { useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { MonthRow } from '@/components/features/month-row'
@@ -14,6 +15,7 @@ interface MonthlyListSectionProps {
 
 export function MonthlyListSection({ summaries, year }: MonthlyListSectionProps) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const currentMonth = parseMonth(new Date())
 
   if (summaries.length === 0) {
@@ -77,8 +79,9 @@ export function MonthlyListSection({ summaries, year }: MonthlyListSectionProps)
           {/* pill型セレクター */}
           <select
             value={year}
-            onChange={(e) => router.push(`/${e.target.value}`)}
-            className="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-medium bg-transparent appearance-none cursor-pointer"
+            onChange={(e) => startTransition(() => router.push(`/${e.target.value}`))}
+            disabled={isPending}
+            className={`rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-medium bg-transparent appearance-none cursor-pointer transition-opacity ${isPending ? 'opacity-50' : ''}`}
             aria-label="年を選択"
             style={{ backgroundImage: 'none' }}
           >
