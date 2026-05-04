@@ -53,3 +53,21 @@ export function isValidMonth(month: string): boolean {
   const m = parseInt(month.slice(4, 6), 10)
   return m >= 1 && m <= 12
 }
+
+export function monthToPath(month: string): string {
+  return `/${month.slice(0, 4)}/${month.slice(4, 6)}`
+}
+
+export function pathToMonth(year: string, month: string): string {
+  return `${year}${month}`
+}
+
+export function isValidYear(year: string): boolean {
+  return /^\d{4}$/.test(year)
+}
+
+export function isValidMonthParam(month: string): boolean {
+  if (!/^\d{2}$/.test(month)) return false
+  const m = parseInt(month, 10)
+  return m >= 1 && m <= 12
+}

@@ -13,7 +13,7 @@ import { useTheme } from 'next-themes'
 import { labelSlide, motionDuration, motionEase } from '@/components/animations/tokens'
 import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
 import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
-import { formatCurrency, formatMonth, getPreviousMonth, parseMonth } from '@/lib/utils/format'
+import { formatCurrency, formatMonth, getPreviousMonth, parseMonth, monthToPath } from '@/lib/utils/format'
 import type { Income, Expense, Carryover, MonthlySummary } from '@/types'
 
 interface HeroSectionProps {
@@ -83,11 +83,11 @@ export function HeroSection({
     const year = parseInt(currentMonth.slice(0, 4), 10)
     const month = parseInt(currentMonth.slice(4, 6), 10)
     const date = new Date(year, month - 1 + offset, 1)
-    router.push(`/?month=${parseMonth(date)}`)
+    router.push(monthToPath(parseMonth(date)))
   }
 
   function goToCurrentMonth() {
-    router.push(`/?month=${parseMonth(new Date())}`)
+    router.push(monthToPath(parseMonth(new Date())))
   }
 
   return (
@@ -138,7 +138,7 @@ export function HeroSection({
         {/* Nav — 一覧へ戻る + 月ナビ */}
         <div className="flex items-center justify-between">
           <Link
-            href="/"
+            href={`/${currentMonth.slice(0, 4)}`}
             aria-label="月の一覧へ戻る"
             className="inline-flex items-center gap-1 text-white/70 text-xs hover:text-white transition-colors shrink-0"
           >

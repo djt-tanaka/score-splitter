@@ -6,7 +6,7 @@ async function login(page: Page) {
   await page.goto('/login')
   await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
   await page.getByRole('button', { name: 'ログイン' }).click()
-  await page.waitForURL(/\/(\?|$)/)
+  await page.waitForURL(/\/\d{4}\/\d{2}/)
 }
 
 test.describe('prefers-reduced-motion', () => {
@@ -16,7 +16,7 @@ test.describe('prefers-reduced-motion', () => {
 
   test('全要素の transition-duration が 0.01ms 以下', async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     const hasLongTransition = await page.evaluate(() => {
       const all = document.querySelectorAll('*')
@@ -33,7 +33,7 @@ test.describe('prefers-reduced-motion', () => {
 
   test('全要素の animation-duration が 0.01ms 以下', async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     const hasLongAnimation = await page.evaluate(() => {
       const all = document.querySelectorAll('*')

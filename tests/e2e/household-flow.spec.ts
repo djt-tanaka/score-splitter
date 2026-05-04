@@ -6,7 +6,7 @@ async function login(page: Page) {
   await page.goto('/login')
   await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
   await page.getByRole('button', { name: 'ログイン' }).click()
-  await page.waitForURL(/\/(\?|$)/)
+  await page.waitForURL(/\/\d{4}\/\d{2}/)
 }
 
 function getIncomeSection(page: Page) {
@@ -47,7 +47,7 @@ test.describe('ログインページ', () => {
   test('正しいパスワードで月一覧に遷移する', async ({ page }) => {
     await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
     await page.getByRole('button', { name: 'ログイン' }).click()
-    await page.waitForURL(/\/(\?|$)/)
+    await page.waitForURL(/\/\d{4}\/\d{2}/)
 
     await expect(
       page.getByText('※各月の収支は繰越に回す前の金額です')
@@ -80,32 +80,29 @@ test.describe('月一覧ページ', () => {
 
   test('月カードをクリックすると月詳細に遷移する', async ({ page }) => {
     await page.getByRole('link', { name: /2026年2月の詳細を開く/ }).click()
-    await expect(page).toHaveURL(/\?month=202602/)
+    await expect(page).toHaveURL(/\/2026\/02/)
     await expect(page.getByText(/Settlement/)).toBeVisible()
   })
 
-  test('月詳細の「一覧へ」リンクで/に戻れる', async ({ page }) => {
-    await page.goto('/?month=202602')
+  test('月詳細の「一覧へ」リンクで年別一覧に戻れる', async ({ page }) => {
+    await page.goto('/2026/02')
     await page.getByRole('link', { name: '月の一覧へ戻る' }).click()
-    await expect(page).toHaveURL(/\/$/)
+    await expect(page).toHaveURL(/\/2026$/)
     await expect(
       page.getByText('※各月の収支は繰越に回す前の金額です')
     ).toBeVisible()
   })
 
-  test('不正な月パラメータは/にリダイレクトされる', async ({ page }) => {
-    await page.goto('/?month=invalid')
-    await expect(page).toHaveURL(/\/$/)
-    await expect(
-      page.getByText('※各月の収支は繰越に回す前の金額です')
-    ).toBeVisible()
+  test('不正な月パラメータはリダイレクトされる', async ({ page }) => {
+    await page.goto('/2026/ab')
+    await expect(page).toHaveURL(/\/\d{4}\/\d{2}/)
   })
 
-  test('月範囲外（13月など）の月パラメータも/にリダイレクトされる', async ({
+  test('月範囲外（13月など）の月パラメータもリダイレクトされる', async ({
     page,
   }) => {
-    await page.goto('/?month=202613')
-    await expect(page).toHaveURL(/\/$/)
+    await page.goto('/2026/13')
+    await expect(page).toHaveURL(/\/\d{4}\/\d{2}/)
   })
 })
 
@@ -115,7 +112,7 @@ test.describe('月一覧ページ', () => {
 test.describe('月詳細ページ', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
   })
 
   test('ヘッダーが表示される', async ({ page }) => {
@@ -132,7 +129,7 @@ test.describe('月詳細ページ', () => {
   })
 
   test('シードデータの収入が表示される', async ({ page }) => {
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     const incomeSection = getIncomeSection(page)
 
@@ -145,7 +142,7 @@ test.describe('月詳細ページ', () => {
   })
 
   test('シードデータの支出が表示される', async ({ page }) => {
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     await expect(page.getByText('家賃')).toBeVisible()
     await expect(page.getByText('光熱費')).toBeVisible()
@@ -155,7 +152,7 @@ test.describe('月詳細ページ', () => {
   })
 
   test('精算額とお小遣いが表示される', async ({ page }) => {
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     await expect(page.getByText(/Settlement/)).toBeVisible()
     await expect(page.getByText(/Allowance/)).toBeVisible()
@@ -163,7 +160,7 @@ test.describe('月詳細ページ', () => {
   })
 
   test('精算額の計算結果が正しい', async ({ page }) => {
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
 
     // シードデータ:
     // 収入: 夫350000+50000=400000, 妻280000 → 合計680000
@@ -183,7 +180,7 @@ test.describe('月詳細ページ', () => {
 test.describe('月ナビゲーション', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
   })
 
   test('現在の月が表示される', async ({ page }) => {
@@ -193,14 +190,14 @@ test.describe('月ナビゲーション', () => {
   test('前月に移動できる', async ({ page }) => {
     await page.getByRole('button', { name: '前月に移動' }).click()
 
-    await expect(page).toHaveURL(/month=202601/)
+    await expect(page).toHaveURL(/\/2026\/01/)
     await expect(page.getByText('2026年1月')).toBeVisible()
   })
 
   test('翌月に移動できる', async ({ page }) => {
     await page.getByRole('button', { name: '翌月に移動' }).click()
 
-    await expect(page).toHaveURL(/month=202603/)
+    await expect(page).toHaveURL(/\/2026\/03/)
     await expect(page.getByText('2026年3月')).toBeVisible()
   })
 
@@ -208,14 +205,14 @@ test.describe('月ナビゲーション', () => {
     await expect(page.getByText('副業')).toBeVisible()
 
     await page.getByRole('button', { name: '前月に移動' }).click()
-    await page.waitForURL(/month=202601/)
+    await page.waitForURL(/\/2026\/01/)
 
     await expect(page.getByText('副業')).not.toBeVisible()
   })
 
   test('データのない月では空メッセージが表示される', async ({ page }) => {
     await page.getByRole('button', { name: '翌月に移動' }).click()
-    await page.waitForURL(/month=202603/)
+    await page.waitForURL(/\/2026\/03/)
 
     await expect(page.getByText('収入がありません')).toBeVisible()
     await expect(page.getByText('支出がありません')).toBeVisible()
@@ -228,7 +225,7 @@ test.describe('月ナビゲーション', () => {
 test.describe('収入の追加', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202612')
+    await page.goto('/2026/12')
   })
 
   test('収入を追加できる', async ({ page }) => {
@@ -273,7 +270,7 @@ test.describe('収入の追加', () => {
 test.describe('支出の追加', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202612')
+    await page.goto('/2026/12')
   })
 
   test('支出を追加できる', async ({ page }) => {
@@ -298,7 +295,7 @@ test.describe('支出の追加', () => {
 test.describe('繰越の追加', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202612')
+    await page.goto('/2026/12')
   })
 
   test('繰越を追加できる', async ({ page }) => {
@@ -323,7 +320,7 @@ test.describe('繰越の追加', () => {
 test.describe('項目の編集', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
   })
 
   test('収入を編集できる', async ({ page }) => {
@@ -369,7 +366,7 @@ test.describe('項目の編集', () => {
 test.describe('項目の削除', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
   })
 
   test('収入を削除できる', async ({ page }) => {
@@ -393,7 +390,7 @@ test.describe('項目の削除', () => {
 test.describe('精算額の更新', () => {
   test('収入追加後に精算額が更新される', async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202611')
+    await page.goto('/2026/11')
 
     await expect(page.getByText('精算なし')).toBeVisible()
 
@@ -419,7 +416,7 @@ test.describe('精算額の更新', () => {
 test.describe('前月からコピー', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
-    await page.goto('/?month=202602')
+    await page.goto('/2026/02')
   })
 
   test('コピーダイアログが表示される', async ({ page }) => {
@@ -489,7 +486,7 @@ test.describe('認証ガード', () => {
   test('ログイン済みでログインページにアクセスするとホームにリダイレクト', async ({ page }) => {
     await login(page)
     await page.goto('/login')
-    await page.waitForURL(/\/(\?|$)/)
+    await page.waitForURL(/\/\d{4}\/\d{2}/)
   })
 })
 

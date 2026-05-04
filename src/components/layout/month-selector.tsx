@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
 import { ExportCsvButton } from '@/components/features/export-csv-button'
 import { labelSlide, motionDuration, motionEase } from '@/components/animations/tokens'
-import { formatMonth, parseMonth, getPreviousMonth } from '@/lib/utils/format'
+import { formatMonth, parseMonth, getPreviousMonth, monthToPath } from '@/lib/utils/format'
 import type { Income, Expense, Carryover } from '@/types'
 
 interface MonthSelectorProps {
@@ -44,11 +44,11 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
     const year = parseInt(currentMonth.slice(0, 4), 10)
     const month = parseInt(currentMonth.slice(4, 6), 10)
     const date = new Date(year, month - 1 + offset, 1)
-    router.push(`/?month=${parseMonth(date)}`)
+    router.push(monthToPath(parseMonth(date)))
   }
 
   function goToCurrentMonth() {
-    router.push(`/?month=${parseMonth(new Date())}`)
+    router.push(monthToPath(parseMonth(new Date())))
   }
 
   const previousMonth = getPreviousMonth(currentMonth)
@@ -56,7 +56,7 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
   return (
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
       <Button variant="outline" size="sm" asChild>
-        <Link href="/" aria-label="月の一覧へ戻る">
+        <Link href={`/${currentMonth.slice(0, 4)}`} aria-label="月の一覧へ戻る">
           <ArrowLeft className="h-4 w-4" />
           <span>一覧へ</span>
         </Link>
