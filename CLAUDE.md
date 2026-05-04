@@ -21,6 +21,7 @@ npm run test         # Vitestウォッチモード
 npm run test:run     # 単発実行
 npm run test:coverage # カバレッジ測定
 npm run test:e2e     # Playwright E2Eテスト
+npm run test:e2e:ui  # Playwright UIモード
 ```
 
 ## ディレクトリ構成
@@ -32,7 +33,12 @@ src/
 │   ├── ui/          # shadcn/ui コンポーネント
 │   ├── sections/    # ページセクション
 │   ├── forms/       # フォーム
-│   └── features/    # 機能コンポーネント
+│   ├── features/    # 機能コンポーネント
+│   ├── layout/      # レイアウトコンポーネント
+│   ├── providers/   # プロバイダー
+│   ├── charts/      # チャート
+│   └── animations/  # アニメーション
+├── hooks/           # カスタムフック
 ├── lib/
 │   ├── supabase/    # Supabase設定
 │   ├── utils/       # ユーティリティ (計算、フォーマット)
@@ -41,6 +47,7 @@ src/
 tests/
 ├── unit/            # ユニットテスト
 ├── integration/     # 統合テスト
+├── components/      # コンポーネントテスト (sections, features, a11y)
 └── e2e/             # E2Eテスト
 ```
 
@@ -63,6 +70,11 @@ tests/
 - **バリデーション**: Zodスキーマを `lib/validations/` に定義
 - **パスエイリアス**: `@/` で `src/` を参照
 - **コミットメッセージ**: 日本語で記述、プレフィックス使用 (feat:, fix:, docs:, test:, chore:)
+
+### 認証
+
+- `src/middleware.ts` でセッションベース認証（`household_session` cookie）
+- 未認証時は `/login` にリダイレクト
 
 ### 金額の扱い
 
