@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
@@ -38,17 +38,22 @@ const monthLabelVariants = {
 
 export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: MonthSelectorProps) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const direction = useMonthDirection(currentMonth)
 
   function navigateMonth(offset: number) {
     const year = parseInt(currentMonth.slice(0, 4), 10)
     const month = parseInt(currentMonth.slice(4, 6), 10)
     const date = new Date(year, month - 1 + offset, 1)
-    router.push(monthToPath(parseMonth(date)))
+    startTransition(() => {
+      router.push(monthToPath(parseMonth(date)))
+    })
   }
 
   function goToCurrentMonth() {
-    router.push(monthToPath(parseMonth(new Date())))
+    startTransition(() => {
+      router.push(monthToPath(parseMonth(new Date())))
+    })
   }
 
   const previousMonth = getPreviousMonth(currentMonth)
@@ -61,13 +66,14 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
           <span>一覧へ</span>
         </Link>
       </Button>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" aria-label="前月に移動" onClick={() => navigateMonth(-1)}>
+      <div className={`flex items-center gap-2 transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
+        <Button variant="outline" size="icon" aria-label="前月に移動" disabled={isPending} onClick={() => navigateMonth(-1)}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <button
           type="button"
           onClick={goToCurrentMonth}
+          disabled={isPending}
           aria-label="今月に移動"
           aria-live="polite"
           className="text-2xl font-bold min-w-[140px] text-center hover:text-accent transition-[color,transform] duration-200 motion-safe:hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md overflow-hidden"
@@ -87,7 +93,7 @@ export function MonthSelector({ currentMonth, incomes, expenses, carryovers }: M
             </motion.span>
           </AnimatePresence>
         </button>
-        <Button variant="outline" size="icon" aria-label="翌月に移動" onClick={() => navigateMonth(1)}>
+        <Button variant="outline" size="icon" aria-label="翌月に移動" disabled={isPending} onClick={() => navigateMonth(1)}>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

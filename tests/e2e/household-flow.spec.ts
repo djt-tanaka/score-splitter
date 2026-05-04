@@ -44,23 +44,23 @@ test.describe('ログインページ', () => {
     ).toBeVisible()
   })
 
-  test('正しいパスワードで月一覧に遷移する', async ({ page }) => {
+  test('正しいパスワードで月詳細に遷移する', async ({ page }) => {
     await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
     await page.getByRole('button', { name: 'ログイン' }).click()
     await page.waitForURL(/\/\d{4}\/\d{2}/)
 
-    await expect(
-      page.getByText('※各月の収支は繰越に回す前の金額です')
-    ).toBeVisible()
+    await expect(page.getByText(/Balance/)).toBeVisible()
   })
 })
 
 // =============================================
-// 月一覧ページ（認証後のランディング）
+// 月一覧ページ（年別一覧）
 // =============================================
 test.describe('月一覧ページ', () => {
   test.beforeEach(async ({ page }) => {
     await login(page)
+    await page.goto('/2026')
+    await page.waitForURL(/\/2026$/)
   })
 
   test('月一覧の注記が表示される', async ({ page }) => {
@@ -497,9 +497,7 @@ test.describe('テーマ切り替え', () => {
   test('テーマ切り替えボタンが存在する', async ({ page }) => {
     await login(page)
 
-    const themeButton = page.locator('header button').filter({
-      has: page.locator('svg.lucide-sun, svg.lucide-moon'),
-    })
+    const themeButton = page.getByRole('button', { name: 'テーマを切り替え' })
     await expect(themeButton).toBeVisible()
   })
 })
