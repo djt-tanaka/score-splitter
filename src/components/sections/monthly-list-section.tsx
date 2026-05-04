@@ -1,27 +1,27 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { MonthRow } from '@/components/features/month-row'
 import { YearlyBarChart } from '@/components/charts/yearly-bar-chart'
-import { formatCurrency, parseMonth } from '@/lib/utils/format'
+import { formatCurrency, parseMonth, monthToPath } from '@/lib/utils/format'
 import type { MonthlySummary } from '@/types'
 
 interface MonthlyListSectionProps {
   summaries: MonthlySummary[]
+  year: number
 }
 
-export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
-  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear())
+export function MonthlyListSection({ summaries, year }: MonthlyListSectionProps) {
+  const router = useRouter()
   const currentMonth = parseMonth(new Date())
 
   if (summaries.length === 0) {
-    const thisMonth = currentMonth
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <p className="text-muted-foreground">まだ記録がありません。</p>
         <Link
-          href={`/?month=${thisMonth}`}
+          href={monthToPath(currentMonth)}
           className="text-accent underline-offset-4 hover:underline"
         >
           今月の画面を開く
@@ -31,9 +31,13 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
   }
 
   const availableYears = [...new Set(summaries.map((s) => Number(s.month.slice(0, 4))))].sort()
+  if (!availableYears.includes(year)) {
+    availableYears.push(year)
+    availableYears.sort()
+  }
 
   const yearSummaries = summaries.filter((s) =>
-    s.month.startsWith(String(selectedYear))
+    s.month.startsWith(String(year))
   )
   const recordedCount = yearSummaries.length
   const balanceYTD = yearSummaries.reduce((sum, s) => sum + s.balance, 0)
@@ -44,7 +48,7 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
   )
 
   const allMonths = Array.from({ length: 12 }, (_, i) => {
-    const m = `${selectedYear}${String(i + 1).padStart(2, '0')}`
+    const m = `${year}${String(i + 1).padStart(2, '0')}`
     return {
       month: m,
       index: i + 1,
@@ -68,12 +72,12 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
         </div>
         <div className="flex items-center gap-3 mt-1.5">
           <div className="text-4xl font-bold leading-none">
-            {selectedYear}
+            {year}
           </div>
           {/* pill型セレクター */}
           <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            value={year}
+            onChange={(e) => router.push(`/${e.target.value}`)}
             className="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-sm font-medium bg-transparent appearance-none cursor-pointer"
             aria-label="年を選択"
             style={{ backgroundImage: 'none' }}
@@ -118,7 +122,7 @@ export function MonthlyListSection({ summaries }: MonthlyListSectionProps) {
 
           {/* 年間バーチャート */}
           <div className="mt-4">
-            <YearlyBarChart summaries={yearSummaries} year={selectedYear} />
+            <YearlyBarChart summaries={yearSummaries} year={year} />
           </div>
         </div>
       )}

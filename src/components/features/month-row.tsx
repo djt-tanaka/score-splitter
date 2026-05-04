@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { formatCurrency, formatMonth } from '@/lib/utils/format'
+import { formatCurrency, formatMonth, monthToPath } from '@/lib/utils/format'
 import type { MonthlySummary } from '@/types'
 
 interface MonthRowProps {
@@ -41,7 +41,7 @@ export function MonthRow({
 
   return (
     <Link
-      href={`/?month=${month}`}
+      href={monthToPath(month)}
       aria-label={`${formatMonth(month)}の詳細を開く`}
       className="flex items-center gap-2.5 py-3.5 border-b border-border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     >
