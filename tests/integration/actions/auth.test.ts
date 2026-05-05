@@ -3,21 +3,30 @@ import '../../../tests/mocks/next'
 import {
   mockSupabaseClient,
   mockSingleSuccess,
-  mockSingleError,
   clearSupabaseMocks,
 } from '../../../tests/mocks/supabase'
 import { mockCookies, mockRedirect } from '../../../tests/mocks/next'
 import { createFormData } from '../../../tests/mocks/helpers'
 
-// bcryptのモック
 vi.mock('bcryptjs', () => ({
   default: {
     compare: vi.fn(),
   },
 }))
 
+vi.mock('@/lib/webauthn/session', () => ({
+  createSession: vi.fn(async () => 'mock-session-token'),
+  deleteSession: vi.fn(async () => undefined),
+  isAuthenticated: vi.fn(async () => false),
+}))
+
 import bcrypt from 'bcryptjs'
 import { login, logout, isAuthenticated } from '@/app/actions/auth'
+import {
+  createSession,
+  deleteSession,
+  isAuthenticated as checkSession,
+} from '@/lib/webauthn/session'
 
 describe('auth actions', () => {
   beforeEach(() => {
@@ -28,12 +37,11 @@ describe('auth actions', () => {
     mockRedirect.mockClear()
     vi.clearAllMocks()
 
-    // 環境変数をクリア
     delete process.env.APP_PASSWORD_HASH_BASE64
   })
 
   describe('login', () => {
-    it('パスワード未入力でエラーを返す', async () => {
+    it('パスワード未入��でエラーを返す', async () => {
       const formData = createFormData({ password: '' })
 
       const result = await login({ error: undefined }, formData)
@@ -42,7 +50,6 @@ describe('auth actions', () => {
     })
 
     it('環境変数からハッシュを取得して認証成功', async () => {
-      // 環境変数にBase64エンコードされたハッシュを設定
       const mockHash = '$2a$10$testHashValue'
       process.env.APP_PASSWORD_HASH_BASE64 = Buffer.from(mockHash).toString(
         'base64'
@@ -52,13 +59,12 @@ describe('auth actions', () => {
 
       const formData = createFormData({ password: 'correct-password' })
 
-      // redirectは例外をスローするので、catchする
       await expect(login({ error: undefined }, formData)).rejects.toThrow(
         'NEXT_REDIRECT:/'
       )
 
       expect(bcrypt.compare).toHaveBeenCalledWith('correct-password', mockHash)
-      expect(mockCookies.set).toHaveBeenCalled()
+      expect(createSession).toHaveBeenCalledWith(null, 'password')
     })
 
     it('環境変数からハッシュを取得して認証失敗', async () => {
@@ -73,11 +79,10 @@ describe('auth actions', () => {
       const result = await login({ error: undefined }, formData)
 
       expect(result.error).toBe('パスワードが正しくありません')
-      expect(mockCookies.set).not.toHaveBeenCalled()
+      expect(createSession).not.toHaveBeenCalled()
     })
 
     it('Supabaseからハッシュを取得して認証成功', async () => {
-      // 環境変数なし
       mockSingleSuccess({ value: '$2a$10$supabaseHashValue' })
       vi.mocked(bcrypt.compare).mockResolvedValueOnce(true as never)
 
@@ -92,6 +97,7 @@ describe('auth actions', () => {
         'correct-password',
         '$2a$10$supabaseHashValue'
       )
+      expect(createSession).toHaveBeenCalledWith(null, 'password')
     })
 
     it('Supabaseからハッシュを取得して認証失敗', async () => {
@@ -105,7 +111,6 @@ describe('auth actions', () => {
     })
 
     it('認証設定がない場合エラーを返す', async () => {
-      // 環境変数なし、Supabaseもデータなし
       mockSingleSuccess(null)
 
       const formData = createFormData({ password: 'any-password' })
@@ -113,54 +118,28 @@ describe('auth actions', () => {
 
       expect(result.error).toBe('認証設定が見つかりません')
     })
-
-    it('認証成功時にセッションCookieが設定される', async () => {
-      const mockHash = '$2a$10$testHashValue'
-      process.env.APP_PASSWORD_HASH_BASE64 = Buffer.from(mockHash).toString(
-        'base64'
-      )
-      vi.mocked(bcrypt.compare).mockResolvedValueOnce(true as never)
-
-      const formData = createFormData({ password: 'correct-password' })
-
-      try {
-        await login({ error: undefined }, formData)
-      } catch {
-        // redirect例外を無視
-      }
-
-      expect(mockCookies.set).toHaveBeenCalledWith(
-        'household_session',
-        expect.any(String),
-        expect.objectContaining({
-          httpOnly: true,
-          sameSite: 'lax',
-          path: '/',
-        })
-      )
-    })
   })
 
   describe('logout', () => {
-    it('セッションCookieを削除してログインページにリダイレクト', async () => {
+    it('セッションを削除してログインページにリダイレクト', async () => {
       await expect(logout()).rejects.toThrow('NEXT_REDIRECT:/login')
 
-      expect(mockCookies.delete).toHaveBeenCalledWith('household_session')
+      expect(deleteSession).toHaveBeenCalled()
     })
   })
 
   describe('isAuthenticated', () => {
-    it('セッションCookieがあればtrueを返す', async () => {
-      mockCookies.get.mockReturnValueOnce({ value: 'session-token' })
+    it('セッションモジュールに委譲する', async () => {
+      vi.mocked(checkSession).mockResolvedValueOnce(true)
 
       const result = await isAuthenticated()
 
       expect(result).toBe(true)
-      expect(mockCookies.get).toHaveBeenCalledWith('household_session')
+      expect(checkSession).toHaveBeenCalled()
     })
 
-    it('セッションCookieがなければfalseを返す', async () => {
-      mockCookies.get.mockReturnValueOnce(undefined)
+    it('セッションがなければfalseを返す', async () => {
+      vi.mocked(checkSession).mockResolvedValueOnce(false)
 
       const result = await isAuthenticated()
 

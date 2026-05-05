@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useActionState } from 'react'
 import { login } from '@/app/actions/auth'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { PasskeyLoginButton } from '@/features/passkey/components/passkey-login-button'
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, {})
@@ -88,6 +89,11 @@ export default function LoginPage() {
               {!isPending && <span className="text-lg font-normal">→</span>}
             </button>
           </form>
+
+          {/* パスキーログイン */}
+          <div className="mt-4">
+            <PasskeyLoginButton />
+          </div>
         </div>
       </main>
 

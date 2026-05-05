@@ -1,6 +1,7 @@
 'use client'
 
-import { LogOut } from 'lucide-react'
+import Link from 'next/link'
+import { LogOut, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { logout } from '@/app/actions/auth'
@@ -17,6 +18,17 @@ export function HeaderActions({ variant = 'default' }: HeaderActionsProps) {
   return (
     <div className="flex items-center gap-1">
       <ThemeToggle className={iconClass} />
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        className={iconClass}
+        asChild
+        aria-label="設定"
+      >
+        <Link href="/settings">
+          <Settings className="h-4 w-4" />
+        </Link>
+      </Button>
       <form action={logout}>
         <Button
           variant="ghost"

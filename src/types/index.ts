@@ -8,6 +8,12 @@ export interface ActionResult<T = unknown> {
 // 担当者
 export type Person = 'husband' | 'wife'
 
+// セッション
+export interface Session {
+  person: Person | null
+  authMethod: 'password' | 'passkey'
+}
+
 // 収入
 export interface Income {
   id: string
