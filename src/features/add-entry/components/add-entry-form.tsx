@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { TYPE_LABELS } from '@/lib/constants'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SubmitButton } from '@/components/ui/submit-button'
@@ -18,11 +19,6 @@ interface AddEntryFormProps {
   onCancel: () => void
 }
 
-const typeLabels = {
-  income: '収入',
-  expense: '支出',
-  carryover: '繰越',
-}
 
 const createActions = {
   income: createIncome,
@@ -124,7 +120,7 @@ export function AddEntryForm({ type, month, onSuccess, onCancel }: AddEntryFormP
           キャンセル
         </Button>
         <SubmitButton className="flex-1 h-12" pendingChildren="追加中...">
-          {typeLabels[type]}を追加
+          {TYPE_LABELS[type]}を追加
         </SubmitButton>
       </div>
     </form>

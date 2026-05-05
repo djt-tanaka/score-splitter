@@ -50,7 +50,6 @@ export default async function MonthPage({ params }: MonthPageProps) {
         incomes={incomes}
         expenses={expenses}
         carryovers={carryovers}
-        recentSummaries={recentSummaries}
       >
         <TrendCard summaries={recentSummaries} currentMonth={month} />
       </HeroSection>

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useActionState } from 'react'
 import { login } from '@/app/actions/auth'
-import { ThemeToggle } from '@/components/features/theme-toggle'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, {})

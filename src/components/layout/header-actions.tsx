@@ -2,7 +2,7 @@
 
 import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/features/theme-toggle'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { logout } from '@/app/actions/auth'
 
 interface HeaderActionsProps {
