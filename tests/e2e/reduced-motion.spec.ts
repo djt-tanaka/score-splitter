@@ -5,7 +5,7 @@ const MOCK_PASSWORD = 'password'
 async function login(page: Page) {
   await page.goto('/login')
   await page.getByPlaceholder('パスワード').fill(MOCK_PASSWORD)
-  await page.getByRole('button', { name: 'ログイン' }).click()
+  await page.getByRole('button', { name: 'ログイン →' }).click()
   await page.waitForURL(/\/\d{4}\/\d{2}/)
 }
 
