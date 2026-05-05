@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { TYPE_LABELS } from '@/lib/constants'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { Button } from '@/components/ui/button'
 import { AddEntryForm } from './add-entry-form'
@@ -25,17 +26,12 @@ interface AddEntryModalProps {
   month: string
 }
 
-const typeLabels = {
-  income: '収入',
-  expense: '支出',
-  carryover: '繰越',
-}
 
 export function AddEntryModal({ type, month }: AddEntryModalProps) {
   const [open, setOpen] = useState(false)
   const isMobile = useIsMobile()
 
-  const title = `${typeLabels[type]}を追加`
+  const title = `${TYPE_LABELS[type]}を追加`
 
   const trigger = (
     <Button variant="outline" size="sm" className="mt-2 w-full">

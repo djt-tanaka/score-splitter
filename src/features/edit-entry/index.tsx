@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Pencil } from 'lucide-react'
+import { TYPE_LABELS } from '@/lib/constants'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,11 +40,6 @@ interface EditModalProps {
   ) => Promise<{ success: boolean; error?: string }>
 }
 
-const typeLabels = {
-  income: '収入',
-  expense: '支出',
-  carryover: '繰越',
-}
 
 export function EditModal({
   id,
@@ -96,7 +92,7 @@ export function EditModal({
     }
   }
 
-  const title = `${typeLabels[type]}を編集`
+  const title = `${TYPE_LABELS[type]}を編集`
 
   const trigger = (
     <Button

@@ -11,17 +11,16 @@ import { ExportCsvButton } from '@/features/export-csv'
 import { HeaderActions } from '@/components/layout/header-actions'
 import { useTheme } from 'next-themes'
 import { labelSlide, motionDuration, motionEase } from '@/components/animations/tokens'
-import { calculateSettlement, filterCarryoverExpenses, filterClearedCarryovers } from '@/lib/utils/calculation'
+import { calculateSettlement } from '@/lib/utils/calculation'
 import { calculateMonthBalance } from '@/lib/utils/monthly-summary'
 import { formatCurrency, formatMonth, getPreviousMonth, parseMonth, monthToPath } from '@/lib/utils/format'
-import type { Income, Expense, Carryover, MonthlySummary } from '@/types'
+import type { Income, Expense, Carryover } from '@/types'
 
 interface HeroSectionProps {
   currentMonth: string
   incomes: Income[]
   expenses: Expense[]
   carryovers: Carryover[]
-  recentSummaries: MonthlySummary[]
   children?: React.ReactNode
 }
 
@@ -68,12 +67,6 @@ export function HeroSection({
   const result = calculateSettlement(incomes, expenses, carryovers)
   const { expenseTotal: allExpenseTotal, balance: monthlyBalance } =
     calculateMonthBalance(incomes, expenses)
-
-  const carryoverExpenses = filterCarryoverExpenses(expenses)
-  const clearedCarryovers = filterClearedCarryovers(carryovers)
-  const carryoverExpenseTotal = carryoverExpenses.reduce((sum, e) => sum + e.amount, 0)
-  const clearedCarryoverTotal = clearedCarryovers.reduce((sum, c) => sum + c.amount, 0)
-  const hasAdjustments = carryoverExpenses.length > 0 || clearedCarryovers.length > 0
 
   const totalItems = incomes.length + expenses.length
   const days = getDaysInMonth(currentMonth)
