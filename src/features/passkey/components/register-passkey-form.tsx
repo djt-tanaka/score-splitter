@@ -55,7 +55,8 @@ export function RegisterPasskeyForm({ onRegistered }: RegisterPasskeyFormProps) 
       if (err instanceof Error && err.name === 'NotAllowedError') {
         setError('パスキーの登録がキャンセルされました')
       } else {
-        setError('パスキーの登録中にエラーが発生しました')
+        const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err)
+        setError(`パスキーの登録中にエラーが発生しました (${detail})`)
       }
     } finally {
       setIsRegistering(false)

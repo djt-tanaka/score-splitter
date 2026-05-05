@@ -41,7 +41,8 @@ export function PasskeyLoginButton() {
       if (err instanceof Error && err.name === 'NotAllowedError') {
         setError('パスキー認証がキャンセルされました')
       } else {
-        setError('パスキー認証中にエラーが発生しました')
+        const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err)
+        setError(`パスキー認証中にエラーが発生しました (${detail})`)
       }
     } finally {
       setIsAuthenticating(false)

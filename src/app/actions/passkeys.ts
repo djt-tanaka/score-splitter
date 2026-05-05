@@ -30,12 +30,13 @@ export interface PasskeyInfo {
 export async function generateRegistrationOptions(
   person: Person
 ): Promise<ActionResult<PublicKeyCredentialCreationOptionsJSON>> {
-  if (!(await isAuthenticated())) {
-    return { success: false, error: '認証が必要です' }
-  }
+  try {
+    if (!(await isAuthenticated())) {
+      return { success: false, error: '認証が必要です' }
+    }
 
-  const config = getWebAuthnConfig()
-  const supabase = await createClient()
+    const config = getWebAuthnConfig()
+    const supabase = await createClient()
 
   // 既存のパスキーを取得（同一personの重複登録防止のため excludeCredentials に含める）
   const { data: existingCredentials } = await supabase
@@ -78,7 +79,14 @@ export async function generateRegistrationOptions(
     .delete()
     .lt('expires_at', new Date().toISOString())
 
-  return { success: true, data: options }
+    return { success: true, data: JSON.parse(JSON.stringify(options)) }
+  } catch (err) {
+    console.error('[generateRegistrationOptions]', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : '登録オプションの生成に失敗しました',
+    }
+  }
 }
 
 export async function verifyRegistration(
@@ -86,12 +94,13 @@ export async function verifyRegistration(
   credential: RegistrationResponseJSON,
   deviceName?: string
 ): Promise<ActionResult<{ credentialId: string }>> {
-  if (!(await isAuthenticated())) {
-    return { success: false, error: '認証が必要です' }
-  }
+  try {
+    if (!(await isAuthenticated())) {
+      return { success: false, error: '認証が必要です' }
+    }
 
-  const config = getWebAuthnConfig()
-  const supabase = await createClient()
+    const config = getWebAuthnConfig()
+    const supabase = await createClient()
 
   // チャレンジを取得
   const { data: challengeRecord } = await supabase
@@ -130,7 +139,7 @@ export async function verifyRegistration(
   const { error } = await supabase.from('passkey_credentials').insert({
     id: registeredCredential.id,
     person,
-    public_key: Buffer.from(registeredCredential.publicKey).toString('base64'),
+    public_key: '\\x' + Buffer.from(registeredCredential.publicKey).toString('hex'),
     counter: registeredCredential.counter,
     device_name: deviceName ?? (credentialBackedUp ? 'クラウド同期' : 'デバイス'),
     transports: credential.response.transports ?? [],
@@ -147,7 +156,14 @@ export async function verifyRegistration(
     .eq('type', 'registration')
     .eq('person', person)
 
-  return { success: true, data: { credentialId: registeredCredential.id } }
+    return { success: true, data: { credentialId: registeredCredential.id } }
+  } catch (err) {
+    console.error('[verifyRegistration]', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : '登録の検証に失敗しました',
+    }
+  }
 }
 
 // --- 認証 ---
@@ -155,105 +171,118 @@ export async function verifyRegistration(
 export async function generateAuthenticationOptions(): Promise<
   ActionResult<PublicKeyCredentialRequestOptionsJSON>
 > {
-  const config = getWebAuthnConfig()
-  const supabase = await createClient()
+  try {
+    const config = getWebAuthnConfig()
+    const supabase = await createClient()
 
-  const options = await generateAuthOptions({
-    rpID: config.rpID,
-    userVerification: 'preferred',
-    // allowCredentials を空にして discoverable credentials を使う
-  })
+    const options = await generateAuthOptions({
+      rpID: config.rpID,
+      userVerification: 'preferred',
+    })
 
-  await supabase.from('webauthn_challenges').insert({
-    challenge: options.challenge,
-    type: 'authentication',
-    person: null,
-    expires_at: new Date(
-      Date.now() + CHALLENGE_TTL_MINUTES * 60 * 1000
-    ).toISOString(),
-  })
+    await supabase.from('webauthn_challenges').insert({
+      challenge: options.challenge,
+      type: 'authentication',
+      person: null,
+      expires_at: new Date(
+        Date.now() + CHALLENGE_TTL_MINUTES * 60 * 1000
+      ).toISOString(),
+    })
 
-  // 期限切れチャレンジを掃除
-  await supabase
-    .from('webauthn_challenges')
-    .delete()
-    .lt('expires_at', new Date().toISOString())
+    // 期限切れチャレンジを掃除
+    await supabase
+      .from('webauthn_challenges')
+      .delete()
+      .lt('expires_at', new Date().toISOString())
 
-  return { success: true, data: options }
+    return { success: true, data: JSON.parse(JSON.stringify(options)) }
+  } catch (err) {
+    console.error('[generateAuthenticationOptions]', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : '認証オプションの生成に失敗しました',
+    }
+  }
 }
 
 export async function verifyAuthentication(
   credential: AuthenticationResponseJSON
 ): Promise<ActionResult<{ person: Person }>> {
-  const config = getWebAuthnConfig()
-  const supabase = await createClient()
+  try {
+    const config = getWebAuthnConfig()
+    const supabase = await createClient()
 
-  // 資格情報をIDで検索
-  const { data: storedCredential } = await supabase
-    .from('passkey_credentials')
-    .select('id, person, public_key, counter, transports')
-    .eq('id', credential.id)
-    .single()
+    const { data: storedCredential } = await supabase
+      .from('passkey_credentials')
+      .select('id, person, public_key, counter, transports')
+      .eq('id', credential.id)
+      .single()
 
-  if (!storedCredential) {
-    return { success: false, error: '登録されていないパスキーです' }
+    if (!storedCredential) {
+      return { success: false, error: '登録されていないパスキーです' }
+    }
+
+    const { data: challengeRecord } = await supabase
+      .from('webauthn_challenges')
+      .select('challenge, expires_at')
+      .eq('type', 'authentication')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (!challengeRecord) {
+      return { success: false, error: 'チャレンジが見つかりません。もう一度お試しください' }
+    }
+
+    if (new Date(challengeRecord.expires_at) < new Date()) {
+      return { success: false, error: 'チャレンジの有効期限が切れました。もう一度お試しください' }
+    }
+
+    const rawKey = storedCredential.public_key as string
+    const publicKeyBytes = rawKey.startsWith('\\x')
+      ? Buffer.from(rawKey.slice(2), 'hex')
+      : Buffer.from(rawKey, 'base64')
+
+    const verification = await verifyAuthenticationResponse({
+      response: credential,
+      expectedChallenge: challengeRecord.challenge,
+      expectedOrigin: config.origin,
+      expectedRPID: config.rpID,
+      requireUserVerification: false,
+      credential: {
+        id: storedCredential.id,
+        publicKey: new Uint8Array(publicKeyBytes),
+        counter: storedCredential.counter,
+        transports: (storedCredential.transports ?? []) as AuthenticatorTransportFuture[],
+      },
+    })
+
+    if (!verification.verified) {
+      return { success: false, error: 'パスキーの認証に失敗しました' }
+    }
+
+    await supabase
+      .from('passkey_credentials')
+      .update({ counter: verification.authenticationInfo.newCounter })
+      .eq('id', storedCredential.id)
+
+    await supabase
+      .from('webauthn_challenges')
+      .delete()
+      .eq('type', 'authentication')
+
+    const person = storedCredential.person as Person
+
+    await createSession(person, 'passkey')
+
+    return { success: true, data: { person } }
+  } catch (err) {
+    console.error('[verifyAuthentication]', err)
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : '認証の検証に失敗しました',
+    }
   }
-
-  // 最新のチャレンジを取得
-  const { data: challengeRecord } = await supabase
-    .from('webauthn_challenges')
-    .select('challenge, expires_at')
-    .eq('type', 'authentication')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (!challengeRecord) {
-    return { success: false, error: 'チャレンジが見つかりません。もう一度お試しください' }
-  }
-
-  if (new Date(challengeRecord.expires_at) < new Date()) {
-    return { success: false, error: 'チャレンジの有効期限が切れました。もう一度お試しください' }
-  }
-
-  const publicKeyBytes = Buffer.from(storedCredential.public_key, 'base64')
-
-  const verification = await verifyAuthenticationResponse({
-    response: credential,
-    expectedChallenge: challengeRecord.challenge,
-    expectedOrigin: config.origin,
-    expectedRPID: config.rpID,
-    requireUserVerification: false,
-    credential: {
-      id: storedCredential.id,
-      publicKey: new Uint8Array(publicKeyBytes),
-      counter: storedCredential.counter,
-      transports: (storedCredential.transports ?? []) as AuthenticatorTransportFuture[],
-    },
-  })
-
-  if (!verification.verified) {
-    return { success: false, error: 'パスキーの認証に失敗しました' }
-  }
-
-  // カウンターを更新
-  await supabase
-    .from('passkey_credentials')
-    .update({ counter: verification.authenticationInfo.newCounter })
-    .eq('id', storedCredential.id)
-
-  // 使用済みチャレンジを削除
-  await supabase
-    .from('webauthn_challenges')
-    .delete()
-    .eq('type', 'authentication')
-
-  const person = storedCredential.person as Person
-
-  // セッション作成
-  await createSession(person, 'passkey')
-
-  return { success: true, data: { person } }
 }
 
 // --- 管理 ---
