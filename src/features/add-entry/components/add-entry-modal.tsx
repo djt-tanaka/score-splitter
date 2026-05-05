@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import { Button } from '@/components/ui/button'
-import { AddEntryForm } from '@/components/forms/add-entry-form'
+import { AddEntryForm } from './add-entry-form'
 import {
   Dialog,
   DialogContent,

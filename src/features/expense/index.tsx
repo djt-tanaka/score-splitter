@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion } from 'motion/react'
 import { DeleteButton } from '@/components/ui/delete-button'
-import { AddEntryModal } from '@/components/forms/add-entry-modal'
-import { EditModal } from '@/components/forms/edit-modal'
+import { AddEntryModal } from '@/features/add-entry'
+import { EditModal } from '@/features/edit-entry'
 import { LottiePlayer } from '@/components/animations/lottie-player'
 import { listExit, listSpring } from '@/components/animations/tokens'
 import { updateExpense, deleteExpense, toggleExpenseCarryover } from '@/app/actions/expense'

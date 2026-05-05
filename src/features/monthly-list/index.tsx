@@ -3,7 +3,7 @@
 import { useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { MonthRow } from '@/components/features/month-row'
+import { MonthRow } from './components/month-row'
 import { YearlyBarChart } from '@/components/charts/yearly-bar-chart'
 import { formatCurrency, parseMonth, monthToPath } from '@/lib/utils/format'
 import type { MonthlySummary } from '@/types'

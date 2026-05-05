@@ -29,11 +29,18 @@ npm run test:e2e:ui  # Playwright UIモード
 ```
 src/
 ├── app/actions/     # Server Actions (認証、CRUD)
+├── features/        # ドメイン機能 (Recursive Features Structure)
+│   ├── income/      # 収入セクション
+│   ├── expense/     # 支出セクション
+│   ├── carryover/   # 繰越セクション
+│   ├── add-entry/   # エントリ追加 (FAB + Sheet + Modal + Form)
+│   ├── edit-entry/  # エントリ編集モーダル
+│   ├── monthly-overview/ # ヒーロー（精算額表示）
+│   ├── monthly-list/    # 月一覧
+│   ├── copy-month/  # 月コピーダイアログ
+│   └── export-csv/  # CSVエクスポート
 ├── components/
 │   ├── ui/          # shadcn/ui コンポーネント
-│   ├── sections/    # ページセクション
-│   ├── forms/       # フォーム
-│   ├── features/    # 機能コンポーネント
 │   ├── layout/      # レイアウトコンポーネント
 │   ├── providers/   # プロバイダー
 │   ├── charts/      # チャート

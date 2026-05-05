@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { IncomeSection } from '@/components/sections/income-section'
+import { IncomeSection } from '@/features/income'
 import type { Income } from '@/types'
 
 // Server Actionsのモック
