@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CarryoverSection } from '@/components/sections/carryover-section'
+import { CarryoverSection } from '@/features/carryover'
 import type { Carryover } from '@/types'
 
 vi.mock('@/app/actions/carryover', () => ({

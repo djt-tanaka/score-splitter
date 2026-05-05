@@ -203,5 +203,3 @@ export function EditModal({
     </Dialog>
   )
 }
-
-export { EditModal as EditDialog }

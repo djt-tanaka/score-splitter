@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { AddEntrySheet } from '@/components/features/add-entry-sheet'
+import { AddEntrySheet } from './components/add-entry-sheet'
+
+export { AddEntryModal } from './components/add-entry-modal'
 
 interface AddEntryFabProps {
   month: string

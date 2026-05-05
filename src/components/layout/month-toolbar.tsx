@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { CopyMonthDialog } from '@/components/features/copy-month-dialog'
-import { ExportCsvButton } from '@/components/features/export-csv-button'
+import { CopyMonthDialog } from '@/features/copy-month'
+import { ExportCsvButton } from '@/features/export-csv'
 import { getPreviousMonth } from '@/lib/utils/format'
 import type { Income, Expense, Carryover } from '@/types'
 
